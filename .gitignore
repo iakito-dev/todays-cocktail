@@ -20,30 +20,30 @@
 /vendor/bundle
 .rspec
 
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+**/log/*
+**/tmp/*
+!**/log/.keep
+!**/tmp/.keep
 
 # PID files
-/tmp/pids/*
-!/tmp/pids/
-!/tmp/pids/.keep
+**/tmp/pids/*
+!**/tmp/pids/
+!**/tmp/pids/.keep
 
 # Storage (uploaded files in development)
-/storage/*
-!/storage/.keep
-/tmp/storage/*
-!/tmp/storage/
-!/tmp/storage/.keep
+**/storage/*
+!**/storage/.keep
+**/tmp/storage/*
+!**/tmp/storage/
+!**/tmp/storage/.keep
 
 # Master key (Rails credentials)
-/config/master.key
-/config/credentials.yml.enc
+**/config/master.key
+**/config/credentials.yml.enc
 
 # Ignore all environment files (.env, .env.*)
-/.env
-/.env*
+**/.env
+**/.env*
 
 # ----------------------------------
 # Supabase local setup
@@ -54,18 +54,18 @@ docker-compose.override.yml
 # ----------------------------------
 # Node / Frontend
 # ----------------------------------
-node_modules
+**/node_modules
 yarn-error.log
 yarn-debug.log*
 npm-debug.log*
-/public/packs
-/public/packs-test
+**/public/packs
+**/public/packs-test
 
 # ----------------------------------
 # Test / Coverage / Build artifacts
 # ----------------------------------
-coverage
-/spec/examples.txt
+**/coverage
+**/spec/examples.txt
 
 # ----------------------------------
 # Deployment tools

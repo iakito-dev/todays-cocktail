@@ -1,5 +1,80 @@
+# =====================================================
+#  Rails + React + Supabase 共通 .gitignore
+# =====================================================
+
+# ----------------------------------
+# OS / Editor
+# ----------------------------------
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ----------------------------------
+# Bundler / Ruby / Rails
+# ----------------------------------
+*.rbc
+.byebug_history
+.bundle
+/vendor/bundle
+.rspec
+
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# PID files
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+# Storage (uploaded files in development)
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
+
+# Master key (Rails credentials)
+/config/master.key
+/config/credentials.yml.enc
+
+# Ignore all environment files (.env, .env.*)
+/.env
+/.env*
+
+# ----------------------------------
+# Supabase local setup
+# ----------------------------------
+.supabase
+docker-compose.override.yml
+
+# ----------------------------------
+# Node / Frontend
+# ----------------------------------
 node_modules
-log
-tmp
-vendor
-.env
+yarn-error.log
+yarn-debug.log*
+npm-debug.log*
+/public/packs
+/public/packs-test
+
+# ----------------------------------
+# Test / Coverage / Build artifacts
+# ----------------------------------
+coverage
+/spec/examples.txt
+
+# ----------------------------------
+# Deployment tools
+# ----------------------------------
+kamal.lock
+
+# ----------------------------------
+# Notes
+# ----------------------------------
+# 個人環境依存のファイルや設定は追加しない
+# Supabase・Rails・Reactを一元的に管理するため、
+# backend/.gitignore は削除済み

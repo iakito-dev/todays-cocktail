@@ -1,0 +1,23 @@
+# config/database.yml
+# Railsアプリケーションのデータベース設定ファイル
+# 開発、テスト、本番の各環境でのデータベース接続設定を定義します
+
+# 基本設定（全環境で共通して使用される設定）
+default: &default
+  adapter: postgresql              # PostgreSQLデータベースを使用
+  encoding: unicode               # Unicode文字エンコーディングを使用
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>  # コネクションプール数（デフォルト5）
+  # データベース接続URL（環境変数から取得、開発環境がデフォルト）
+  url: <%= ENV.fetch("DATABASE_URL") { "postgres://postgres:postgres@127.0.0.1:54322/app_development" } %>
+
+# 開発環境設定
+# ローカル開発時に使用される設定
+development:
+  <<: *default  # 上記のdefault設定をすべて継承
+
+# テスト環境設定
+# 自動テスト実行時に使用される設定
+test:
+  <<: *default  # 上記のdefault設定を継承
+  # テスト専用のデータベースURL（開発環境とは別のデータベースを使用）
+  url: <%= ENV.fetch("DATABASE_URL_TEST") { "postgres://postgres:postgres@127.0.0.1:54322/app_test" } %>

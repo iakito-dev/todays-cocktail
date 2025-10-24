@@ -1,34 +1,47 @@
+# ================================
+# 🐳 Docker Compose 設定（Supabaseローカル接続用）
+# ================================
+# Supabase CLI（supabase start）で起動したDBを利用し、
+# Docker上ではフロントエンド（React）とバックエンド（Rails）のみを起動する構成。
+
 version: "3.9"
 
 services:
+  # -------------------------------
+  # Rails API バックエンド
+  # -------------------------------
   backend:
     build: ./backend
     ports:
-      - "3000:3000"
-    depends_on:
-      - db
+      - "3000:3000"  # Rails APIサーバー (localhost:3000)
+    environment:
+      RAILS_ENV: development
+      # Docker内からホストのSupabaseに接続
+      DATABASE_URL: postgres://postgres:postgres@host.docker.internal:54322/app_development
+    volumes:
+      - ./backend:/app  # ローカルのコードをマウントしてホットリロード
     env_file:
-      - .env
+      - ./backend/.env  # バックエンド専用の.envファイル
+    command: bash -c "bundle install && rails s -b 0.0.0.0"
 
+  # -------------------------------
+  # React / Vite フロントエンド
+  # -------------------------------
   frontend:
     build: ./frontend
     ports:
-      - "5173:5173"
-    env_file:
-      - .env
-
-  db:
-    image: postgres:16
+      - "5173:5173"  # Vite開発サーバー (localhost:5173)
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5432:5432"
+      # バックエンドAPIとの通信先
+      VITE_API_URL: http://localhost:3000
+      # Supabase設定
+      VITE_SUPABASE_URL: http://localhost:54321
+      VITE_SUPABASE_ANON_KEY: dummy
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - ./frontend:/app
+      - /app/node_modules
     env_file:
-      - .env
+      - ./frontend/.env  # フロントエンド専用の.envファイル
+    command: npm run dev
 
-volumes:
-  db_data:
+# DBサービスは削除（SupabaseローカルPostgreSQLを使用）

@@ -16,8 +16,8 @@ services:
       - "3000:3000"  # Rails APIサーバー (localhost:3000)
     environment:
       RAILS_ENV: development
-      # .envに定義されたDATABASE_URLをそのまま使用
-      DATABASE_URL: ${DATABASE_URL}
+      # Docker内からホストのSupabaseに接続
+      DATABASE_URL: postgres://postgres:postgres@host.docker.internal:54322/app_development
     volumes:
       - ./backend:/app  # ローカルのコードをマウントしてホットリロード
     env_file:
@@ -34,14 +34,14 @@ services:
     environment:
       # バックエンドAPIとの通信先
       VITE_API_URL: http://localhost:3000
-      # Supabase設定（まだ未使用でもダミーでOK）
-      VITE_SUPABASE_URL: http://localhost
+      # Supabase設定
+      VITE_SUPABASE_URL: http://localhost:54321
       VITE_SUPABASE_ANON_KEY: dummy
     volumes:
       - ./frontend:/app
       - /app/node_modules
     env_file:
       - ./frontend/.env  # フロントエンド専用の.envファイル
-    command: bash -c "npm install && npm run dev"
+    command: npm run dev
 
 # DBサービスは削除（SupabaseローカルPostgreSQLを使用）

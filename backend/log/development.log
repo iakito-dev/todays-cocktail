@@ -52,3 +52,10 @@ Started GET "/health" for ::1 at 2025-10-24 11:33:26 +0100
 Started GET "/health" for ::1 at 2025-10-24 11:46:32 +0100
 Started GET "/health" for ::1 at 2025-10-24 11:46:33 +0100
 Started GET "/health" for ::1 at 2025-10-24 11:46:33 +0100
+Started GET "/health" for 192.168.65.1 at 2025-10-24 11:11:38 +0000
+  [1m[36mActiveRecord::SchemaMigration Load (8.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='Backend'*/[0m
+Started GET "/health" for 192.168.65.1 at 2025-10-24 11:11:41 +0000
+Started GET "/health" for 192.168.65.1 at 2025-10-24 11:11:57 +0000
+Started GET "/health" for 192.168.65.1 at 2025-10-24 11:11:57 +0000
+Started GET "/health" for 192.168.65.1 at 2025-10-24 11:12:04 +0000
+Started GET "/health" for 192.168.65.1 at 2025-10-24 11:12:04 +0000

@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import { fetchHealth } from "./lib/api";
+import { Button } from "./components/ui/button";
+import { Card, CardHeader, CardContent } from "./components/ui/card";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [status, setStatus] = useState<string>("checking...");
+
+  useEffect(() => {
+    fetchHealth()
+      .then((t) => setStatus(t))
+      .catch((e) => setStatus(`error: ${e.message}`));
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-background text-foreground p-6">
+      <div className="max-w-xl mx-auto space-y-4">
+        <h1 className="text-2xl font-bold">Frontend ↔ Backend Health Check</h1>
+        <Card>
+          <CardHeader>Backend /health</CardHeader>
+          <CardContent>
+            <p>status: {status}</p>
+            <div className="mt-3">
+              <Button onClick={() => window.location.reload()}>Reload</Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;

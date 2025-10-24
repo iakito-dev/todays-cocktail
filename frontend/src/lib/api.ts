@@ -5,7 +5,7 @@
 
 // API BaseURL設定
 // 環境変数VITE_API_BASE_URLから取得、未設定時はローカル開発環境をデフォルトとする
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
 /**
  * GETリクエストを送信する
@@ -16,8 +16,8 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000";
  */
 export async function apiGet(path: string, init?: RequestInit) {
   const res = await fetch(`${BASE_URL}${path}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
     ...init, // カスタムヘッダーやその他のオプションをマージ
   });
 

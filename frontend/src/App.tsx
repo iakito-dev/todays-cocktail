@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { fetchHealth } from "./lib/api";
-import { Button } from "./components/ui/button";
-import { Card, CardHeader, CardContent } from "./components/ui/card";
+import { useEffect, useState } from 'react';
+import { fetchHealth } from './lib/api';
+import { Button } from './components/ui/button';
+import { Card, CardHeader, CardContent } from './components/ui/card';
 
 function App() {
-  const [status, setStatus] = useState<string>("checking...");
+  const [status, setStatus] = useState<string>('checking...');
 
   useEffect(() => {
     fetchHealth()

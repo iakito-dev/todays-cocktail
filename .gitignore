@@ -53,8 +53,15 @@ lerna-debug.log*
 **/config/credentials.yml.enc
 
 # Ignore all environment files (.env, .env.*)
+# フロントエンド・バックエンド両方の.envファイルを無視
+# ただし.env.exampleファイルはサンプルとしてGitに含める
 **/.env
-**/.env*
+**/.env.local
+**/.env.development
+**/.env.test
+**/.env.production
+**/.env.staging
+!**/.env.example
 
 # ----------------------------------
 # Supabase local setup
@@ -95,4 +102,8 @@ kamal.lock
 # ----------------------------------
 # 個人環境依存のファイルや設定は追加しない
 # Supabase・Rails・Reactを一元的に管理するため、
-# backend/.gitignore は削除済み
+# 各ディレクトリの.gitignoreは削除済み
+#
+# 環境変数ファイル構成:
+# - backend/.env  : Rails用（DATABASE_URL等）
+# - frontend/.env : React用（VITE_*環境変数）

@@ -240,3 +240,21 @@ Processing by Api::V1::CocktailsController#index as */*
 Completed 200 OK in 14ms (Views: 13.2ms | ActiveRecord: 0.9ms (1 query, 0 cached) | GC: 0.0ms)
 
 
+Started GET "/health" for 192.168.65.1 at 2025-10-25 09:29:17 +0000
+Started GET "/api/v1/cocktails" for 192.168.65.1 at 2025-10-25 09:29:17 +0000
+Processing by Api::V1::CocktailsController#index as */*
+  Parameters: {"cocktail"=>{}}
+Started GET "/health" for 192.168.65.1 at 2025-10-25 09:29:17 +0000
+  [1m[36mCocktail Load (8.5ms)[0m  [1m[34mSELECT "cocktails".* FROM "cocktails" /*action='index',application='Backend',controller='cocktails'*/[0m
+  ↳ app/controllers/api/v1/cocktails_controller.rb:4:in `index'
+Completed 200 OK in 22ms (Views: 10.1ms | ActiveRecord: 8.4ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/api/v1/cocktails" for 192.168.65.1 at 2025-10-25 09:29:17 +0000
+Processing by Api::V1::CocktailsController#index as */*
+  Parameters: {"cocktail"=>{}}
+  [1m[36mCocktail Load (1.1ms)[0m  [1m[34mSELECT "cocktails".* FROM "cocktails" /*action='index',application='Backend',controller='cocktails'*/[0m
+  ↳ app/controllers/api/v1/cocktails_controller.rb:4:in `index'
+Completed 200 OK in 12ms (Views: 10.6ms | ActiveRecord: 1.1ms (1 query, 0 cached) | GC: 0.0ms)
+
+

@@ -2,6 +2,7 @@
  * APIクライアント
  * Rails APIバックエンドとの通信を行うためのユーティリティ関数
  */
+import type { Cocktail } from './types';
 
 // API BaseURL設定
 // 環境変数VITE_API_BASE_URLから取得、未設定時はローカル開発環境をデフォルトとする
@@ -38,4 +39,11 @@ export async function apiGet(path: string, init?: RequestInit) {
 export async function fetchHealth(): Promise<string> {
   const res = await fetch(`${BASE_URL}/health`);
   return res.text();
+}
+
+/**
+ * カクテル一覧を取得
+ */
+export async function fetchCocktails(): Promise<Cocktail[]> {
+  return apiGet('/api/v1/cocktails');
 }

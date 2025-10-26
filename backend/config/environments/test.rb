@@ -50,4 +50,8 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Allow all hosts in test to avoid HostAuthorization 403 on simple requests
+  config.hosts.clear
+  config.host_authorization = { exclude: ->(_request) { true } }
 end

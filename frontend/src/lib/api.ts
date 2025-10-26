@@ -44,6 +44,26 @@ export async function fetchHealth(): Promise<string> {
 /**
  * カクテル一覧を取得
  */
-export async function fetchCocktails(): Promise<Cocktail[]> {
-  return apiGet('/api/v1/cocktails');
+export interface CocktailQuery {
+  q?: string;
+  base?: string | string[]; // enum key(s)
+  ingredients?: string; // comma/space separated
+}
+
+export async function fetchCocktails(params?: CocktailQuery): Promise<Cocktail[]> {
+  const qs = new URLSearchParams();
+  if (params) {
+    if (params.q) qs.set('q', params.q);
+    if (params.ingredients) qs.set('ingredients', params.ingredients);
+    if (params.base) {
+      const bases = Array.isArray(params.base) ? params.base : params.base.split(',');
+      if (bases.length === 1) {
+        qs.set('base', bases[0]);
+      } else if (bases.length > 1) {
+        bases.forEach((b) => qs.append('base[]', b));
+      }
+    }
+  }
+  const path = `/api/v1/cocktails${qs.toString() ? `?${qs.toString()}` : ''}`;
+  return apiGet(path);
 }

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Cocktails", type: :request do
   describe "GET /api/v1/cocktails" do
     before do
-      Cocktail.delete_all
+      Cocktail.destroy_all
       create(:cocktail, name: 'マティーニ', base: :gin, instructions: 'ジン ベルモット')
       create(:cocktail, name: 'モヒート', base: :rum, instructions: 'ラム ミント ライム')
     end

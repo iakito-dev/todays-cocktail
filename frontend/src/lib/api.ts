@@ -56,7 +56,7 @@ export async function fetchCocktails(params?: CocktailQuery): Promise<Cocktail[]
     if (params.q) qs.set('q', params.q);
     if (params.ingredients) qs.set('ingredients', params.ingredients);
     if (params.base) {
-      const bases = Array.isArray(params.base) ? params.base : `${params.base}`.split(',');
+      const bases = Array.isArray(params.base) ? params.base : params.base.split(',');
       if (bases.length === 1) {
         qs.set('base', bases[0]);
       } else if (bases.length > 1) {

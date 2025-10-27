@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :cocktail_ingredient do
     association :cocktail
     association :ingredient
-    amount_text { "45ml" }
+    sequence(:amount_text) { |n| "#{15 + n * 15}ml" }
     position { 1 }
   end
 end

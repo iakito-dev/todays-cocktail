@@ -1,3 +1,8 @@
+export interface Ingredient {
+  name: string;
+  amount: string;
+}
+
 export interface Cocktail {
   id: number;
   name: string;
@@ -6,6 +11,8 @@ export interface Cocktail {
   technique: 'build' | 'stir' | 'shake';
   image_url: string | null;
   instructions: string | null;
+  glass?: string;
+  ingredients?: Ingredient[];
   created_at: string;
   updated_at: string;
 }

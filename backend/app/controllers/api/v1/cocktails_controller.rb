@@ -33,7 +33,19 @@ class Api::V1::CocktailsController < ApplicationController
   end
 
   def show
-    cocktail = Cocktail.find(params[:id])
-    render json: cocktail
+    cocktail = Cocktail.includes(cocktail_ingredients: :ingredient).find(params[:id])
+    
+    # フロントエンド用のフォーマットに変換
+    cocktail_data = cocktail.as_json.merge(
+      ingredients: cocktail.ordered_ingredients.map do |ci|
+        {
+          name: ci.ingredient.name,
+          amount: ci.amount_text,
+          position: ci.position
+        }
+      end
+    )
+    
+    render json: cocktail_data
   end
 end

@@ -67,3 +67,12 @@ export async function fetchCocktails(params?: CocktailQuery): Promise<Cocktail[]
   const path = `/api/v1/cocktails${qs.toString() ? `?${qs.toString()}` : ''}`;
   return apiGet(path);
 }
+
+/**
+ * カクテル詳細を取得
+ * @param id - カクテルのID
+ * @returns Promise<Cocktail> カクテルの詳細情報
+ */
+export async function fetchCocktail(id: string | number): Promise<Cocktail> {
+  return apiGet(`/api/v1/cocktails/${id}`);
+}

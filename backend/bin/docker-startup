@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+echo "🚀 Starting Rails application..."
+
+# サーバーPIDファイルを削除
+rm -f tmp/pids/server.pid
+
+# 依存関係をインストール
+echo "📦 Installing dependencies..."
+bundle install
+
+# データベースの準備
+echo "🗄️  Preparing database..."
+bundle exec rails db:prepare
+
+# データベースが空の場合のみSeedを実行
+if [ $(bundle exec rails runner "puts Cocktail.count") -eq 0 ]; then
+  echo "🌱 Seeding database (first time setup)..."
+  bundle exec rails db:seed
+else
+  echo "✅ Database already seeded, skipping..."
+fi
+
+# Railsサーバーを起動
+echo "🎉 Starting Rails server..."
+bundle exec rails s -b 0.0.0.0

@@ -51,7 +51,7 @@ class Api::V1::CocktailsController < ApplicationController
 
   def todays_pick
     # ランダムに1件のカクテルを取得
-    cocktail = Cocktail.order('RANDOM()').first
+    cocktail = Cocktail.order(Arel.sql('RANDOM()')).first
 
     if cocktail
       # フロントエンド用のフォーマットに変換

@@ -1,13 +1,13 @@
 # データの更新とサンプル追加
-mohito = Cocktail.find_by(name: "モヒート")
-if mohito
-  mohito.update!(glass: "タンブラー")
+mojito = Cocktail.find_by(name: "モヒート")
+if mojito
+  mojito.update!(glass: "タンブラー")
 
   # 既存の材料を削除
-  mohito.cocktail_ingredients.destroy_all
+  mojito.ingredients.destroy_all
 
   # 新しい材料を追加
-  mohito.ingredients.create!([
+  mojito.ingredients.create!([
     { name: "ホワイトラム", amount: "45ml" },
     { name: "ライム", amount: "1/2個" },
     { name: "ミントの葉", amount: "10枚" },

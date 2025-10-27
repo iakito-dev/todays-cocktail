@@ -22,7 +22,7 @@ services:
       - ./backend:/app  # ローカルのコードをマウントしてホットリロード
     env_file:
       - ./backend/.env  # バックエンド専用の.envファイル
-    command: bash -c "bundle install && rails s -b 0.0.0.0"
+    command: bash -c "rm -f tmp/pids/server.pid && bundle install && rails s -b 0.0.0.0"
 
   # -------------------------------
   # React / Vite フロントエンド
@@ -42,6 +42,6 @@ services:
       - /app/node_modules
     env_file:
       - ./frontend/.env  # フロントエンド専用の.envファイル
-    command: npm run dev
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
 
 # DBサービスは削除（SupabaseローカルPostgreSQLを使用）

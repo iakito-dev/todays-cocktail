@@ -22,6 +22,8 @@ services:
       - ./backend:/app  # ローカルのコードをマウントしてホットリロード
     env_file:
       - ./backend/.env  # バックエンド専用の.envファイル
+    # Rails初期化処理（PIDファイル削除・依存インストール・サーバ起動など）は
+    # /app/bin/docker-startup スクリプトで実行します。詳細はスクリプト内コメント参照。
     command: bash /app/bin/docker-startup
 
   # -------------------------------

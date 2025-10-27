@@ -215,7 +215,7 @@ cocktails_data = [
 # カクテルと材料を作成
 cocktails_data.each_with_index do |data, index|
   puts "Creating cocktail: #{data[:name]}"
-  
+
   # バリデーション
   base = BASE_MAP[data[:base]]
   strength = STRENGTH_MAP[data[:strength]]
@@ -240,7 +240,7 @@ cocktails_data.each_with_index do |data, index|
   data[:ingredients].each_with_index do |ingredient_data, position|
     # 材料をマスタテーブルで作成・取得（重複なし）
     ingredient = Ingredient.find_or_create_by!(name: ingredient_data[:name])
-    
+
     # 中間テーブルに関係を作成
     CocktailIngredient.create!(
       cocktail: cocktail,

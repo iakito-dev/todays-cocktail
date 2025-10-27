@@ -45,7 +45,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
 
     it 'returns the cocktail with ingredients' do
       get "/api/v1/cocktails/#{cocktail.id}"
-      
+
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
       expect(json['id']).to eq(cocktail.id)
@@ -61,7 +61,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
 
     it 'includes all required cocktail fields' do
       get "/api/v1/cocktails/#{cocktail.id}"
-      
+
       json = JSON.parse(response.body)
       expect(json).to have_key('id')
       expect(json).to have_key('name')
@@ -73,7 +73,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
 
     it 'orders ingredients by position' do
       get "/api/v1/cocktails/#{cocktail.id}"
-      
+
       json = JSON.parse(response.body)
       ingredients = json['ingredients']
       expect(ingredients.first['position']).to eq(1)

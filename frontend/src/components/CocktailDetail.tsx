@@ -10,7 +10,7 @@ import type { Cocktail } from '../lib/types';
 // 日本語ラベルのマッピング
 const BASE_LABELS: Record<string, string> = {
   gin: 'ジン',
-  rum: 'ラム', 
+  rum: 'ラム',
   whisky: 'ウイスキー',
   vodka: 'ウォッカ',
   tequila: 'テキーラ',
@@ -20,7 +20,7 @@ const BASE_LABELS: Record<string, string> = {
 
 const STRENGTH_LABELS: Record<string, string> = {
   light: 'ライト',
-  medium: 'ミディアム', 
+  medium: 'ミディアム',
   strong: 'ストロング',
 };
 

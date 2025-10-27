@@ -34,7 +34,7 @@ class Api::V1::CocktailsController < ApplicationController
 
   def show
     cocktail = Cocktail.includes(cocktail_ingredients: :ingredient).find(params[:id])
-    
+
     # フロントエンド用のフォーマットに変換
     cocktail_data = cocktail.as_json.merge(
       ingredients: cocktail.ordered_ingredients.map do |ci|
@@ -45,7 +45,7 @@ class Api::V1::CocktailsController < ApplicationController
         }
       end
     )
-    
+
     render json: cocktail_data
   end
 end

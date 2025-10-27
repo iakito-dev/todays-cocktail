@@ -8,7 +8,7 @@ RSpec.describe Ingredient, type: :model do
 
   describe 'validations' do
     it { should validate_presence_of(:name) }
-    
+
     it 'validates uniqueness of name' do
       create(:ingredient, name: 'TestIngredient')
       should validate_uniqueness_of(:name)
@@ -20,10 +20,10 @@ RSpec.describe Ingredient, type: :model do
       ingredient = create(:ingredient)
       cocktail1 = create(:cocktail)
       cocktail2 = create(:cocktail)
-      
+
       create(:cocktail_ingredient, cocktail: cocktail1, ingredient: ingredient, amount_text: '45ml', position: 1)
       create(:cocktail_ingredient, cocktail: cocktail2, ingredient: ingredient, amount_text: '30ml', position: 1)
-      
+
       expect(ingredient.cocktails.count).to eq(2)
     end
   end

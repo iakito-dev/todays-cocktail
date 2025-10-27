@@ -50,8 +50,8 @@ export function CocktailCard({ cocktail, onViewDetails }: CocktailCardProps) {
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-3 right-3">
-          <Badge className={`${strengthColors[cocktail.strength]} shadow-sm`}>
-            {strengthLabels[cocktail.strength]}
+          <Badge className={`${strengthColors[cocktail.strength] ?? strengthColors['light']} shadow-sm`}>
+            {strengthLabels[cocktail.strength] ?? strengthLabels['light']}
           </Badge>
         </div>
       </div>

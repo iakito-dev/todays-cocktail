@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/card';
+import { Button } from './ui/button';
+import { Badge } from './ui/badge';
+import { Sparkles, ArrowRight } from 'lucide-react';
+import { ImageWithFallback } from './ImageWithFallback';
 import type { Cocktail } from '../lib/types';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -11,8 +14,11 @@ const strengthColors = {
   strong: 'bg-red-100 text-red-800 border-red-200'
 };
 
-export function TodaysPick() {
-  const navigate = useNavigate();
+interface TodaysPickProps {
+  onViewDetails?: (cocktail: Cocktail) => void;
+}
+
+export function TodaysPick({ onViewDetails }: TodaysPickProps) {
   const [cocktail, setCocktail] = useState<Cocktail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,8 +43,8 @@ export function TodaysPick() {
   }, []);
 
   const handleClick = () => {
-    if (cocktail) {
-      navigate(`/cocktails/${cocktail.id}`);
+    if (cocktail && onViewDetails) {
+      onViewDetails(cocktail);
     }
   };
 
@@ -47,7 +53,7 @@ export function TodaysPick() {
       <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
         <div className="p-8 md:p-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit mb-4">
-            <span className="text-xl">🍸</span>
+            <Sparkles className="w-5 h-5" />
             <span className="font-medium">Today's Pick</span>
           </div>
           <p className="text-gray-600">読み込み中...</p>
@@ -61,7 +67,7 @@ export function TodaysPick() {
       <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
         <div className="p-8 md:p-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit mb-4">
-            <span className="text-xl">🍸</span>
+            <Sparkles className="w-5 h-5" />
             <span className="font-medium">Today's Pick</span>
           </div>
           <p className="text-gray-600">本日のおすすめカクテルを取得できませんでした。</p>
@@ -71,14 +77,12 @@ export function TodaysPick() {
   }
 
   return (
-    <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-      onClick={handleClick}
-    >
+    <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
       <div className="relative grid md:grid-cols-2 gap-8 p-8 md:p-12">
         {/* Left Content */}
         <div className="flex flex-col justify-center space-y-6">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit">
-            <span className="text-xl">🍸</span>
+            <Sparkles className="w-5 h-5" />
             <span className="font-medium">Today's Pick</span>
           </div>
 
@@ -92,38 +96,37 @@ export function TodaysPick() {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <span className={`${strengthColors[cocktail.strength as keyof typeof strengthColors]} px-4 py-2 rounded-full text-sm font-medium border`}>
+            <Badge className={`${strengthColors[cocktail.strength as keyof typeof strengthColors]} px-4 py-2`}>
               {getStrengthLabel(cocktail.strength)}
-            </span>
-            <span className="px-4 py-2 rounded-full text-sm font-medium border border-gray-200 bg-white">
+            </Badge>
+            <Badge variant="outline" className="px-4 py-2 bg-white border-gray-200">
               {getBaseLabel(cocktail.base)}
-            </span>
-            <span className="px-4 py-2 rounded-full text-sm font-medium border border-gray-200 bg-white">
+            </Badge>
+            <Badge variant="outline" className="px-4 py-2 bg-white border-gray-200">
               {getTechniqueLabel(cocktail.technique)}
-            </span>
+            </Badge>
           </div>
 
-          <button
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               handleClick();
             }}
-            className="w-fit bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg shadow-sm transition-colors font-medium inline-flex items-center gap-2"
+            className="w-fit bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 shadow-sm"
           >
             レシピを見る
-            <span>→</span>
-          </button>
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </Button>
         </div>
 
         {/* Right Image */}
         <div className="flex items-center justify-center">
           <div className="relative group">
             <div className="relative aspect-square w-full max-w-sm rounded-3xl overflow-hidden shadow-lg">
-              <img
-                src={cocktail.image_url || "https://via.placeholder.com/400x400?text=No+Image"}
+              <ImageWithFallback
+                src={cocktail.image_url || ""}
                 alt={cocktail.name || "No image available"}
                 className="w-full h-full object-cover"
-                loading="eager"
               />
             </div>
           </div>

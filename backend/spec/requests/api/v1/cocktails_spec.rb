@@ -80,4 +80,73 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
       expect(ingredients.last['position']).to eq(2)
     end
   end
+
+  describe "GET /api/v1/cocktails/todays_pick" do
+    context 'when cocktails exist' do
+      let!(:cocktail1) { create(:cocktail, :with_ingredients, name: 'マティーニ') }
+      let!(:cocktail2) { create(:cocktail, :with_ingredients, name: 'モヒート') }
+
+      it 'returns success' do
+        get '/api/v1/cocktails/todays_pick'
+        expect(response).to have_http_status(:success)
+      end
+
+      it 'returns a random cocktail' do
+        get '/api/v1/cocktails/todays_pick'
+        json = JSON.parse(response.body)
+
+        expect(json).to have_key('id')
+        expect(json).to have_key('name')
+        expect([cocktail1.name, cocktail2.name]).to include(json['name'])
+      end
+
+      it 'includes ingredients in the response' do
+        get '/api/v1/cocktails/todays_pick'
+        json = JSON.parse(response.body)
+
+        expect(json).to have_key('ingredients')
+        expect(json['ingredients']).to be_an(Array)
+        expect(json['ingredients'].size).to be > 0
+      end
+
+      it 'includes all required cocktail fields' do
+        get '/api/v1/cocktails/todays_pick'
+        json = JSON.parse(response.body)
+
+        expect(json).to have_key('id')
+        expect(json).to have_key('name')
+        expect(json).to have_key('base')
+        expect(json).to have_key('strength')
+        expect(json).to have_key('technique')
+        expect(json).to have_key('image_url')
+        expect(json).to have_key('instructions')
+        expect(json).to have_key('glass')
+      end
+
+      it 'includes ingredient details with name, amount, and position' do
+        get '/api/v1/cocktails/todays_pick'
+        json = JSON.parse(response.body)
+
+        ingredient = json['ingredients'].first
+        expect(ingredient).to have_key('name')
+        expect(ingredient).to have_key('amount')
+        expect(ingredient).to have_key('position')
+      end
+    end
+
+    context 'when no cocktails exist' do
+      before { Cocktail.destroy_all }
+
+      it 'returns 404' do
+        get '/api/v1/cocktails/todays_pick'
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'returns error message' do
+        get '/api/v1/cocktails/todays_pick'
+        json = JSON.parse(response.body)
+        expect(json).to have_key('error')
+      end
+    end
+  end
 end

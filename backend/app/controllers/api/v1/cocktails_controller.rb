@@ -48,4 +48,25 @@ class Api::V1::CocktailsController < ApplicationController
 
     render json: cocktail_data
   end
+
+  def todays_pick
+    # ランダムに1件のカクテルを取得
+    cocktail = Cocktail.order(Arel.sql('RANDOM()')).first
+
+    if cocktail
+      # フロントエンド用のフォーマットに変換
+      cocktail_data = cocktail.as_json.merge(
+        ingredients: cocktail.ordered_ingredients.map do |ci|
+          {
+            name: ci.ingredient.name,
+            amount: ci.amount_text,
+            position: ci.position
+          }
+        end
+      )
+      render json: cocktail_data
+    else
+      render json: { error: 'No cocktails available' }, status: :not_found
+    end
+  end
 end

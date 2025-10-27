@@ -1,8 +1,4 @@
 FactoryBot.define do
-  factory :ingredient do
-    sequence(:name) { |n| "材料#{n}" }
-  end
-
   factory :cocktail do
     sequence(:name) { |n| "カクテル#{n}" }
     base { :gin }
@@ -21,12 +17,5 @@ FactoryBot.define do
         create(:cocktail_ingredient, cocktail: cocktail, ingredient: ingredient2, amount_text: '適量', position: 2)
       end
     end
-  end
-
-  factory :cocktail_ingredient do
-    association :cocktail
-    association :ingredient
-    amount_text { '45ml' }
-    position { 1 }
   end
 end

@@ -67,7 +67,7 @@ export function CocktailDetailDialog({
                 {cocktail.name}
               </DialogTitle>
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge className={`${strengthColors[cocktail.strength]} px-3 py-1.5 border text-sm`}>
+                <Badge className={`${strengthColors[cocktail.strength as keyof typeof strengthColors] ?? ''} px-3 py-1.5 border text-sm`}>
                   {STRENGTH_LABELS[cocktail.strength]}
                 </Badge>
                 <Badge variant="outline" className="flex items-center gap-1 px-3 py-1.5 text-sm">

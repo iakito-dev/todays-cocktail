@@ -4,7 +4,9 @@ import { fetchCocktail } from '../lib/api';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from '../components/ui/badge';
+import { Separator } from './ui/separator';
 import { Wine, GlassWater, Hammer, ArrowLeft } from 'lucide-react';
+import { ImageWithFallback } from './ImageWithFallback';
 import type { Cocktail } from '../lib/types';
 
 // 日本語ラベルのマッピング
@@ -88,9 +90,9 @@ export function CocktailDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-gray-50 text-foreground p-6">
       <div className="max-w-3xl mx-auto space-y-6">
-        <Button variant="ghost" onClick={() => navigate('/')} className="mb-4">
+        <Button variant="ghost" onClick={() => navigate('/')} className="mb-4 hover:bg-white">
           <ArrowLeft className="w-4 h-4 mr-2" />
           戻る
         </Button>
@@ -113,7 +115,7 @@ export function CocktailDetail() {
           {/* Image */}
           {cocktail.image_url && (
             <div className="aspect-video rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-              <img
+              <ImageWithFallback
                 src={cocktail.image_url}
                 alt={cocktail.name}
                 className="w-full h-full object-cover"
@@ -143,6 +145,8 @@ export function CocktailDetail() {
             </div>
           </div>
 
+          <Separator className="my-6" />
+
           {/* Ingredients - サンプルデータ表示（後でバックエンドから取得） */}
           {cocktail.ingredients && cocktail.ingredients.length > 0 && (
             <div>
@@ -154,7 +158,7 @@ export function CocktailDetail() {
                 {cocktail.ingredients.map((ingredient, index) => (
                   <div
                     key={index}
-                    className="flex justify-between items-center p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+                    className="flex justify-between items-center p-4 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
                   >
                     <span className="text-gray-900">{ingredient.name}</span>
                     <span className="text-gray-600 px-3 py-1 bg-white rounded-full">
@@ -165,6 +169,8 @@ export function CocktailDetail() {
               </div>
             </div>
           )}
+
+          <Separator className="my-6" />
 
           {/* Instructions */}
           {cocktail.instructions && (

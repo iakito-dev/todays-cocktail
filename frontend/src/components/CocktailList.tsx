@@ -1,30 +1,24 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { fetchHealth, fetchCocktails, type CocktailQuery } from '../lib/api';
-import { Button } from './ui/button';
-import { Card, CardHeader, CardContent } from './ui/card';
+import { fetchCocktails, fetchCocktail, type CocktailQuery } from '../lib/api';
+import { Card, CardContent } from './ui/card';
 import { TodaysPick } from './TodaysPick';
+import { CocktailCard } from './CocktailCard';
+import { CocktailFilters } from './CocktailFilters';
+import { CocktailDetailDialog } from './CocktailDetailDialog';
 import type { Cocktail } from '../lib/types';
 
 export function CocktailList() {
-  const navigate = useNavigate();
-  const [status, setStatus] = useState<string>('checking...');
   const [cocktails, setCocktails] = useState<Cocktail[] | null>(null);
   const [cocktailsError, setCocktailsError] = useState<string | null>(null);
+  const [selectedCocktail, setSelectedCocktail] = useState<Cocktail | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   // Filters
   const [q, setQ] = useState('');
   const [selectedBases, setSelectedBases] = useState<string[]>([]);
   const [ingredients, setIngredients] = useState('');
-
   // simple debounce
   const debouncedQ = useDebounce(q, 300);
   const debouncedIngredients = useDebounce(ingredients, 300);
-
-  useEffect(() => {
-    fetchHealth()
-      .then((t) => setStatus(t))
-      .catch((e) => setStatus(`error: ${e.message}`));
-  }, []);
 
   useEffect(() => {
     const params: CocktailQuery = {};
@@ -36,133 +30,94 @@ export function CocktailList() {
       .catch((e) => setCocktailsError(e.message));
   }, [debouncedQ, selectedBases, debouncedIngredients]);
 
-  const handleCocktailClick = (cocktailId: number) => {
-    navigate(`/cocktails/${cocktailId}`);
+  const handleCocktailClick = async (cocktail: Cocktail) => {
+    try {
+      // 詳細データを取得（ingredients付き）
+      const detailedCocktail = await fetchCocktail(cocktail.id);
+      setSelectedCocktail(detailedCocktail);
+      setIsDialogOpen(true);
+    } catch {
+      // エラーでも基本情報で開く
+      setSelectedCocktail(cocktail);
+      setIsDialogOpen(true);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedCocktail(null);
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold">Today's Cocktail</h1>
-
-        {/* Today's Pick Section */}
-        <TodaysPick />
-
-        <Card>
-          <CardHeader>Backend /health</CardHeader>
-          <CardContent>
-            <p>status: {status}</p>
-            <div className="mt-3">
-              <Button onClick={() => window.location.reload()}>Reload</Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <section className="space-y-3">
-          <h2 className="text-xl font-semibold">Cocktails</h2>
-          {/* Filters */}
-          <Card>
-            <CardContent className="pt-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">カクテル名で検索</label>
-                <input
-                  className="w-full rounded-md border px-3 py-2 text-sm bg-background"
-                  placeholder="マティーニ、モヒート…"
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
+    <div className="min-h-screen bg-gray-50 text-foreground">
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
+          {/* Sidebar - Filters */}
+          <aside className="lg:sticky lg:top-6 lg:h-fit">
+            <Card className="bg-white border-gray-200">
+              <CardContent className="pt-6">
+                <CocktailFilters
+                  searchQuery={q}
+                  onSearchChange={setQ}
+                  selectedBases={selectedBases}
+                  onBasesChange={setSelectedBases}
+                  ingredientSearch={ingredients}
+                  onIngredientSearchChange={setIngredients}
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">ベースで選ぶ</label>
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-                  {BASE_OPTIONS.map((b) => {
-                    const active = selectedBases.includes(b.value);
-                    return (
-                      <button
-                        key={b.value}
-                        className={`text-sm border rounded-md px-2 py-1 ${active ? 'bg-primary text-primary-foreground' : 'bg-background'}`}
-                        onClick={() =>
-                          setSelectedBases((prev) =>
-                            prev.includes(b.value) ? prev.filter((x) => x !== b.value) : [...prev, b.value]
-                          )
-                        }
-                      >
-                        {b.label}
-                      </button>
-                    );
-                  })}
-                  {selectedBases.length > 0 && (
-                    <button
-                      className="text-xs underline col-span-full justify-self-start text-muted-foreground"
-                      onClick={() => setSelectedBases([])}
-                    >
-                      クリア
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">手持ちの材料から探す</label>
-                <input
-                  className="w-full rounded-md border px-3 py-2 text-sm bg-background"
-                  placeholder="ライム、ジン… (カンマで区切り)"
-                  value={ingredients}
-                  onChange={(e) => setIngredients(e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-          {cocktailsError && (
-            <p className="text-sm text-red-500">Failed to load: {cocktailsError}</p>
-          )}
-          {!cocktails && !cocktailsError && <p>Loading...</p>}
-          {cocktails && (
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-              {cocktails.map((c) => (
-                <Card
-                  key={c.id}
-                  className="cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => handleCocktailClick(c.id)}
-                >
-                  <CardHeader className="space-y-1">
-                    <div className="font-bold">{c.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Base: {c.base} · Strength: {c.strength} · Technique: {c.technique}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {c.image_url && (
-                      <img
-                        src={c.image_url}
-                        alt={c.name}
-                        className="w-full h-40 object-cover rounded"
-                        loading="lazy"
+              </CardContent>
+            </Card>
+          </aside>
+
+          {/* Main Content */}
+          <main className="space-y-6">
+            <h1 className="text-3xl font-bold text-gray-900">Today's Cocktail</h1>
+
+            {/* Today's Pick Section */}
+            <TodaysPick onViewDetails={handleCocktailClick} />
+
+            {/* Cocktails Section */}
+            <section className="space-y-4">
+              <h2 className="text-2xl font-semibold text-gray-900">カクテル一覧</h2>
+
+              {cocktailsError && (
+                <p className="text-sm text-red-500">Failed to load: {cocktailsError}</p>
+              )}
+              {!cocktails && !cocktailsError && (
+                <div className="text-center py-12 text-gray-500">Loading...</div>
+              )}
+              {cocktails && (
+                <>
+                  <p className="text-sm text-gray-600">{cocktails.length}件のカクテルが見つかりました</p>
+                  <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                    {cocktails.map((c) => (
+                      <CocktailCard
+                        key={c.id}
+                        cocktail={c}
+                        onViewDetails={handleCocktailClick}
                       />
-                    )}
-                    {c.instructions && (
-                      <p className="mt-3 text-sm whitespace-pre-wrap">{c.instructions}</p>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </section>
+                    ))}
+                  </div>
+                  {cocktails.length === 0 && (
+                    <div className="text-center py-12 text-gray-500">
+                      <p>条件に一致するカクテルが見つかりませんでした</p>
+                    </div>
+                  )}
+                </>
+              )}
+            </section>
+          </main>
+        </div>
       </div>
+
+      {/* Cocktail Detail Dialog */}
+      <CocktailDetailDialog
+        cocktail={selectedCocktail}
+        isOpen={isDialogOpen}
+        onClose={handleCloseDialog}
+      />
     </div>
   );
 }
-
-// UI constants
-const BASE_OPTIONS = [
-  { value: 'gin', label: 'ジン' },
-  { value: 'rum', label: 'ラム' },
-  { value: 'whisky', label: 'ウイスキー' },
-  { value: 'vodka', label: 'ウォッカ' },
-  { value: 'tequila', label: 'テキーラ' },
-  { value: 'beer', label: 'ビール' },
-  { value: 'wine', label: 'ワイン' },
-] as const;
 
 // simple debounce hook
 function useDebounce<T>(value: T, delay = 300) {

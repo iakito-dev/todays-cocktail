@@ -4,7 +4,7 @@ if mohito
   mohito.update!(glass: "タンブラー")
 
   # 既存の材料を削除
-  mohito.ingredients.destroy_all
+  mohito.cocktail_ingredients.destroy_all
 
   # 新しい材料を追加
   mohito.ingredients.create!([

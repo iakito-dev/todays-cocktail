@@ -62,7 +62,7 @@ export function CocktailCard({ cocktail, onViewDetails }: CocktailCardProps) {
             <Wine className="w-4 h-4" />
             <span>{baseLabels[cocktail.base]}</span>
           </div>
-          <span className="text-gray-500">{techniqueLabels[cocktail.technique]}</span>
+          <span className="text-gray-500">{techniqueLabels[cocktail.technique as keyof typeof techniqueLabels] ?? cocktail.technique}</span>
         </div>
       </CardContent>
     </Card>

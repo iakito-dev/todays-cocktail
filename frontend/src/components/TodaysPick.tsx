@@ -119,14 +119,12 @@ export function TodaysPick() {
         <div className="flex items-center justify-center">
           <div className="relative group">
             <div className="relative aspect-square w-full max-w-sm rounded-3xl overflow-hidden shadow-lg">
-              {cocktail.image_url && (
-                <img
-                  src={cocktail.image_url}
-                  alt={cocktail.name}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
-              )}
+              <img
+                src={cocktail.image_url || "https://via.placeholder.com/400x400?text=No+Image"}
+                alt={cocktail.name || "No image available"}
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
             </div>
           </div>
         </div>

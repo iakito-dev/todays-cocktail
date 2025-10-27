@@ -112,7 +112,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
               e.stopPropagation();
               handleClick();
             }}
-            className="w-fit bg-blue-500 hover:bg-blue-600 text-white px-8 py-6 shadow-sm"
+            className="w-fit bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 shadow-sm"
           >
             レシピを見る
             <ArrowRight className="ml-2 w-5 h-5" />

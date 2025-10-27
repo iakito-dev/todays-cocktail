@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 class Cocktail < ApplicationRecord
+  has_many :cocktail_ingredients, dependent: :destroy
+  has_many :ingredients, through: :cocktail_ingredients
+
   enum :base, {
     gin: 0,
     rum: 1,
@@ -23,4 +26,9 @@ class Cocktail < ApplicationRecord
   }, prefix: true
 
   validates :name, presence: true
+
+  # 材料を順序つきで取得
+  def ordered_ingredients
+    cocktail_ingredients.includes(:ingredient).ordered
+  end
 end

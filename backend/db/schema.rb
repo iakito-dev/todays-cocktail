@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_25_084644) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_27_155850) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "cocktail_ingredients", force: :cascade do |t|
+    t.bigint "cocktail_id", null: false
+    t.bigint "ingredient_id", null: false
+    t.string "amount_text"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cocktail_id"], name: "index_cocktail_ingredients_on_cocktail_id"
+    t.index ["ingredient_id"], name: "index_cocktail_ingredients_on_ingredient_id"
+  end
 
   create_table "cocktails", force: :cascade do |t|
     t.string "name"
@@ -23,7 +34,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_25_084644) do
     t.text "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "glass"
     t.index ["name"], name: "index_cocktails_on_name"
+  end
+
+  create_table "ingredients", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -37,4 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_25_084644) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "cocktail_ingredients", "cocktails"
+  add_foreign_key "cocktail_ingredients", "ingredients"
 end

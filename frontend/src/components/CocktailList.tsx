@@ -44,7 +44,7 @@ export function CocktailList() {
     <div className="min-h-screen bg-background text-foreground p-6">
       <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="text-2xl font-bold">Today's Cocktail</h1>
-        
+
         {/* Today's Pick Section */}
         <TodaysPick />
 

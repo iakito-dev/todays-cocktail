@@ -94,7 +94,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
       it 'returns a random cocktail' do
         get '/api/v1/cocktails/todays_pick'
         json = JSON.parse(response.body)
-        
+
         expect(json).to have_key('id')
         expect(json).to have_key('name')
         expect([cocktail1.name, cocktail2.name]).to include(json['name'])
@@ -103,7 +103,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
       it 'includes ingredients in the response' do
         get '/api/v1/cocktails/todays_pick'
         json = JSON.parse(response.body)
-        
+
         expect(json).to have_key('ingredients')
         expect(json['ingredients']).to be_an(Array)
         expect(json['ingredients'].size).to be > 0
@@ -112,7 +112,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
       it 'includes all required cocktail fields' do
         get '/api/v1/cocktails/todays_pick'
         json = JSON.parse(response.body)
-        
+
         expect(json).to have_key('id')
         expect(json).to have_key('name')
         expect(json).to have_key('base')
@@ -126,7 +126,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
       it 'includes ingredient details with name, amount, and position' do
         get '/api/v1/cocktails/todays_pick'
         json = JSON.parse(response.body)
-        
+
         ingredient = json['ingredients'].first
         expect(ingredient).to have_key('name')
         expect(ingredient).to have_key('amount')

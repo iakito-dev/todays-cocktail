@@ -81,7 +81,7 @@ export function TodaysPick() {
             <span className="text-xl">🍸</span>
             <span className="font-medium">Today's Pick</span>
           </div>
-          
+
           <div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
               {cocktail.name}

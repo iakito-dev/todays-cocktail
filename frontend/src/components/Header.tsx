@@ -14,7 +14,7 @@ export function Header() {
             </div>
             <div className="leading-tight">
               <h1 className="text-2xl font-semibold text-gray-900">Today's Cocktail</h1>
-              <p className="text-s text-gray-500 mt-0.5">お気に入りの一杯を見つけよう</p>
+              <p className="text-sm text-gray-500 mt-0.5">お気に入りの一杯を見つけよう</p>
             </div>
           </Link>
 

@@ -70,7 +70,6 @@ export function CocktailList() {
 
           {/* Main Content */}
           <main className="space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">Today's Cocktail</h1>
 
             {/* Today's Pick Section */}
             <TodaysPick onViewDetails={handleCocktailClick} />

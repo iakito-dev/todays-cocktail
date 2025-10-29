@@ -185,7 +185,7 @@ cocktails_data = [
     name: 'テキーラサンライズ',
     base: 'テキーラ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
+    image_url: 'https://images.unsplash.com/photo-9ak6t_5ERVo?w=800',
     ingredients: [
       { name: 'テキーラ', amount: '45ml' },
       { name: 'オレンジジュース', amount: '90ml' },

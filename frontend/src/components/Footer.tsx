@@ -22,7 +22,7 @@ export const Footer = () => {
             20歳未満の飲酒および飲酒運転は法律で禁止されています。
           </p>
         </div>
-                <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+        <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
           <div>
             © 2025 Today's Cocktail. Licensed under MIT License.
           </div>

@@ -315,18 +315,18 @@ Devise.setup do |config|
   config.jwt do |jwt|
     # JWT署名用のシークレットキー（環境変数から読み込むことを推奨）
     jwt.secret = Rails.application.credentials.devise_jwt_secret_key || ENV['DEVISE_JWT_SECRET_KEY']
-    
+
     # JWT発行・検証のエンドポイント設定
     jwt.dispatch_requests = [
       ['POST', %r{^/api/v1/login$}],
       ['POST', %r{^/api/v1/signup$}]
     ]
-    
+
     # JWT無効化（ログアウト）のエンドポイント設定
     jwt.revocation_requests = [
       ['DELETE', %r{^/api/v1/logout$}]
     ]
-    
+
     # JWTの有効期限（デフォルト: 1時間）
     jwt.expiration_time = 1.day.to_i
   end

@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
   include ActionController::MimeResponds
-  
+
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   # Devise + JWT認証のためのヘルパーメソッド
@@ -16,15 +16,15 @@ class ApplicationController < ActionController::API
         true,
         { algorithm: 'HS256' }
       )
-      
+
       jti = decoded_token[0]['jti']
       user_id = decoded_token[0]['sub']
-      
+
       # トークンが無効化リストに存在するか確認
       if JwtDenylist.exists?(jti: jti)
         return render_unauthorized
       end
-      
+
       @current_user = User.find(user_id)
     rescue JWT::DecodeError, JWT::ExpiredSignature, ActiveRecord::RecordNotFound => e
       render_unauthorized

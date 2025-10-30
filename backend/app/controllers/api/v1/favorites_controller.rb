@@ -9,7 +9,7 @@ module Api
       # ログインユーザーのお気に入りカクテル一覧を取得
       def index
         favorites = current_user.favorites.includes(cocktail: :ingredients).order(created_at: :desc)
-        
+
         render json: {
           status: { code: 200, message: "お気に入り一覧を取得しました。" },
           data: favorites.map do |favorite|

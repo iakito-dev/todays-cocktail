@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   # Devise設定（全体で必要）
+  # デフォルトのDeviseルートはスキップ（api/v1配下でカスタムAPIルートを定義しているため）
   devise_for :users, skip: :all
 
   namespace :api do

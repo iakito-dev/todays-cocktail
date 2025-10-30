@@ -23,7 +23,7 @@ module Api
 
             # トークンをdenylistに追加
             JwtDenylist.create!(jti: jti, exp: Time.at(exp))
-          rescue JWT::DecodeError, JWT::ExpiredSignature => e
+          rescue JWT::DecodeError, JWT::ExpiredSignature
             # トークンが無効でもログアウト成功とする
           end
         end

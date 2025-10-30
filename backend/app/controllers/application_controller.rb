@@ -27,6 +27,7 @@ class ApplicationController < ActionController::API
 
       @current_user = User.find(user_id)
     rescue JWT::DecodeError, JWT::ExpiredSignature, ActiveRecord::RecordNotFound => e
+      Rails.logger.error("Authentication failed: #{e.class} - #{e.message}\n#{e.backtrace&.join("\n")}")
       render_unauthorized
     end
   end

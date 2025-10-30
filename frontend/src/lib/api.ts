@@ -9,6 +9,39 @@ import type { Cocktail } from './types';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
 /**
+ * 認証トークンを取得
+ */
+function getAuthToken(): string | null {
+  return localStorage.getItem('auth_token');
+}
+
+/**
+ * 認証トークンを保存
+ */
+export function setAuthToken(token: string): void {
+  localStorage.setItem('auth_token', token);
+}
+
+/**
+ * 認証トークンをクリア
+ */
+export function clearAuthToken(): void {
+  localStorage.removeItem('auth_token');
+}
+
+/**
+ * 認証ヘッダーを取得
+ */
+function getAuthHeaders(): HeadersInit {
+  const token = getAuthToken();
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+/**
  * GETリクエストを送信する
  * @param path - APIエンドポイントのパス（例: "/api/users", "/health"）
  * @param init - 追加のfetchオプション（オプショナル）
@@ -18,7 +51,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 export async function apiGet(path: string, init?: RequestInit) {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(),
     ...init, // カスタムヘッダーやその他のオプションをマージ
   });
 
@@ -29,6 +62,30 @@ export async function apiGet(path: string, init?: RequestInit) {
   }
 
   // JSONパースに失敗した場合は空オブジェクトを返す
+  return res.json().catch(() => ({}));
+}
+
+/**
+ * POSTリクエストを送信する
+ * @param path - APIエンドポイントのパス
+ * @param body - リクエストボディ
+ * @param init - 追加のfetchオプション
+ * @returns レスポンスのJSONデータ
+ * @throws {Error} リクエストが失敗した場合
+ */
+export async function apiPost(path: string, body?: unknown, init?: RequestInit) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+    ...init,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`POST ${path} failed: ${res.status} ${text}`);
+  }
+
   return res.json().catch(() => ({}));
 }
 
@@ -75,4 +132,117 @@ export async function fetchCocktails(params?: CocktailQuery): Promise<Cocktail[]
  */
 export async function fetchCocktail(id: string | number): Promise<Cocktail> {
   return apiGet(`/api/v1/cocktails/${id}`);
+}
+
+/**
+ * 認証関連の型定義
+ */
+export interface LoginRequest {
+  user: {
+    email: string;
+    password: string;
+  };
+}
+
+export interface SignupRequest {
+  user: {
+    email: string;
+    password: string;
+    name: string;
+  };
+}
+
+export interface AuthResponse {
+  status: {
+    code: number;
+    message: string;
+  };
+  data: {
+    user: {
+      id: number;
+      email: string;
+      name: string;
+    };
+  };
+}
+
+/**
+ * ログイン
+ * @param email - メールアドレス
+ * @param password - パスワード
+ * @returns Promise<AuthResponse> 認証レスポンス
+ */
+export async function login(email: string, password: string): Promise<AuthResponse> {
+  const response = await fetch(`${BASE_URL}/api/v1/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user: { email, password },
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`ログインに失敗しました: ${response.status} ${text}`);
+  }
+
+  // レスポンスヘッダーからトークンを取得
+  const token = response.headers.get('Authorization');
+  if (token) {
+    setAuthToken(token.replace('Bearer ', ''));
+  }
+
+  return response.json();
+}
+
+/**
+ * 新規登録
+ * @param email - メールアドレス
+ * @param password - パスワード
+ * @param name - ユーザー名
+ * @returns Promise<AuthResponse> 認証レスポンス
+ */
+export async function signup(email: string, password: string, name: string): Promise<AuthResponse> {
+  const response = await fetch(`${BASE_URL}/api/v1/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user: { email, password, name },
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`アカウント作成に失敗しました: ${response.status} ${text}`);
+  }
+
+  // レスポンスヘッダーからトークンを取得
+  const token = response.headers.get('Authorization');
+  if (token) {
+    setAuthToken(token.replace('Bearer ', ''));
+  }
+
+  return response.json();
+}
+
+/**
+ * ログアウト
+ */
+export async function logout(): Promise<void> {
+  try {
+    await fetch(`${BASE_URL}/api/v1/logout`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+  } finally {
+    clearAuthToken();
+  }
+}
+
+/**
+ * 現在のユーザー情報を取得
+ * @returns Promise<AuthResponse> ユーザー情報
+ */
+export async function getCurrentUser(): Promise<AuthResponse> {
+  return apiGet('/api/v1/users/me');
 }

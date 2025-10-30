@@ -29,6 +29,10 @@ module Backend
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Devise/Wardenを動作させるために必要なミドルウェアを追加
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+
     # デフォルトのエンコーディングをUTF-8に設定
     config.encoding = "utf-8"
   end

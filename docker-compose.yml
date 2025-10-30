@@ -18,6 +18,8 @@ services:
       RAILS_ENV: development
       # Docker内からホストのSupabaseに接続
       DATABASE_URL: postgres://postgres:postgres@host.docker.internal:54322/app_development
+      # Devise JWT認証用シークレットキー
+      DEVISE_JWT_SECRET_KEY: ${DEVISE_JWT_SECRET_KEY}
     volumes:
       - ./backend:/app  # ローカルのコードをマウントしてホットリロード
     env_file:

@@ -6,6 +6,7 @@ gem "puma", ">= 5.0"
 
 # 認証（Devise）
 gem "devise"
+gem "devise-jwt" # JWT認証用
 
 # CORS対応（フロントエンドとの通信用）
 gem "rack-cors"

@@ -4,6 +4,8 @@ RSpec.describe Cocktail, type: :model do
   describe 'associations' do
     it { should have_many(:cocktail_ingredients).dependent(:destroy) }
     it { should have_many(:ingredients).through(:cocktail_ingredients) }
+    it { should have_many(:favorites).dependent(:destroy) }
+    it { should have_many(:favorited_by_users).through(:favorites).source(:user) }
   end
 
   describe 'validations' do
@@ -54,6 +56,53 @@ RSpec.describe Cocktail, type: :model do
       expect(cocktail.ingredients.count).to eq(3)
       expect(cocktail.ordered_ingredients.first.ingredient.name).to eq('テストジン')
       expect(cocktail.ordered_ingredients.first.amount_text).to eq('45ml')
+    end
+  end
+
+  describe 'お気に入り機能' do
+    let(:cocktail) { create(:cocktail) }
+    let(:user) { create(:user) }
+
+    describe '#favorited_by?' do
+      context 'ユーザーがお気に入りに追加している場合' do
+        before { create(:favorite, user: user, cocktail: cocktail) }
+
+        it 'trueを返す' do
+          expect(cocktail.favorited_by?(user)).to be true
+        end
+      end
+
+      context 'ユーザーがお気に入りに追加していない場合' do
+        it 'falseを返す' do
+          expect(cocktail.favorited_by?(user)).to be false
+        end
+      end
+
+      context 'ユーザーがnilの場合' do
+        it 'falseを返す' do
+          expect(cocktail.favorited_by?(nil)).to be false
+        end
+      end
+    end
+
+    it 'カクテルを削除するとお気に入りも削除される' do
+      create(:favorite, user: user, cocktail: cocktail)
+      expect {
+        cocktail.destroy
+      }.to change(Favorite, :count).by(-1)
+    end
+
+    it '複数のユーザーにお気に入り登録される' do
+      user1 = create(:user)
+      user2 = create(:user)
+      user3 = create(:user)
+
+      create(:favorite, user: user1, cocktail: cocktail)
+      create(:favorite, user: user2, cocktail: cocktail)
+      create(:favorite, user: user3, cocktail: cocktail)
+
+      expect(cocktail.favorited_by_users.count).to eq(3)
+      expect(cocktail.favorited_by_users).to include(user1, user2, user3)
     end
   end
 end

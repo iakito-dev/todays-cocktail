@@ -10,6 +10,7 @@
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+.ruby-lsp/
 
 # ----------------------------------
 # Logs (Rails + Frontend)

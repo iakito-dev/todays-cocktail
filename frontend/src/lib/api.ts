@@ -90,6 +90,31 @@ export async function apiPost(path: string, body?: unknown, init?: RequestInit) 
 }
 
 /**
+ * 認証用POSTリクエスト（レスポンスヘッダーも返す）
+ * 認証エンドポイント（login/signup）専用の内部ヘルパー関数
+ * @param path - APIエンドポイントのパス
+ * @param body - リクエストボディ
+ * @returns レスポンスのJSONデータとAuthorizationヘッダー
+ * @throws {Error} リクエストが失敗した場合
+ */
+async function apiPostAuth(path: string, body: unknown): Promise<{ data: AuthResponse; token: string | null }> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`POST ${path} failed: ${res.status} ${text}`);
+  }
+
+  const token = res.headers.get('Authorization');
+  const data = await res.json().catch(() => ({}));
+  return { data, token };
+}
+
+/**
  * ヘルスチェック - APIサーバーの疎通確認
  * @returns Promise<string> サーバーからのレスポンス
  */
@@ -173,26 +198,15 @@ export interface AuthResponse {
  * @returns Promise<AuthResponse> 認証レスポンス
  */
 export async function login(email: string, password: string): Promise<AuthResponse> {
-  const response = await fetch(`${BASE_URL}/api/v1/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user: { email, password },
-    }),
+  const { data, token } = await apiPostAuth('/api/v1/login', {
+    user: { email, password },
   });
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`ログインに失敗しました: ${response.status} ${text}`);
-  }
-
-  // レスポンスヘッダーからトークンを取得
-  const token = response.headers.get('Authorization');
   if (token) {
     setAuthToken(token.replace('Bearer ', ''));
   }
 
-  return response.json();
+  return data;
 }
 
 /**
@@ -203,26 +217,15 @@ export async function login(email: string, password: string): Promise<AuthRespon
  * @returns Promise<AuthResponse> 認証レスポンス
  */
 export async function signup(email: string, password: string, name: string): Promise<AuthResponse> {
-  const response = await fetch(`${BASE_URL}/api/v1/signup`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user: { email, password, name },
-    }),
+  const { data, token } = await apiPostAuth('/api/v1/signup', {
+    user: { email, password, name },
   });
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`アカウント作成に失敗しました: ${response.status} ${text}`);
-  }
-
-  // レスポンスヘッダーからトークンを取得
-  const token = response.headers.get('Authorization');
   if (token) {
     setAuthToken(token.replace('Bearer ', ''));
   }
 
-  return response.json();
+  return data;
 }
 
 /**

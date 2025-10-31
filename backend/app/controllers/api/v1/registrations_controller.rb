@@ -22,11 +22,11 @@ module Api
 
       # パラメータの取得方法をオーバーライド
       def sign_up_params
-        params.require(:user).permit(:email, :password, :password_confirmation)
+        params.require(:user).permit(:email, :password, :password_confirmation, :name)
       end
 
       def account_update_params
-        params.require(:user).permit(:email, :password, :password_confirmation, :current_password)
+        params.require(:user).permit(:email, :password, :password_confirmation, :current_password, :name)
       end
 
       # リソースのレンダリング
@@ -37,7 +37,8 @@ module Api
             data: {
               user: {
                 id: resource.id,
-                email: resource.email
+                email: resource.email,
+                name: resource.name
               }
             }
           }, status: :ok

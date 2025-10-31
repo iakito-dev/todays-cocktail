@@ -41,7 +41,8 @@ module Api
           data: {
             user: {
               id: resource.id,
-              email: resource.email
+              email: resource.email,
+              name: resource.name
             }
           }
         }, status: :ok

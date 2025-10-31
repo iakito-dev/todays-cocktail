@@ -12,6 +12,9 @@ Rails.application.routes.draw do
         delete 'logout', to: 'sessions#destroy'
       end
 
+      # ユーザーエンドポイント
+      get 'users/me', to: 'users#me'
+
       # カクテルエンドポイント
       resources :cocktails, only: [:index, :show] do
         collection do

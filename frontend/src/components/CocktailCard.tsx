@@ -3,10 +3,14 @@ import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Wine } from 'lucide-react';
 import { ImageWithFallback } from './ImageWithFallback';
+import { FavoriteButton } from './FavoriteButton';
 
 interface CocktailCardProps {
   cocktail: Cocktail;
   onViewDetails: (cocktail: Cocktail) => void;
+  onFavoriteToggle?: (cocktailId: number) => void;
+  isFavorited?: boolean;
+  showFavoriteButton?: boolean;
 }
 
 const strengthColors = {
@@ -37,7 +41,13 @@ const techniqueLabels = {
   'shake': 'シェイク'
 };
 
-export function CocktailCard({ cocktail, onViewDetails }: CocktailCardProps) {
+export function CocktailCard({
+  cocktail,
+  onViewDetails,
+  onFavoriteToggle,
+  isFavorited = false,
+  showFavoriteButton = false
+}: CocktailCardProps) {
   return (
     <Card
       className="group cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden border bg-white border-gray-200"
@@ -49,6 +59,17 @@ export function CocktailCard({ cocktail, onViewDetails }: CocktailCardProps) {
           alt={cocktail.name}
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
         />
+        {/* お気に入りボタン - 左上 */}
+        {showFavoriteButton && onFavoriteToggle && (
+          <div className="absolute top-3 left-3 z-10">
+            <FavoriteButton
+              isFavorited={isFavorited}
+              onToggle={() => onFavoriteToggle(cocktail.id)}
+              size="sm"
+            />
+          </div>
+        )}
+        {/* 強度バッジ - 右上 */}
         <div className="absolute top-3 right-3">
           <Badge className={`${strengthColors[cocktail.strength] ?? strengthColors['light']} shadow-sm`}>
             {strengthLabels[cocktail.strength] ?? strengthLabels['light']}

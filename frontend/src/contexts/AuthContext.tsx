@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { login as apiLogin, signup as apiSignup, logout as apiLogout, getCurrentUser } from '../lib/api';
+import { login as apiLogin, signup as apiSignup, logout as apiLogout, getCurrentUser, clearAuthToken } from '../lib/api';
 
 interface User {
   id: number;
@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(response.data.user);
         } catch {
           // トークンが無効な場合はクリア
-          localStorage.removeItem('auth_token');
+          clearAuthToken();
         }
       }
       setIsLoading(false);

@@ -141,11 +141,14 @@ class CocktailImporter
       # 材料を取得または作成
       ingredient = Ingredient.find_or_create_by!(name: ingredient_name.strip)
       
+      # 分量がない場合は「適量」を設定
+      amount = measure&.strip.presence || '適量'
+      
       # カクテルと材料を関連付け
       CocktailIngredient.create!(
         cocktail: cocktail,
         ingredient: ingredient,
-        amount_text: measure&.strip,
+        amount_text: amount,
         position: position
       )
       

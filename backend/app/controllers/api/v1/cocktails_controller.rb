@@ -39,11 +39,15 @@ class Api::V1::CocktailsController < ApplicationController
     cocktail_data = cocktail.as_json.merge(
       ingredients: cocktail.ordered_ingredients.map do |ci|
         {
-          name: ci.ingredient.name,
-          amount: ci.amount_text,
+          name: ci.ingredient.name_ja || ci.ingredient.name,
+          name_en: ci.ingredient.name,
+          amount: ci.amount_ja || ci.amount_text,
+          amount_en: ci.amount_text,
           position: ci.position
         }
-      end
+      end,
+      glass_ja: cocktail.glass_ja,
+      name_ja: cocktail.name_ja
     )
 
     render json: cocktail_data
@@ -58,11 +62,15 @@ class Api::V1::CocktailsController < ApplicationController
       cocktail_data = cocktail.as_json.merge(
         ingredients: cocktail.ordered_ingredients.map do |ci|
           {
-            name: ci.ingredient.name,
-            amount: ci.amount_text,
+            name: ci.ingredient.name_ja || ci.ingredient.name,
+            name_en: ci.ingredient.name,
+            amount: ci.amount_ja || ci.amount_text,
+            amount_en: ci.amount_text,
             position: ci.position
           }
-        end
+        end,
+        glass_ja: cocktail.glass_ja,
+        name_ja: cocktail.name_ja
       )
       render json: cocktail_data
     else

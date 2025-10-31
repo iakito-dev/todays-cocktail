@@ -114,7 +114,7 @@ export function CocktailDetailDialog({
               </div>
               <div>
                 <div className="text-sm text-gray-500 mb-1">グラス</div>
-                <div className="text-base font-medium text-gray-900">{cocktail.glass}</div>
+                <div className="text-base font-medium text-gray-900">{cocktail.glass_ja || cocktail.glass}</div>
               </div>
             </div>
             <div className="flex items-center gap-4 p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
@@ -164,17 +164,23 @@ export function CocktailDetailDialog({
             </div>
           </div>
 
-          {/* Tips */}
+          {/* Description or Tips */}
           <div className="bg-blue-50 p-7 rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
             <div className="flex items-start gap-4">
               <div className="text-2xl">💡</div>
               <div>
-                <h4 className="font-semibold mb-3 text-base text-blue-900">初心者の方へ</h4>
+                <h4 className="font-semibold mb-3 text-base text-blue-900">
+                  {cocktail.description ? 'このカクテルについて' : '初心者の方へ'}
+                </h4>
                 <p className="text-blue-800 leading-relaxed text-base">
-                  このカクテルは{cocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : cocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
-                  {cocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
-                  {cocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
-                  {cocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
+                  {cocktail.description || (
+                    <>
+                      このカクテルは{cocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : cocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
+                      {cocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
+                      {cocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
+                      {cocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
+                    </>
+                  )}
                 </p>
               </div>
             </div>

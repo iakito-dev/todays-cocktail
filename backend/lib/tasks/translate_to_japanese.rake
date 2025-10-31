@@ -244,6 +244,60 @@ class JapaneseTranslator
       "#{ml}ml"
     end
     
+    # 分数とshotの組み合わせを先に処理 (例: "1 1/2 shot" や "1/2 shot")
+    text = text.gsub(/(\d+)\s+(\d+)\/(\d+)\s*shots?/i) do |match|
+      whole = $1.to_f
+      numerator = $2.to_f
+      denominator = $3.to_f
+      total_shots = whole + (numerator / denominator)
+      ml = (total_shots * 30).round
+      "#{ml}ml"
+    end
+    
+    text = text.gsub(/(\d+)\/(\d+)\s*shots?/i) do |match|
+      numerator = $1.to_f
+      denominator = $2.to_f
+      shots = numerator / denominator
+      ml = (shots * 30).round
+      "#{ml}ml"
+    end
+    
+    # shot (ショット) を ml に変換 (1 shot = 30ml)
+    text = text.gsub(/(\d+(?:\.\d+)?(?:\s*-\s*\d+(?:\.\d+)?)?)\s*shots?/i) do |match|
+      value = $1
+      if value.include?('-')
+        # 範囲の場合
+        min, max = value.split('-').map(&:strip).map(&:to_f)
+        "#{(min * 30).round}-#{(max * 30).round}ml"
+      else
+        ml = (value.to_f * 30).round
+        "#{ml}ml"
+      end
+    end
+    
+    # jigger (ジガー) を ml に変換 (1 jigger = 45ml)
+    text = text.gsub(/(\d+)\s+(\d+)\/(\d+)\s*jiggers?/i) do |match|
+      whole = $1.to_f
+      numerator = $2.to_f
+      denominator = $3.to_f
+      total_jiggers = whole + (numerator / denominator)
+      ml = (total_jiggers * 45).round
+      "#{ml}ml"
+    end
+    
+    text = text.gsub(/(\d+)\/(\d+)\s*jiggers?/i) do |match|
+      numerator = $1.to_f
+      denominator = $2.to_f
+      jiggers = numerator / denominator
+      ml = (jiggers * 45).round
+      "#{ml}ml"
+    end
+    
+    text = text.gsub(/(\d+(?:\.\d+)?)\s*jiggers?/i) do |match|
+      ml = ($1.to_f * 45).round
+      "#{ml}ml"
+    end
+    
     # 残った分数を処理 (単位なし)
     text = text.gsub(/(\d+)\s+(\d+)\/(\d+)/) do |match|
       whole = $1
@@ -257,13 +311,14 @@ class JapaneseTranslator
     end
     
     # 単位の翻訳
+    text = text.gsub(/(\d+)\s*cups?/i, '\1カップ')
     text = text.gsub(/\bcup\b/i, 'カップ')
     text = text.gsub(/\bpint\b/i, 'パイント')
     text = text.gsub(/\bgallon\b/i, 'ガロン')
     text = text.gsub(/\bquart\b/i, 'クォート')
-    text = text.gsub(/\bshot\b/i, 'ショット')
-    text = text.gsub(/\bjigger\b/i, 'ジガー')
+    text = text.gsub(/(\d+)\s*dash(?:es)?\b/i, '\1ダッシュ')
     text = text.gsub(/\bdash(?:es)?\b/i, 'ダッシュ')
+    text = text.gsub(/(\d+)\s*splash(?:es)?\b/i, '\1スプラッシュ')
     text = text.gsub(/\bsplash(?:es)?\b/i, 'スプラッシュ')
     text = text.gsub(/\btop\s+up\b/i, '満たす')
     text = text.gsub(/\bfill\b/i, '満たす')

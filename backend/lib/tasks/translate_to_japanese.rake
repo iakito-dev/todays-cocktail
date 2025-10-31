@@ -195,6 +195,24 @@ class JapaneseTranslator
     
     text = amount.strip
     
+    # 分数とozの組み合わせを先に処理 (例: "1 1/2 oz" や "1/2 oz")
+    text = text.gsub(/(\d+)\s+(\d+)\/(\d+)\s*oz/i) do |match|
+      whole = $1.to_f
+      numerator = $2.to_f
+      denominator = $3.to_f
+      total_oz = whole + (numerator / denominator)
+      ml = (total_oz * 30).round
+      "#{ml}ml"
+    end
+    
+    text = text.gsub(/(\d+)\/(\d+)\s*oz/i) do |match|
+      numerator = $1.to_f
+      denominator = $2.to_f
+      oz = numerator / denominator
+      ml = (oz * 30).round
+      "#{ml}ml"
+    end
+    
     # oz (オンス) を ml に変換 (1 oz = 30ml)
     text = text.gsub(/(\d+(?:\.\d+)?(?:\s*-\s*\d+(?:\.\d+)?)?)\s*oz/i) do |match|
       value = $1
@@ -226,18 +244,16 @@ class JapaneseTranslator
       "#{ml}ml"
     end
     
-    # 分数を処理 (1/2, 1/4, 3/4 など)
-    text = text.gsub(/(\d+)\s*\/\s*(\d+)/) do |match|
-      numerator = $1.to_f
-      denominator = $2.to_f
-      result = numerator / denominator
-      
-      case result
-      when 0.25 then '1/4'
-      when 0.5 then '1/2'
-      when 0.75 then '3/4'
-      else result.to_s
-      end
+    # 残った分数を処理 (単位なし)
+    text = text.gsub(/(\d+)\s+(\d+)\/(\d+)/) do |match|
+      whole = $1
+      numerator = $2
+      denominator = $3
+      "#{whole} #{numerator}/#{denominator}"
+    end
+    
+    text = text.gsub(/(\d+)\/(\d+)/) do |match|
+      "#{$1}/#{$2}"
     end
     
     # 単位の翻訳

@@ -40,7 +40,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
       setEmail('');
       setPassword('');
       setName('');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Login failed:', error);
       setError('ログインに失敗しました');
     }
@@ -61,7 +61,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
       setEmail('');
       setPassword('');
       setName('');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Signup failed:', error);
       setError('アカウント作成に失敗しました');
     }

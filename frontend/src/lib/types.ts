@@ -13,7 +13,14 @@ export interface Cocktail {
   instructions: string | null;
   glass?: string;
   ingredients?: Ingredient[];
+  is_favorited?: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface Favorite {
+  id: number;
+  cocktail: Cocktail;
+  created_at: string;
 }
 

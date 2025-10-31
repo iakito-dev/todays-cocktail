@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
 import { fetchCocktails, fetchCocktail, type CocktailQuery } from '../lib/api';
 import { Card, CardContent } from './ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
+import { Button } from './ui/button';
+import { Heart, LogIn } from 'lucide-react';
 import { TodaysPick } from './TodaysPick';
 import { CocktailCard } from './CocktailCard';
 import { CocktailFilters } from './CocktailFilters';
 import { CocktailDetailDialog } from './CocktailDetailDialog';
+import { AuthDialog } from './AuthDialog';
+import { useFavorites } from '../hooks/useFavorites';
+import { useAuth } from '../hooks/useAuth';
 import type { Cocktail } from '../lib/types';
 
 export function CocktailList() {
@@ -12,6 +18,13 @@ export function CocktailList() {
   const [cocktailsError, setCocktailsError] = useState<string | null>(null);
   const [selectedCocktail, setSelectedCocktail] = useState<Cocktail | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  // Auth & Favorites
+  const { user, login, signup } = useAuth();
+  const { favorites, fetchFavorites, addFavorite, removeFavorite, getFavoriteId, isFavorite, clearFavorites } = useFavorites();
+
   // Filters
   const [q, setQ] = useState('');
   const [selectedBases, setSelectedBases] = useState<string[]>([]);
@@ -30,9 +43,19 @@ export function CocktailList() {
       .catch((e) => setCocktailsError(e.message));
   }, [debouncedQ, selectedBases, debouncedIngredients]);
 
+  // お気に入り一覧を取得 or クリア
+  useEffect(() => {
+    if (user) {
+      fetchFavorites();
+    } else {
+      // ログアウト時にお気に入りをクリア
+      clearFavorites();
+    }
+  }, [user, fetchFavorites, clearFavorites]);
+
   const handleCocktailClick = async (cocktail: Cocktail) => {
     try {
-      // 詳細データを取得（ingredients付き）
+      // 詳細データを取得(ingredients付き)
       const detailedCocktail = await fetchCocktail(cocktail.id);
       setSelectedCocktail(detailedCocktail);
       setIsDialogOpen(true);
@@ -47,6 +70,27 @@ export function CocktailList() {
     setIsDialogOpen(false);
     setSelectedCocktail(null);
   };
+
+  const handleFavoriteToggle = async (cocktailId: number) => {
+    if (!user) {
+      // ログインダイアログを開く
+      setIsAuthOpen(true);
+      return;
+    }
+
+    const favorited = isFavorite(cocktailId);
+    if (favorited) {
+      const favoriteId = getFavoriteId(cocktailId);
+      if (favoriteId) {
+        await removeFavorite(favoriteId);
+      }
+    } else {
+      await addFavorite(cocktailId);
+    }
+  };
+
+  // お気に入りカクテル一覧を取得
+  const favoriteCocktails = favorites.map(fav => fav.cocktail);
 
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
@@ -76,33 +120,92 @@ export function CocktailList() {
 
             {/* Cocktails Section */}
             <section className="space-y-4">
-              <h2 className="text-2xl font-semibold text-gray-900">カクテル一覧</h2>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full max-w-md grid-cols-2">
+                  <TabsTrigger value="all" className="flex items-center gap-2">
+                    すべて ({cocktails?.length || 0})
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="favorites"
+                    className="flex items-center gap-2"
+                  >
+                    <Heart size={16} className={user ? 'fill-red-500 text-red-500' : ''} />
+                    お気に入り ({favorites.length})
+                  </TabsTrigger>
+                </TabsList>
 
-              {cocktailsError && (
-                <p className="text-sm text-red-500">Failed to load: {cocktailsError}</p>
-              )}
-              {!cocktails && !cocktailsError && (
-                <div className="text-center py-12 text-gray-500">Loading...</div>
-              )}
-              {cocktails && (
-                <>
-                  <p className="text-sm text-gray-600">{cocktails.length}件のカクテルが見つかりました</p>
-                  <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                    {cocktails.map((c) => (
-                      <CocktailCard
-                        key={c.id}
-                        cocktail={c}
-                        onViewDetails={handleCocktailClick}
-                      />
-                    ))}
-                  </div>
-                  {cocktails.length === 0 && (
-                    <div className="text-center py-12 text-gray-500">
-                      <p>条件に一致するカクテルが見つかりませんでした</p>
+                <TabsContent value="all" className="space-y-4 mt-6">
+                  {cocktailsError && (
+                    <p className="text-sm text-red-500">Failed to load: {cocktailsError}</p>
+                  )}
+                  {!cocktails && !cocktailsError && (
+                    <div className="text-center py-12 text-gray-500">Loading...</div>
+                  )}
+                  {cocktails && (
+                    <>
+                      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                        {cocktails.map((c) => (
+                          <CocktailCard
+                            key={c.id}
+                            cocktail={c}
+                            onViewDetails={handleCocktailClick}
+                            onFavoriteToggle={handleFavoriteToggle}
+                            isFavorited={isFavorite(c.id)}
+                            showFavoriteButton={true}
+                          />
+                        ))}
+                      </div>
+                      {cocktails.length === 0 && (
+                        <div className="text-center py-12 text-gray-500">
+                          <p>条件に一致するカクテルが見つかりませんでした</p>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="favorites" className="space-y-4 mt-6">
+                  {user ? (
+                    <>
+                      {favorites.length === 0 ? (
+                        <div className="text-center py-12 text-gray-500">
+                          <Heart size={48} className="mx-auto mb-4 text-gray-300" />
+                          <p className="text-lg font-medium">お気に入りがありません</p>
+                          <p className="text-sm mt-2">カクテルのハートマークをクリックして、お気に入りに追加しましょう</p>
+                        </div>
+                      ) : (
+                        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                          {favoriteCocktails.map((c) => (
+                            <CocktailCard
+                              key={c.id}
+                              cocktail={c}
+                              onViewDetails={handleCocktailClick}
+                              onFavoriteToggle={handleFavoriteToggle}
+                              isFavorited={true}
+                              showFavoriteButton={true}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-center py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                      <div className="text-6xl mb-4">🔒</div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">ログインが必要です</h3>
+                      <p className="text-gray-500 mb-6">
+                        お気に入り機能を使うにはログインしてください
+                      </p>
+                      <Button
+                        onClick={() => setIsAuthOpen(true)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm"
+                      >
+                        <LogIn className="w-4 h-4 mr-2" />
+                        ログインする
+                      </Button>
                     </div>
                   )}
-                </>
-              )}
+                </TabsContent>
+              </Tabs>
             </section>
           </main>
         </div>
@@ -113,6 +216,16 @@ export function CocktailList() {
         cocktail={selectedCocktail}
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
+        isFavorite={selectedCocktail ? isFavorite(selectedCocktail.id) : false}
+        onToggleFavorite={handleFavoriteToggle}
+      />
+
+      {/* Auth Dialog */}
+      <AuthDialog
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onLogin={login}
+        onSignup={signup}
       />
     </div>
   );

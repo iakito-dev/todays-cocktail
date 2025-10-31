@@ -93,7 +93,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
           <TabsContent value="login" className="space-y-4 mt-6">
             <form onSubmit={handleLogin} className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800">
+                <div className="p-3 bg-red-50 border border-red-200rounded-xl text-red-800">
                   {error}
                 </div>
               )}
@@ -136,16 +136,16 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
           <TabsContent value="signup" className="space-y-4 mt-6">
             <form onSubmit={handleSignup} className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+                <div className="p-3 bg-red-50 border border-red-200rounded-xl text-red-800 text-sm">
                   {error}
                 </div>
               )}
               <div className="space-y-2">
-                <Label htmlFor="signup-name" className="text-sm font-medium text-gray-700">お名前</Label>
+                <Label htmlFor="signup-name" className="text-sm font-medium text-gray-700">ユーザー名</Label>
                 <Input
                   id="signup-name"
                   type="text"
-                  placeholder="田中太郎"
+                  placeholder="例: カクテル太郎"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required

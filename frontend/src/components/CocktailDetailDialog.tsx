@@ -59,7 +59,7 @@ export function CocktailDetailDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-8">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-8">
         <DialogHeader>
           <div className="flex items-start justify-between pr-8">
             <div className="flex-1">
@@ -81,10 +81,10 @@ export function CocktailDetailDialog({
                 variant="ghost"
                 size="lg"
                 onClick={() => onToggleFavorite(cocktail.id)}
-                className="hover:bg-gray-100 rounded-full w-12 h-12 p-0"
+                className="hover:bg-gray-100 rounded-full w-16 h-16 p-0"
               >
                 <Heart
-                  className={`w-6 h-6 transition-colors ${
+                  className={`w-12 h-12 transition-colors ${
                     isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-500'
                   }`}
                 />
@@ -105,7 +105,7 @@ export function CocktailDetailDialog({
 
           {/* Glass and Technique */}
           <div className="grid grid-cols-2 gap-5">
-            <div className="flex items-center gap-4 p-6 rounded-2xl bg-gray-50">
+            <div className="flex items-center gap-4 p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
               <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center">
                 <GlassWater className="w-5 h-5 text-blue-600" />
               </div>
@@ -114,7 +114,7 @@ export function CocktailDetailDialog({
                 <div className="text-base font-medium text-gray-900">{cocktail.glass}</div>
               </div>
             </div>
-            <div className="flex items-center gap-4 p-6 rounded-2xl bg-gray-50">
+            <div className="flex items-center gap-4 p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
               <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center">
                 <Hammer className="w-5 h-5 text-orange-600" />
               </div>
@@ -137,7 +137,7 @@ export function CocktailDetailDialog({
               {cocktail.ingredients?.map((ingredient, index) => (
                 <div
                   key={index}
-                  className="flex justify-between items-center p-5 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="flex justify-between items-center p-5 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all hover:scale-[1.02] hover:shadow-sm"
                 >
                   <span className="text-base text-gray-900">{ingredient.name}</span>
                   <span className="text-gray-600 px-4 py-1.5 bg-white rounded-full text-sm font-medium">
@@ -156,13 +156,13 @@ export function CocktailDetailDialog({
               <div className="w-1 h-6 bg-blue-500 rounded-full" />
               <h3 className="font-semibold text-lg text-gray-900">作り方</h3>
             </div>
-            <div className="bg-gray-50 p-7 rounded-2xl">
+            <div className="bg-gray-50 p-7 rounded-2xl hover:bg-gray-100 transition-colors">
               <p className="leading-relaxed text-base text-gray-700 whitespace-pre-wrap">{cocktail.instructions}</p>
             </div>
           </div>
 
           {/* Tips */}
-          <div className="bg-blue-50 p-7 rounded-2xl border border-blue-100">
+          <div className="bg-blue-50 p-7 rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
             <div className="flex items-start gap-4">
               <div className="text-2xl">💡</div>
               <div>

@@ -3,15 +3,19 @@ import { fetchCocktails, fetchCocktail, type CocktailQuery } from '../lib/api';
 import { Card, CardContent } from './ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 import { Button } from './ui/button';
-import { Heart, LogIn } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
+import { Heart, LogIn, SlidersHorizontal } from 'lucide-react';
 import { TodaysPick } from './TodaysPick';
 import { CocktailCard } from './CocktailCard';
 import { CocktailFilters } from './CocktailFilters';
 import { CocktailDetailDialog } from './CocktailDetailDialog';
 import { AuthDialog } from './AuthDialog';
+import { Pagination } from './Pagination';
 import { useFavorites } from '../hooks/useFavorites';
 import { useAuth } from '../hooks/useAuth';
 import type { Cocktail } from '../lib/types';
+
+const ITEMS_PER_PAGE = 10;
 
 export function CocktailList() {
   const [cocktails, setCocktails] = useState<Cocktail[] | null>(null);
@@ -20,6 +24,11 @@ export function CocktailList() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [favoritesPage, setFavoritesPage] = useState(1);
 
   // Auth & Favorites
   const { user, login, signup } = useAuth();
@@ -41,6 +50,8 @@ export function CocktailList() {
     fetchCocktails(params)
       .then(setCocktails)
       .catch((e) => setCocktailsError(e.message));
+    // フィルター変更時はページを1にリセット
+    setCurrentPage(1);
   }, [debouncedQ, selectedBases, debouncedIngredients]);
 
   // お気に入り一覧を取得 or クリア
@@ -92,12 +103,37 @@ export function CocktailList() {
   // お気に入りカクテル一覧を取得
   const favoriteCocktails = favorites.map(fav => fav.cocktail);
 
+  // ページネーション用の計算
+  const allCocktailsTotal = cocktails?.length || 0;
+  const allCocktailsTotalPages = Math.ceil(allCocktailsTotal / ITEMS_PER_PAGE);
+  const allCocktailsPaginated = cocktails?.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  ) || [];
+
+  const favoritesTotal = favoriteCocktails.length;
+  const favoritesTotalPages = Math.ceil(favoritesTotal / ITEMS_PER_PAGE);
+  const favoritesPaginated = favoriteCocktails.slice(
+    (favoritesPage - 1) * ITEMS_PER_PAGE,
+    favoritesPage * ITEMS_PER_PAGE
+  );
+
+  // タブ切り替え時にページをリセット
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === 'all') {
+      setCurrentPage(1);
+    } else {
+      setFavoritesPage(1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
       <div className="max-w-7xl mx-auto p-6">
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-          {/* Sidebar - Filters */}
-          <aside className="lg:sticky lg:top-6 lg:h-fit">
+          {/* Sidebar - Filters (Desktop Only) */}
+          <aside className="hidden lg:block lg:sticky lg:top-6 lg:h-fit">
             <Card className="bg-white border-gray-200">
               <CardContent className="pt-6">
                 <CocktailFilters
@@ -114,13 +150,42 @@ export function CocktailList() {
 
           {/* Main Content */}
           <main className="space-y-6">
+            {/* Mobile Filter Button */}
+            <div className="lg:hidden">
+              <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full bg-white border-gray-200 hover:bg-gray-50 h-12 rounded-xl"
+                  >
+                    <SlidersHorizontal className="w-5 h-5 mr-2" />
+                    カクテル図鑑
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[320px] sm:w-[380px] overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle className="text-lg font-semibold">カクテル図鑑</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6">
+                    <CocktailFilters
+                      searchQuery={q}
+                      onSearchChange={setQ}
+                      selectedBases={selectedBases}
+                      onBasesChange={setSelectedBases}
+                      ingredientSearch={ingredients}
+                      onIngredientSearchChange={setIngredients}
+                    />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
 
             {/* Today's Pick Section */}
             <TodaysPick onViewDetails={handleCocktailClick} />
 
             {/* Cocktails Section */}
             <section className="space-y-4">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 <TabsList className="grid w-full max-w-md grid-cols-2">
                   <TabsTrigger value="all" className="flex items-center gap-2">
                     すべて ({cocktails?.length || 0})
@@ -144,7 +209,7 @@ export function CocktailList() {
                   {cocktails && (
                     <>
                       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                        {cocktails.map((c) => (
+                        {allCocktailsPaginated.map((c) => (
                           <CocktailCard
                             key={c.id}
                             cocktail={c}
@@ -160,6 +225,11 @@ export function CocktailList() {
                           <p>条件に一致するカクテルが見つかりませんでした</p>
                         </div>
                       )}
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={allCocktailsTotalPages}
+                        onPageChange={setCurrentPage}
+                      />
                     </>
                   )}
                 </TabsContent>
@@ -174,18 +244,25 @@ export function CocktailList() {
                           <p className="text-sm mt-2">カクテルのハートマークをクリックして、お気に入りに追加しましょう</p>
                         </div>
                       ) : (
-                        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                          {favoriteCocktails.map((c) => (
-                            <CocktailCard
-                              key={c.id}
-                              cocktail={c}
-                              onViewDetails={handleCocktailClick}
-                              onFavoriteToggle={handleFavoriteToggle}
-                              isFavorited={true}
-                              showFavoriteButton={true}
-                            />
-                          ))}
-                        </div>
+                        <>
+                          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                            {favoritesPaginated.map((c) => (
+                              <CocktailCard
+                                key={c.id}
+                                cocktail={c}
+                                onViewDetails={handleCocktailClick}
+                                onFavoriteToggle={handleFavoriteToggle}
+                                isFavorited={true}
+                                showFavoriteButton={true}
+                              />
+                            ))}
+                          </div>
+                          <Pagination
+                            currentPage={favoritesPage}
+                            totalPages={favoritesTotalPages}
+                            onPageChange={setFavoritesPage}
+                          />
+                        </>
                       )}
                     </>
                   ) : (
@@ -197,7 +274,7 @@ export function CocktailList() {
                       </p>
                       <Button
                         onClick={() => setIsAuthOpen(true)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm"
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm"
                       >
                         <LogIn className="w-4 h-4 mr-2" />
                         ログインする

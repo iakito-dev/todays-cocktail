@@ -76,7 +76,7 @@ export function CocktailFilters({
                 onClick={() => handleBaseToggle(base.value)}
                 className={`w-full p-3.5 rounded-xl border transition-all ${
                   isSelected
-                    ? 'bg-blue-500 text-white border-blue-500 shadow-sm'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-transparent shadow-sm'
                     : 'bg-white hover:bg-gray-50 border-gray-200 text-gray-900'
                 }`}
               >

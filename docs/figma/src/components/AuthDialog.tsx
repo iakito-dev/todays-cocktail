@@ -28,12 +28,12 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!email || !password) {
       setError('メールアドレスとパスワードを入力してください');
       return;
     }
-    
+
     try {
       await onLogin(email, password);
       // Reset form
@@ -48,12 +48,12 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!email || !password || !name) {
       setError('すべての項目を入力してください');
       return;
     }
-    
+
     try {
       await onSignup(email, password, name);
       // Reset form
@@ -89,7 +89,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
           <TabsContent value="login" className="space-y-4">
             <form onSubmit={handleLogin} className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800">
+                <div className="p-3 bg-red-50 border border-red-200rounded-xl text-red-800">
                   {error}
                 </div>
               )}
@@ -117,8 +117,8 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
                   disabled={isLoading}
                 />
               </div>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white shadow-sm"
                 disabled={isLoading}
               >
@@ -130,12 +130,12 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
           <TabsContent value="signup" className="space-y-4">
             <form onSubmit={handleSignup} className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800">
+                <div className="p-3 bg-red-50 border border-red-200rounded-xl text-red-800">
                   {error}
                 </div>
               )}
               <div className="space-y-2">
-                <Label htmlFor="signup-name">お名前</Label>
+                <Label htmlFor="signup-name">ユーザー名</Label>
                 <Input
                   id="signup-name"
                   type="text"
@@ -171,8 +171,8 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
                   minLength={6}
                 />
               </div>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white shadow-sm"
                 disabled={isLoading}
               >

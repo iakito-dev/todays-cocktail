@@ -4,10 +4,10 @@ namespace :cocktails do
   desc 'Translate cocktail data to Japanese'
   task translate: :environment do
     puts "Starting translation and conversion..."
-    
+
     translator = JapaneseTranslator.new
     translator.translate_all
-    
+
     puts "\nTranslation completed!"
   end
 end
@@ -135,7 +135,7 @@ class JapaneseTranslator
     translate_glasses
     translate_ingredients
     translate_amounts
-    
+
     puts "\n" + "=" * 50
     puts "Translation Summary:"
     puts "  Updated: #{@updated_count} records"
@@ -146,55 +146,55 @@ class JapaneseTranslator
 
   def translate_glasses
     puts "\nTranslating glass names..."
-    
+
     Cocktail.find_each do |cocktail|
       next if cocktail.glass.blank?
-      
+
       glass_ja = GLASS_TRANSLATIONS[cocktail.glass] || cocktail.glass
-      
+
       if cocktail.update(glass_ja: glass_ja)
         @updated_count += 1
       end
     end
-    
+
     puts "  ✅ Translated #{Cocktail.where.not(glass_ja: nil).count} glass names"
   end
 
   def translate_ingredients
     puts "\nTranslating ingredient names..."
-    
+
     Ingredient.find_each do |ingredient|
       name_ja = INGREDIENT_TRANSLATIONS[ingredient.name] || ingredient.name
-      
+
       if ingredient.update(name_ja: name_ja)
         @updated_count += 1
       end
     end
-    
+
     puts "  ✅ Translated #{Ingredient.count} ingredient names"
   end
 
   def translate_amounts
     puts "\nConverting amounts to Japanese units..."
-    
+
     CocktailIngredient.find_each do |ci|
       next if ci.amount_text.blank?
-      
+
       amount_ja = convert_amount_to_japanese(ci.amount_text)
-      
+
       if ci.update(amount_ja: amount_ja)
         @updated_count += 1
       end
     end
-    
+
     puts "  ✅ Converted #{CocktailIngredient.where.not(amount_ja: nil).count} amounts"
   end
 
   def convert_amount_to_japanese(amount)
     return '適量' if amount == '適量'
-    
+
     text = amount.strip
-    
+
     # 分数とozの組み合わせを先に処理 (例: "1 1/2 oz" や "1/2 oz")
     text = text.gsub(/(\d+)\s+(\d+)\/(\d+)\s*oz/i) do |match|
       whole = $1.to_f
@@ -204,7 +204,7 @@ class JapaneseTranslator
       ml = (total_oz * 30).round
       "#{ml}ml"
     end
-    
+
     text = text.gsub(/(\d+)\/(\d+)\s*oz/i) do |match|
       numerator = $1.to_f
       denominator = $2.to_f
@@ -212,7 +212,7 @@ class JapaneseTranslator
       ml = (oz * 30).round
       "#{ml}ml"
     end
-    
+
     # oz (オンス) を ml に変換 (1 oz = 30ml)
     text = text.gsub(/(\d+(?:\.\d+)?(?:\s*-\s*\d+(?:\.\d+)?)?)\s*oz/i) do |match|
       value = $1
@@ -225,25 +225,65 @@ class JapaneseTranslator
         "#{ml}ml"
       end
     end
-    
+
     # tsp (ティースプーン) を ml に変換 (1 tsp = 5ml)
-    text = text.gsub(/(\d+(?:\.\d+)?)\s*tsp/i) do |match|
-      ml = ($1.to_f * 5).round
+    text = text.gsub(/(\d+)\s+(\d+)\/(\d+)\s*tsps?/i) do |match|
+      whole = $1.to_f
+      numerator = $2.to_f
+      denominator = $3.to_f
+      total_tsp = whole + (numerator / denominator)
+      ml = (total_tsp * 5).round(1)
+      ml = ml.to_i if ml == ml.to_i
       "#{ml}ml"
     end
     
-    # tbsp (テーブルスプーン) を ml に変換 (1 tbsp = 15ml)
-    text = text.gsub(/(\d+(?:\.\d+)?)\s*tbsp/i) do |match|
-      ml = ($1.to_f * 15).round
+    text = text.gsub(/(\d+)\/(\d+)\s*tsps?/i) do |match|
+      numerator = $1.to_f
+      denominator = $2.to_f
+      tsp = numerator / denominator
+      ml = (tsp * 5).round(1)
+      ml = ml.to_i if ml == ml.to_i
       "#{ml}ml"
     end
     
+    text = text.gsub(/(\d+(?:\.\d+)?)\s*tsps?/i) do |match|
+      ml = ($1.to_f * 5).round(1)
+      ml = ml.to_i if ml == ml.to_i
+      "#{ml}ml"
+    end
+
+    # tbsp/tblsp (テーブルスプーン) を ml に変換 (1 tbsp = 15ml)
+    text = text.gsub(/(\d+)\s+(\d+)\/(\d+)\s*t(?:a)?blsps?/i) do |match|
+      whole = $1.to_f
+      numerator = $2.to_f
+      denominator = $3.to_f
+      total_tbsp = whole + (numerator / denominator)
+      ml = (total_tbsp * 15).round(1)
+      ml = ml.to_i if ml == ml.to_i
+      "#{ml}ml"
+    end
+    
+    text = text.gsub(/(\d+)\/(\d+)\s*t(?:a)?blsps?/i) do |match|
+      numerator = $1.to_f
+      denominator = $2.to_f
+      tbsp = numerator / denominator
+      ml = (tbsp * 15).round(1)
+      ml = ml.to_i if ml == ml.to_i
+      "#{ml}ml"
+    end
+    
+    text = text.gsub(/(\d+(?:\.\d+)?)\s*t(?:a)?blsps?/i) do |match|
+      ml = ($1.to_f * 15).round(1)
+      ml = ml.to_i if ml == ml.to_i
+      "#{ml}ml"
+    end
+
     # cl (センチリットル) を ml に変換 (1 cl = 10ml)
     text = text.gsub(/(\d+(?:\.\d+)?)\s*cl/i) do |match|
       ml = ($1.to_f * 10).round
       "#{ml}ml"
     end
-    
+
     # 分数とshotの組み合わせを先に処理 (例: "1 1/2 shot" や "1/2 shot")
     text = text.gsub(/(\d+)\s+(\d+)\/(\d+)\s*shots?/i) do |match|
       whole = $1.to_f
@@ -253,7 +293,7 @@ class JapaneseTranslator
       ml = (total_shots * 30).round
       "#{ml}ml"
     end
-    
+
     text = text.gsub(/(\d+)\/(\d+)\s*shots?/i) do |match|
       numerator = $1.to_f
       denominator = $2.to_f
@@ -261,7 +301,7 @@ class JapaneseTranslator
       ml = (shots * 30).round
       "#{ml}ml"
     end
-    
+
     # shot (ショット) を ml に変換 (1 shot = 30ml)
     text = text.gsub(/(\d+(?:\.\d+)?(?:\s*-\s*\d+(?:\.\d+)?)?)\s*shots?/i) do |match|
       value = $1
@@ -274,7 +314,7 @@ class JapaneseTranslator
         "#{ml}ml"
       end
     end
-    
+
     # jigger (ジガー) を ml に変換 (1 jigger = 45ml)
     text = text.gsub(/(\d+)\s+(\d+)\/(\d+)\s*jiggers?/i) do |match|
       whole = $1.to_f
@@ -284,7 +324,7 @@ class JapaneseTranslator
       ml = (total_jiggers * 45).round
       "#{ml}ml"
     end
-    
+
     text = text.gsub(/(\d+)\/(\d+)\s*jiggers?/i) do |match|
       numerator = $1.to_f
       denominator = $2.to_f
@@ -292,12 +332,12 @@ class JapaneseTranslator
       ml = (jiggers * 45).round
       "#{ml}ml"
     end
-    
+
     text = text.gsub(/(\d+(?:\.\d+)?)\s*jiggers?/i) do |match|
       ml = ($1.to_f * 45).round
       "#{ml}ml"
     end
-    
+
     # 残った分数を処理 (単位なし)
     text = text.gsub(/(\d+)\s+(\d+)\/(\d+)/) do |match|
       whole = $1
@@ -305,11 +345,11 @@ class JapaneseTranslator
       denominator = $3
       "#{whole} #{numerator}/#{denominator}"
     end
-    
+
     text = text.gsub(/(\d+)\/(\d+)/) do |match|
       "#{$1}/#{$2}"
     end
-    
+
     # 単位の翻訳
     text = text.gsub(/(\d+)\s*cups?/i, '\1カップ')
     text = text.gsub(/\bcup\b/i, 'カップ')
@@ -320,11 +360,10 @@ class JapaneseTranslator
     text = text.gsub(/\bdash(?:es)?\b/i, 'ダッシュ')
     text = text.gsub(/(\d+)\s*splash(?:es)?\b/i, '\1スプラッシュ')
     text = text.gsub(/\bsplash(?:es)?\b/i, 'スプラッシュ')
-    text = text.gsub(/\btop\s+up\b/i, '満たす')
-    text = text.gsub(/\bfill\b/i, '満たす')
-    
-    # よくあるフレーズ
+
+    # よくあるフレーズ（「fill」や「top up」の前に処理）
     text = text.gsub(/\bJuice of\s+(\d+)\b/i, '\1個分')
+    text = text.gsub(/\b(?:Fill|Top(?:\s+up)?)\s+with\b/i, '満たす')
     text = text.gsub(/\bto taste\b/i, '適量')
     text = text.gsub(/\bfresh\b/i, 'フレッシュ')
     text = text.gsub(/\bdried\b/i, '乾燥')
@@ -335,6 +374,9 @@ class JapaneseTranslator
     text = text.gsub(/\bwedge\b/i, 'くし切り')
     text = text.gsub(/\btwist\b/i, 'ツイスト')
     text = text.gsub(/(\d+)\s*-\s*(\d+)$/, '\1〜\2個')
+    
+    # 最後に、単位のない数字だけの場合は「個」を追加
+    text = text.gsub(/^(\d+)$/, '\1個')
     
     text.strip
   end

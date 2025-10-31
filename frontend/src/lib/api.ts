@@ -91,6 +91,7 @@ export async function apiPost(path: string, body?: unknown, init?: RequestInit) 
 
 /**
  * 認証用POSTリクエスト（レスポンスヘッダーも返す）
+ * 認証エンドポイント（login/signup）専用の内部ヘルパー関数
  * @param path - APIエンドポイントのパス
  * @param body - リクエストボディ
  * @returns レスポンスのJSONデータとAuthorizationヘッダー
@@ -110,7 +111,6 @@ async function apiPostAuth(path: string, body: unknown): Promise<{ data: AuthRes
 
   const token = res.headers.get('Authorization');
   const data = await res.json().catch(() => ({}));
-  
   return { data, token };
 }
 

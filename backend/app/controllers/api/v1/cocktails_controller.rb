@@ -2,11 +2,11 @@ class Api::V1::CocktailsController < ApplicationController
   def index
     cocktails = Cocktail.all
 
-    # 名前で部分一致検索
+    # 名前で部分一致検索（日本語名または英語名）
     if params[:q].present?
       keyword = params[:q].to_s.strip
       like = "%#{ActiveRecord::Base.sanitize_sql_like(keyword)}%"
-      cocktails = cocktails.where('name ILIKE ?', like)
+      cocktails = cocktails.where('name ILIKE ? OR name_ja ILIKE ?', like, like)
     end
 
     # ベースで絞り込み（単数 or 複数）。例: base=gin,rum または base[]=gin&base[]=rum

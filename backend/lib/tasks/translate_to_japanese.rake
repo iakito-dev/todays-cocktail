@@ -163,8 +163,29 @@ class JapaneseTranslator
   def translate_ingredients
     puts "\nTranslating ingredient names..."
 
+    api_key = ENV['DEEPL_API_KEY']
+    has_api_key = api_key.present?
+
+    unless has_api_key
+      puts "  ⚠️  DEEPL_API_KEY not set. Using dictionary only."
+    end
+
     Ingredient.find_each do |ingredient|
-      name_ja = INGREDIENT_TRANSLATIONS[ingredient.name] || ingredient.name
+      # 既に日本語訳がある場合はスキップ
+      next if ingredient.name_ja.present? && ingredient.name != ingredient.name_ja
+
+      # まず辞書で確認
+      name_ja = INGREDIENT_TRANSLATIONS[ingredient.name]
+
+      # 辞書になく、APIキーがある場合はDeepLで翻訳
+      if name_ja.nil? && has_api_key
+        name_ja = translate_with_deepl(ingredient.name, api_key)
+        puts "  🌐 #{ingredient.name} -> #{name_ja}" if name_ja
+        sleep 0.3 if name_ja # API負荷軽減
+      end
+
+      # それでもなければ英語のまま
+      name_ja ||= ingredient.name
 
       if ingredient.update(name_ja: name_ja)
         @updated_count += 1
@@ -172,6 +193,33 @@ class JapaneseTranslator
     end
 
     puts "  ✅ Translated #{Ingredient.count} ingredient names"
+  end
+
+  def translate_with_deepl(text, api_key)
+    require 'net/http'
+    require 'json'
+    require 'uri'
+
+    uri = URI('https://api-free.deepl.com/v2/translate')
+    params = {
+      'auth_key' => api_key,
+      'text' => text,
+      'target_lang' => 'JA',
+      'source_lang' => 'EN'
+    }
+
+    response = Net::HTTP.post_form(uri, params)
+
+    if response.is_a?(Net::HTTPSuccess)
+      result = JSON.parse(response.body)
+      translated = result['translations']&.first&.dig('text')
+      return translated if translated
+    end
+
+    nil
+  rescue StandardError => e
+    puts "    ⚠️  Translation error for '#{text}': #{e.message}"
+    nil
   end
 
   def translate_amounts
@@ -236,7 +284,7 @@ class JapaneseTranslator
       ml = ml.to_i if ml == ml.to_i
       "#{ml}ml"
     end
-    
+
     text = text.gsub(/(\d+)\/(\d+)\s*tsps?/i) do |match|
       numerator = $1.to_f
       denominator = $2.to_f
@@ -245,7 +293,7 @@ class JapaneseTranslator
       ml = ml.to_i if ml == ml.to_i
       "#{ml}ml"
     end
-    
+
     text = text.gsub(/(\d+(?:\.\d+)?)\s*tsps?/i) do |match|
       ml = ($1.to_f * 5).round(1)
       ml = ml.to_i if ml == ml.to_i
@@ -262,7 +310,7 @@ class JapaneseTranslator
       ml = ml.to_i if ml == ml.to_i
       "#{ml}ml"
     end
-    
+
     text = text.gsub(/(\d+)\/(\d+)\s*t(?:a)?blsps?/i) do |match|
       numerator = $1.to_f
       denominator = $2.to_f
@@ -271,7 +319,7 @@ class JapaneseTranslator
       ml = ml.to_i if ml == ml.to_i
       "#{ml}ml"
     end
-    
+
     text = text.gsub(/(\d+(?:\.\d+)?)\s*t(?:a)?blsps?/i) do |match|
       ml = ($1.to_f * 15).round(1)
       ml = ml.to_i if ml == ml.to_i
@@ -374,10 +422,10 @@ class JapaneseTranslator
     text = text.gsub(/\bwedge\b/i, 'くし切り')
     text = text.gsub(/\btwist\b/i, 'ツイスト')
     text = text.gsub(/(\d+)\s*-\s*(\d+)$/, '\1〜\2個')
-    
+
     # 最後に、単位のない数字だけの場合は「個」を追加
     text = text.gsub(/^(\d+)$/, '\1個')
-    
+
     text.strip
   end
 end

@@ -64,9 +64,14 @@ export function CocktailDetailDialog({
         <DialogHeader className="text-left sticky top-0 bg-white z-10 p-6 sm:p-8 pb-4 sm:pb-6 border-b border-gray-100">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <DialogTitle className="text-2xl sm:text-4xl mb-3 sm:mb-4 text-gray-900">
-                {cocktail.name}
-              </DialogTitle>
+              <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
+                <DialogTitle className="text-2xl sm:text-4xl font-bold text-gray-900 leading-tight">
+                  {cocktail.name_ja || cocktail.name}
+                </DialogTitle>
+                {cocktail.name_ja && (
+                  <p className="text-sm sm:text-lg text-gray-500 font-medium tracking-wide uppercase">{cocktail.name}</p>
+                )}
+              </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className={`${strengthColors[cocktail.strength as keyof typeof strengthColors] ?? ''} px-2.5 py-1 sm:px-3 sm:py-1.5 border text-xs sm:text-sm`}>
                   {STRENGTH_LABELS[cocktail.strength]}
@@ -160,31 +165,29 @@ export function CocktailDetailDialog({
               <h3 className="font-semibold text-lg text-gray-900">作り方</h3>
             </div>
             <div className="bg-gray-50 p-7 rounded-2xl hover:bg-gray-100 transition-colors">
-              <p className="leading-relaxed text-base text-gray-700 whitespace-pre-wrap">{cocktail.instructions}</p>
+              <p className="leading-relaxed text-base text-gray-700 whitespace-pre-wrap">
+                {cocktail.description || cocktail.instructions}
+              </p>
             </div>
           </div>
 
           {/* Description or Tips */}
-          <div className="bg-blue-50 p-7 rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
-            <div className="flex items-start gap-4">
-              <div className="text-2xl">💡</div>
-              <div>
-                <h4 className="font-semibold mb-3 text-base text-blue-900">
-                  {cocktail.description ? 'このカクテルについて' : '初心者の方へ'}
-                </h4>
-                <p className="text-blue-800 leading-relaxed text-base">
-                  {cocktail.description || (
-                    <>
-                      このカクテルは{cocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : cocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
-                      {cocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
-                      {cocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
-                      {cocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
-                    </>
-                  )}
-                </p>
+          {!cocktail.description && (
+            <div className="bg-blue-50 p-7 rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="text-2xl">💡</div>
+                <div>
+                  <h4 className="font-semibold mb-3 text-base text-blue-900">初心者の方へ</h4>
+                  <p className="text-blue-800 leading-relaxed text-base">
+                    このカクテルは{cocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : cocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
+                    {cocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
+                    {cocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
+                    {cocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
           </div>
         </div>
       </DialogContent>

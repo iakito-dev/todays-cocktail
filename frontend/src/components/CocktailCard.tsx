@@ -77,7 +77,14 @@ export function CocktailCard({
         </div>
       </div>
       <CardContent className="p-3 md:p-5">
-        <h3 className="mb-2 md:mb-3 text-sm md:text-base text-gray-900 font-semibold line-clamp-1">{cocktail.name}</h3>
+        <div className="mb-2 md:mb-3 min-h-[2.5rem] md:min-h-[3rem]">
+          <h3 className="text-sm md:text-base text-gray-900 font-bold line-clamp-1 leading-tight">
+            {cocktail.name_ja || cocktail.name}
+          </h3>
+          {cocktail.name_ja && (
+            <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mt-0.5">{cocktail.name}</p>
+          )}
+        </div>
         <div className="flex items-center justify-between text-xs md:text-sm">
           <div className="flex items-center gap-1.5 md:gap-2 text-gray-600">
             <Wine className="w-3.5 h-3.5 md:w-4 md:h-4" />

@@ -15,9 +15,26 @@ import { useFavorites } from '../hooks/useFavorites';
 import { useAuth } from '../hooks/useAuth';
 import type { Cocktail } from '../lib/types';
 
-const ITEMS_PER_PAGE = 10;
+// 画面サイズに応じた表示件数を取得
+const useItemsPerPage = () => {
+  const [itemsPerPage, setItemsPerPage] = useState(
+    typeof window !== 'undefined' && window.innerWidth < 1024 ? 8 : 9
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerPage(window.innerWidth < 1024 ? 8 : 9);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return itemsPerPage;
+};
 
 export function CocktailList() {
+  const itemsPerPage = useItemsPerPage();
   const [cocktails, setCocktails] = useState<Cocktail[] | null>(null);
   const [cocktailsError, setCocktailsError] = useState<string | null>(null);
   const [selectedCocktail, setSelectedCocktail] = useState<Cocktail | null>(null);
@@ -105,17 +122,17 @@ export function CocktailList() {
 
   // ページネーション用の計算
   const allCocktailsTotal = cocktails?.length || 0;
-  const allCocktailsTotalPages = Math.ceil(allCocktailsTotal / ITEMS_PER_PAGE);
+  const allCocktailsTotalPages = Math.ceil(allCocktailsTotal / itemsPerPage);
   const allCocktailsPaginated = cocktails?.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   ) || [];
 
   const favoritesTotal = favoriteCocktails.length;
-  const favoritesTotalPages = Math.ceil(favoritesTotal / ITEMS_PER_PAGE);
+  const favoritesTotalPages = Math.ceil(favoritesTotal / itemsPerPage);
   const favoritesPaginated = favoriteCocktails.slice(
-    (favoritesPage - 1) * ITEMS_PER_PAGE,
-    favoritesPage * ITEMS_PER_PAGE
+    (favoritesPage - 1) * itemsPerPage,
+    favoritesPage * itemsPerPage
   );
 
   // タブ切り替え時にページをリセット
@@ -150,8 +167,13 @@ export function CocktailList() {
 
           {/* Main Content */}
           <main className="space-y-6">
+            {/* Today's Pick Section */}
+            <div className="order-1">
+              <TodaysPick onViewDetails={handleCocktailClick} />
+            </div>
+
             {/* Mobile Filter Button */}
-            <div className="lg:hidden">
+            <div className="lg:hidden order-2">
               <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                 <SheetTrigger asChild>
                   <Button
@@ -159,12 +181,12 @@ export function CocktailList() {
                     className="w-full bg-white border-gray-200 hover:bg-gray-50 h-12 rounded-xl"
                   >
                     <SlidersHorizontal className="w-5 h-5 mr-2" />
-                    カクテル図鑑
+                    検索・絞り込み
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[320px] sm:w-[380px] overflow-y-auto">
                   <SheetHeader>
-                    <SheetTitle className="text-lg font-semibold">カクテル図鑑</SheetTitle>
+                    <SheetTitle className="text-lg font-semibold">検索・絞り込み</SheetTitle>
                   </SheetHeader>
                   <div className="mt-6">
                     <CocktailFilters
@@ -180,11 +202,8 @@ export function CocktailList() {
               </Sheet>
             </div>
 
-            {/* Today's Pick Section */}
-            <TodaysPick onViewDetails={handleCocktailClick} />
-
             {/* Cocktails Section */}
-            <section className="space-y-4">
+            <section className="space-y-4 order-3">
               <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 <TabsList className="grid w-full max-w-md grid-cols-2">
                   <TabsTrigger value="all" className="flex items-center gap-2">
@@ -208,7 +227,7 @@ export function CocktailList() {
                   )}
                   {cocktails && (
                     <>
-                      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-3">
                         {allCocktailsPaginated.map((c) => (
                           <CocktailCard
                             key={c.id}
@@ -245,7 +264,7 @@ export function CocktailList() {
                         </div>
                       ) : (
                         <>
-                          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                          <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-3">
                             {favoritesPaginated.map((c) => (
                               <CocktailCard
                                 key={c.id}

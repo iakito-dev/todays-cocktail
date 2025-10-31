@@ -2,14 +2,12 @@
 
 puts "Cleaning up existing data..."
 
-# 既存データを削除
 CocktailIngredient.destroy_all
 Ingredient.destroy_all
 Cocktail.destroy_all
 
 puts "Seeding cocktails and ingredients..."
 
-# enum mapping
 BASE_MAP = {
   'ジン' => :gin,
   'ラム' => :rum,
@@ -32,7 +30,6 @@ TECHNIQUE_MAP = {
   'シェイク' => :shake
 }
 
-# Figmaデータをベースにしたカクテルデータ
 cocktails_data = [
   {
     name: 'マティーニ',
@@ -185,7 +182,7 @@ cocktails_data = [
     name: 'テキーラサンライズ',
     base: 'テキーラ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-9ak6t_5ERVo?w=800',
+    image_url: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
     ingredients: [
       { name: 'テキーラ', amount: '45ml' },
       { name: 'オレンジジュース', amount: '90ml' },
@@ -196,7 +193,7 @@ cocktails_data = [
     technique: 'ビルド'
   },
   {
-    name: 'オールドファッションド',
+    name: 'オールドファッション',
     base: 'ウイスキー',
     strength: 'ストロング',
     image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
@@ -209,23 +206,290 @@ cocktails_data = [
     instructions: 'ロックグラスに角砂糖とビターズを入れ、少量の水で溶かす。氷を入れウイスキーを注ぎステアする。オレンジピールを飾る。',
     glass: 'ロックグラス',
     technique: 'ビルド'
+  },
+  {
+    name: 'エスプレッソマティーニ',
+    base: 'ウォッカ',
+    strength: 'ミディアム',
+    image_url: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800',
+    ingredients: [
+      { name: 'ウォッカ', amount: '50ml' },
+      { name: 'カルーアコーヒーリキュール', amount: '25ml' },
+      { name: 'エスプレッソ', amount: '30ml' },
+      { name: 'シュガーシロップ', amount: '10ml' }
+    ],
+    instructions: 'シェイカーに氷と全ての材料を入れ、力強くシェイクする。カクテルグラスに濾して注ぎ、コーヒー豆を飾る。',
+    glass: 'カクテルグラス',
+    technique: 'シェイク'
+  },
+  {
+    name: 'ピニャコラーダ',
+    base: 'ラム',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1546171753-97d7676e4602?w=800',
+    ingredients: [
+      { name: 'ホワイトラム', amount: '45ml' },
+      { name: 'ココナッツクリーム', amount: '30ml' },
+      { name: 'パイナップルジュース', amount: '90ml' },
+      { name: 'パイナップル', amount: '適量' }
+    ],
+    instructions: 'ブレンダーに氷と全ての材料を入れミキシングする。グラスに注ぎ、パイナップルとチェリーを飾る。',
+    glass: 'トロピカルグラス',
+    technique: 'シェイク'
+  },
+  {
+    name: 'ブラッディメアリー',
+    base: 'ウォッカ',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=800',
+    ingredients: [
+      { name: 'ウォッカ', amount: '45ml' },
+      { name: 'トマトジュース', amount: '90ml' },
+      { name: 'レモンジュース', amount: '15ml' },
+      { name: 'タバスコ', amount: '3dash' },
+      { name: '塩・胡椒', amount: '適量' }
+    ],
+    instructions: 'タンブラーに氷と全ての材料を入れステアする。セロリやレモンを飾る。',
+    glass: 'タンブラー',
+    technique: 'ビルド'
+  },
+  {
+    name: 'カイピリーニャ',
+    base: 'ラム',
+    strength: 'ミディアム',
+    image_url: 'https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=800',
+    ingredients: [
+      { name: 'カシャーサ', amount: '60ml' },
+      { name: 'ライム', amount: '1個' },
+      { name: 'ブラウンシュガー', amount: '2tsp' }
+    ],
+    instructions: 'グラスにカットしたライムと砂糖を入れ潰す。クラッシュドアイスを入れ、カシャーサを注ぎステアする。',
+    glass: 'ロックグラス',
+    technique: 'ビルド'
+  },
+  {
+    name: 'アマレットサワー',
+    base: 'ウイスキー',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800',
+    ingredients: [
+      { name: 'アマレット', amount: '45ml' },
+      { name: 'レモンジュース', amount: '30ml' },
+      { name: 'シュガーシロップ', amount: '15ml' },
+      { name: '卵白', amount: '適量' }
+    ],
+    instructions: 'シェイカーに氷と材料を入れシェイクする。ロックグラスに注ぎ、レモンとチェリーを飾る。',
+    glass: 'ロックグラス',
+    technique: 'シェイク'
+  },
+  {
+    name: 'ロングアイランドアイスティー',
+    base: 'ウォッカ',
+    strength: 'ストロング',
+    image_url: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=800',
+    ingredients: [
+      { name: 'ウォッカ', amount: '15ml' },
+      { name: 'ホワイトラム', amount: '15ml' },
+      { name: 'ジン', amount: '15ml' },
+      { name: 'テキーラ', amount: '15ml' },
+      { name: 'ホワイトキュラソー', amount: '15ml' },
+      { name: 'レモンジュース', amount: '30ml' },
+      { name: 'コーラ', amount: '適量' }
+    ],
+    instructions: 'タンブラーに氷と材料を入れステアする。コーラで満たし、レモンを飾る。',
+    glass: 'タンブラー',
+    technique: 'ビルド'
+  },
+  {
+    name: 'ギムレット',
+    base: 'ジン',
+    strength: 'ミディアム',
+    image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+    ingredients: [
+      { name: 'ドライジン', amount: '45ml' },
+      { name: 'ライムジュース', amount: '15ml' },
+      { name: 'シュガーシロップ', amount: '10ml' }
+    ],
+    instructions: 'シェイカーに氷と材料を入れシェイクする。カクテルグラスに濾して注ぐ。',
+    glass: 'カクテルグラス',
+    technique: 'シェイク'
+  },
+  {
+    name: 'サイドカー',
+    base: 'ウイスキー',
+    strength: 'ミディアム',
+    image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
+    ingredients: [
+      { name: 'ブランデー', amount: '30ml' },
+      { name: 'ホワイトキュラソー', amount: '15ml' },
+      { name: 'レモンジュース', amount: '15ml' },
+      { name: '砂糖', amount: '適量' }
+    ],
+    instructions: 'グラスの縁に砂糖をつける。シェイカーに氷と材料を入れシェイクする。グラスに注ぐ。',
+    glass: 'カクテルグラス',
+    technique: 'シェイク'
+  },
+  {
+    name: 'アペロールスピリッツ',
+    base: 'ジン',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
+    ingredients: [
+      { name: 'アペロール', amount: '60ml' },
+      { name: 'プロセッコ', amount: '90ml' },
+      { name: 'ソーダ', amount: '30ml' },
+      { name: 'オレンジスライス', amount: '1個' }
+    ],
+    instructions: 'ワイングラスに氷を入れ、アペロール、プロセッコ、ソーダの順に注ぎ軽くステアする。オレンジを飾る。',
+    glass: 'ワイングラス',
+    technique: 'ビルド'
+  },
+  {
+    name: 'フレンチ75',
+    base: 'ジン',
+    strength: 'ミディアム',
+    image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+    ingredients: [
+      { name: 'ドライジン', amount: '30ml' },
+      { name: 'レモンジュース', amount: '15ml' },
+      { name: 'シュガーシロップ', amount: '10ml' },
+      { name: 'シャンパン', amount: '60ml' }
+    ],
+    instructions: 'シェイカーにジン、レモンジュース、シロップを入れシェイクする。シャンパングラスに注ぎ、シャンパンで満たす。',
+    glass: 'シャンパングラス',
+    technique: 'シェイク'
+  },
+  {
+    name: 'パロマ',
+    base: 'テキーラ',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
+    ingredients: [
+      { name: 'テキーラ', amount: '50ml' },
+      { name: 'グレープフルーツジュース', amount: '75ml' },
+      { name: 'ライムジュース', amount: '15ml' },
+      { name: 'ソーダ', amount: '適量' },
+      { name: '塩', amount: '適量' }
+    ],
+    instructions: 'グラスの縁に塩をつける。氷を入れテキーラ、グレープフルーツジュース、ライムジュースを注ぎ、ソーダで満たす。',
+    glass: 'タンブラー',
+    technique: 'ビルド'
+  },
+  {
+    name: 'ウイスキーハイボール',
+    base: 'ウイスキー',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800',
+    ingredients: [
+      { name: 'ウイスキー', amount: '45ml' },
+      { name: 'ソーダ', amount: '適量' },
+      { name: 'レモンピール', amount: '1個' }
+    ],
+    instructions: 'タンブラーに氷を入れ、ウイスキーを注ぐ。ソーダで満たし、軽くステアする。レモンピールを絞って落とす。',
+    glass: 'タンブラー',
+    technique: 'ビルド'
+  },
+  {
+    name: 'ケープコッダー',
+    base: 'ウォッカ',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
+    ingredients: [
+      { name: 'ウォッカ', amount: '45ml' },
+      { name: 'クランベリージュース', amount: '120ml' },
+      { name: 'ライム', amount: '1/4個' }
+    ],
+    instructions: 'タンブラーに氷を入れ、ウォッカとクランベリージュースを注ぎステアする。ライムを絞って落とす。',
+    glass: 'タンブラー',
+    technique: 'ビルド'
+  },
+  {
+    name: 'ミントジュレップ',
+    base: 'ウイスキー',
+    strength: 'ミディアム',
+    image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
+    ingredients: [
+      { name: 'バーボンウイスキー', amount: '60ml' },
+      { name: 'ミントの葉', amount: '10枚' },
+      { name: 'シュガーシロップ', amount: '15ml' },
+      { name: '水', amount: '少量' }
+    ],
+    instructions: 'グラスにミント、シロップ、水を入れ潰す。クラッシュドアイスを入れウイスキーを注ぎステアする。ミントを飾る。',
+    glass: 'ジュレップカップ',
+    technique: 'ビルド'
+  },
+  {
+    name: 'ブルーハワイ',
+    base: 'ラム',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=800',
+    ingredients: [
+      { name: 'ホワイトラム', amount: '30ml' },
+      { name: 'ブルーキュラソー', amount: '15ml' },
+      { name: 'パイナップルジュース', amount: '60ml' },
+      { name: 'レモンジュース', amount: '15ml' }
+    ],
+    instructions: 'シェイカーに氷と材料を入れシェイクする。氷を入れたグラスに注ぐ。パイナップルとチェリーを飾る。',
+    glass: 'タンブラー',
+    technique: 'シェイク'
+  },
+  {
+    name: 'アヴィエーション',
+    base: 'ジン',
+    strength: 'ミディアム',
+    image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+    ingredients: [
+      { name: 'ドライジン', amount: '45ml' },
+      { name: 'マラスキーノリキュール', amount: '15ml' },
+      { name: 'クレーム・ド・ヴィオレット', amount: '7.5ml' },
+      { name: 'レモンジュース', amount: '15ml' }
+    ],
+    instructions: 'シェイカーに氷と材料を入れシェイクする。カクテルグラスに濾して注ぐ。',
+    glass: 'カクテルグラス',
+    technique: 'シェイク'
+  },
+  {
+    name: 'ソルティドッグ',
+    base: 'ウォッカ',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
+    ingredients: [
+      { name: 'ウォッカ', amount: '45ml' },
+      { name: 'グレープフルーツジュース', amount: '適量' },
+      { name: '塩', amount: '適量' }
+    ],
+    instructions: 'グラスの縁に塩をつける。氷を入れウォッカとグレープフルーツジュースを注ぎステアする。',
+    glass: 'タンブラー',
+    technique: 'ビルド'
+  },
+  {
+    name: 'メキシカンミュール',
+    base: 'テキーラ',
+    strength: 'ライト',
+    image_url: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
+    ingredients: [
+      { name: 'テキーラ', amount: '50ml' },
+      { name: 'ライムジュース', amount: '15ml' },
+      { name: 'ジンジャービア', amount: '適量' },
+      { name: 'ライム', amount: '1/4個' }
+    ],
+    instructions: 'コッパーマグに氷を入れ、テキーラとライムジュースを注ぐ。ジンジャービアで満たし、ライムを飾る。',
+    glass: 'コッパーマグ',
+    technique: 'ビルド'
   }
 ]
 
-# カクテルと材料を作成
-cocktails_data.each_with_index do |data, index|
+cocktails_data.each do |data|
   puts "Creating cocktail: #{data[:name]}"
 
-  # バリデーション
   base = BASE_MAP[data[:base]]
   strength = STRENGTH_MAP[data[:strength]]
   technique = TECHNIQUE_MAP[data[:technique]]
 
   if base.nil? || strength.nil? || technique.nil?
-    raise ArgumentError, "Invalid enum mapping for cocktail: #{data[:name]}"
+    raise ArgumentError, "Invalid enum mapping for #{data[:name]}"
   end
 
-  # カクテル作成
   cocktail = Cocktail.create!(
     name: data[:name],
     base: base,
@@ -236,21 +500,17 @@ cocktails_data.each_with_index do |data, index|
     glass: data[:glass]
   )
 
-  # 材料作成
-  data[:ingredients].each_with_index do |ingredient_data, position|
-    # 材料をマスタテーブルで作成・取得（重複なし）
-    ingredient = Ingredient.find_or_create_by!(name: ingredient_data[:name])
-
-    # 中間テーブルに関係を作成
+  data[:ingredients].each_with_index do |ing, i|
+    ingredient = Ingredient.find_or_create_by!(name: ing[:name])
     CocktailIngredient.create!(
       cocktail: cocktail,
       ingredient: ingredient,
-      amount_text: ingredient_data[:amount],
-      position: position + 1
+      amount_text: ing[:amount],
+      position: i + 1
     )
   end
 end
 
-puts "✅ Seeded #{Cocktail.count} cocktails"
-puts "✅ Seeded #{Ingredient.count} unique ingredients"
-puts "✅ Seeded #{CocktailIngredient.count} cocktail-ingredient relationships"
+puts "Seeded #{Cocktail.count} cocktails"
+puts "Seeded #{Ingredient.count} unique ingredients"
+puts "Seeded #{CocktailIngredient.count} relationships"

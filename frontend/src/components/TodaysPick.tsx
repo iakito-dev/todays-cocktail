@@ -77,52 +77,56 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
   }
 
   return (
-    <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-      <div className="relative grid md:grid-cols-2 gap-8 p-8 md:p-12">
+    <Card
+      className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      onClick={handleClick}
+    >
+      <div className="relative flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 p-4 md:p-8 lg:p-12">
         {/* Left Content */}
-        <div className="flex flex-col justify-center space-y-6">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit">
-            <Sparkles className="w-5 h-5" />
+        <div className="flex flex-col justify-center space-y-3 md:space-y-6 order-1 md:order-1">
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full w-fit text-sm md:text-base">
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
             <span className="font-medium">Today's Pick</span>
           </div>
 
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4 text-gray-900">
               {cocktail.name}
             </h2>
-            <p className="text-gray-600 leading-relaxed line-clamp-3">
+            <p className="text-sm md:text-base text-gray-600 leading-relaxed line-clamp-2 md:line-clamp-3">
               {cocktail.instructions}
             </p>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
-            <Badge className={`${strengthColors[cocktail.strength as keyof typeof strengthColors]} px-4 py-2`}>
+          <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+            <Badge className={`${strengthColors[cocktail.strength as keyof typeof strengthColors]} px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm`}>
               {getStrengthLabel(cocktail.strength)}
             </Badge>
-            <Badge variant="outline" className="px-4 py-2 bg-white border-gray-200">
+            <Badge variant="outline" className="px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm bg-white border-gray-200">
               {getBaseLabel(cocktail.base)}
             </Badge>
-            <Badge variant="outline" className="px-4 py-2 bg-white border-gray-200">
+            <Badge variant="outline" className="px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm bg-white border-gray-200">
               {getTechniqueLabel(cocktail.technique)}
             </Badge>
           </div>
 
+          {/* デスクトップ用ボタン */}
           <Button
             onClick={(e) => {
               e.stopPropagation();
               handleClick();
             }}
-            className="group w-full md:w-fit bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 md:px-8 py-4 md:py-6 shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base rounded-xl"
+            className="hidden md:flex group w-full md:w-fit bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base rounded-xl"
           >
             レシピを見る
-            <ArrowRight className="ml-2 w-5 h-5" />
+            <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
           </Button>
         </div>
 
         {/* Right Image */}
-        <div className="flex items-center justify-center">
-          <div className="relative group">
-            <div className="relative aspect-square w-full max-w-sm rounded-3xl overflow-hidden shadow-lg">
+        <div className="flex items-center justify-center order-2 md:order-2">
+          <div className="relative group w-full">
+            <div className="relative aspect-square w-full max-w-sm mx-auto rounded-2xl md:rounded-3xl overflow-hidden shadow-lg">
               <ImageWithFallback
                 src={cocktail.image_url || ""}
                 alt={cocktail.name || "No image available"}
@@ -131,6 +135,18 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
             </div>
           </div>
         </div>
+
+        {/* モバイル用ボタン（画像の下） */}
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleClick();
+          }}
+          className="md:hidden group w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-3 shadow-lg hover:shadow-xl transition-all duration-300 text-sm rounded-xl order-3"
+        >
+          レシピを見る
+          <ArrowRight className="ml-2 w-4 h-4" />
+        </Button>
       </div>
     </Card>
   );

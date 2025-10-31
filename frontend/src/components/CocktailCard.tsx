@@ -50,7 +50,7 @@ export function CocktailCard({
 }: CocktailCardProps) {
   return (
     <Card
-      className="group cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden border bg-white border-gray-200"
+      className="group cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden border bg-white border-gray-200 rounded-xl"
       onClick={() => onViewDetails(cocktail)}
     >
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -61,7 +61,7 @@ export function CocktailCard({
         />
         {/* お気に入りボタン - 左上 */}
         {showFavoriteButton && onFavoriteToggle && (
-          <div className="absolute top-3 left-3 z-10">
+          <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
             <FavoriteButton
               isFavorited={isFavorited}
               onToggle={() => onFavoriteToggle(cocktail.id)}
@@ -70,17 +70,17 @@ export function CocktailCard({
           </div>
         )}
         {/* 強度バッジ - 右上 */}
-        <div className="absolute top-3 right-3">
-          <Badge className={`${strengthColors[cocktail.strength] ?? strengthColors['light']} shadow-sm`}>
+        <div className="absolute top-2 right-2 md:top-3 md:right-3">
+          <Badge className={`${strengthColors[cocktail.strength] ?? strengthColors['light']} shadow-sm text-xs`}>
             {strengthLabels[cocktail.strength] ?? strengthLabels['light']}
           </Badge>
         </div>
       </div>
-      <CardContent className="p-5">
-        <h3 className="mb-3 text-gray-900 font-semibold">{cocktail.name}</h3>
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2 text-gray-600">
-            <Wine className="w-4 h-4" />
+      <CardContent className="p-3 md:p-5">
+        <h3 className="mb-2 md:mb-3 text-sm md:text-base text-gray-900 font-semibold line-clamp-1">{cocktail.name}</h3>
+        <div className="flex items-center justify-between text-xs md:text-sm">
+          <div className="flex items-center gap-1.5 md:gap-2 text-gray-600">
+            <Wine className="w-3.5 h-3.5 md:w-4 md:h-4" />
             <span>{baseLabels[cocktail.base]}</span>
           </div>
           <span className="text-gray-500">{techniqueLabels[cocktail.technique as keyof typeof techniqueLabels] ?? cocktail.technique}</span>

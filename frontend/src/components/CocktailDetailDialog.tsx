@@ -59,19 +59,20 @@ export function CocktailDetailDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-8">
-        <DialogHeader>
-          <div className="flex items-start justify-between pr-8">
-            <div className="flex-1">
-              <DialogTitle className="text-4xl mb-4 text-gray-900">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col p-0 [&>button]:hidden">
+        {/* Fixed Header */}
+        <DialogHeader className="text-left sticky top-0 bg-white z-10 p-6 sm:p-8 pb-4 sm:pb-6 border-b border-gray-100">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <DialogTitle className="text-2xl sm:text-4xl mb-3 sm:mb-4 text-gray-900">
                 {cocktail.name}
               </DialogTitle>
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge className={`${strengthColors[cocktail.strength as keyof typeof strengthColors] ?? ''} px-3 py-1.5 border text-sm`}>
+                <Badge className={`${strengthColors[cocktail.strength as keyof typeof strengthColors] ?? ''} px-2.5 py-1 sm:px-3 sm:py-1.5 border text-xs sm:text-sm`}>
                   {STRENGTH_LABELS[cocktail.strength]}
                 </Badge>
-                <Badge variant="outline" className="flex items-center gap-1 px-3 py-1.5 text-sm">
-                  <Wine className="w-3.5 h-3.5" />
+                <Badge variant="outline" className="flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm">
+                  <Wine className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   {BASE_LABELS[cocktail.base]}
                 </Badge>
               </div>
@@ -79,9 +80,9 @@ export function CocktailDetailDialog({
             {onToggleFavorite && (
               <Button
                 variant="ghost"
-                size="lg"
+                size="icon"
                 onClick={() => onToggleFavorite(cocktail.id)}
-                className="hover:bg-gray-100 rounded-full w-16 h-16 p-0"
+                className="hover:bg-gray-100 rounded-full shrink-0"
               >
                 <Heart
                   className={`w-12 h-12 transition-colors ${
@@ -93,7 +94,9 @@ export function CocktailDetailDialog({
           </div>
         </DialogHeader>
 
-        <div className="space-y-8 mt-8">
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto flex-1 p-6 sm:p-8 pt-4 sm:pt-6">
+          <div className="space-y-8">
           {/* Image */}
           <div className="aspect-video rounded-2xl overflow-hidden shadow-lg border border-gray-200">
             <ImageWithFallback
@@ -175,6 +178,7 @@ export function CocktailDetailDialog({
                 </p>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </DialogContent>

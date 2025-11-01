@@ -12,10 +12,50 @@ default: &default
 
 # 開発環境設定
 development:
-  <<: *default  # 上記のdefault設定をすべて継承
+  primary:
+    <<: *default
+  cache:
+    <<: *default
+    database: app_development_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: app_development_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: app_development_cable
+    migrations_paths: db/cable_migrate
 
 # テスト環境設定
 test:
-  <<: *default  # 上記のdefault設定を継承
-  # テスト専用のデータベースURL（開発環境とは別のデータベースを使用）
-  url: <%= ENV.fetch("DATABASE_URL_TEST") { "postgres://postgres:postgres@host.docker.internal:54322/app_test" } %>
+  primary:
+    <<: *default
+    url: <%= ENV.fetch("DATABASE_URL_TEST") { "postgres://postgres:postgres@host.docker.internal:54322/app_test" } %>
+  cache:
+    <<: *default
+    database: app_test_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: app_test_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: app_test_cable
+    migrations_paths: db/cable_migrate
+
+# 本番環境設定
+production:
+  primary:
+    <<: *default
+  # Solid Cable, Cache, Queue は本番環境では同じデータベースを使用
+  cache:
+    <<: *default
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    migrations_paths: db/cable_migrate

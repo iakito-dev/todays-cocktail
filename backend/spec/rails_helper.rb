@@ -82,6 +82,9 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  # Devise test helpers
+  config.include Devise::Test::IntegrationHelpers, type: :request
+
   # Shoulda Matchers configuration
   Shoulda::Matchers.configure do |shoulda_config|
     shoulda_config.integrate do |with|
@@ -89,12 +92,10 @@ RSpec.configure do |config|
       with.library :rails
     end
   end
-end
 
-# Shoulda Matchers configuration
-Shoulda::Matchers.configure do |config|
-  config.integrate do |with|
-    with.test_framework :rspec
-    with.library :rails
+  # メールのテスト設定
+  config.before(:each) do
+    ActionMailer::Base.deliveries.clear
+    ActionMailer::Base.delivery_method = :test
   end
 end

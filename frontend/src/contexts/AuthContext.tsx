@@ -6,6 +6,7 @@ interface User {
   id: number;
   email: string;
   name: string;
+  admin: boolean;
 }
 
 interface AuthContextType {
@@ -15,6 +16,7 @@ interface AuthContextType {
   signup: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,8 +57,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
-      const response = await apiSignup(email, password, name);
-      setUser(response.data.user);
+      await apiSignup(email, password, name);
+      // メール確認が必要なため、自動ログインしない
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -79,6 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signup,
     logout,
     isAuthenticated: user !== null,
+    isAdmin: user?.admin || false,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

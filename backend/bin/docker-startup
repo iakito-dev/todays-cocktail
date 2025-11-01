@@ -19,7 +19,7 @@ if [ $(bundle exec rails runner "puts Cocktail.count") -eq 0 ]; then
   echo "🌱 Seeding database (first time setup)..."
   bundle exec rails db:seed
 else
-  echo "✅ Database already seeded, skipping..."
+  echo " Database already seeded, skipping..."
 fi
 
 # Railsサーバーを起動

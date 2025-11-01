@@ -11,10 +11,10 @@ module Api
         build_resource(sign_up_params)
 
         if resource.save
-          sign_in(resource)
-          render_resource(resource)
+          # メール確認が必要な場合は自動ログインしない（開発環境でも同様）
+          render_resource(resource, "確認メールを送信しました。メールを確認してアカウントを有効化してください。")
         else
-          render_resource(resource)
+          render_resource(resource, "アカウントの作成に失敗しました。")
         end
       end
 
@@ -30,21 +30,22 @@ module Api
       end
 
       # リソースのレンダリング
-      def render_resource(resource)
+      def render_resource(resource, message = nil)
         if resource.persisted?
           render json: {
-            status: { code: 200, message: "アカウントを作成しました。" },
+            status: { code: 200, message: message || "アカウントを作成しました。" },
             data: {
               user: {
                 id: resource.id,
                 email: resource.email,
-                name: resource.name
+                name: resource.name,
+                confirmed: resource.confirmed?
               }
             }
           }, status: :ok
         else
           render json: {
-            status: { code: 422, message: "アカウントの作成に失敗しました。" },
+            status: { code: 422, message: message || "アカウントの作成に失敗しました。" },
             errors: resource.errors.full_messages
           }, status: :unprocessable_entity
         end

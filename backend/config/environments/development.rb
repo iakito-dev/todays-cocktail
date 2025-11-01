@@ -29,14 +29,39 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  # Set the default URL options for Active Storage
+  Rails.application.routes.default_url_options = { host: 'localhost', port: 3000 }
+
+  # Mailer settings for development
+  # 環境変数RESEND_API_KEYが設定されている場合はResendを使用、なければletter_opener
+  if ENV['RESEND_API_KEY'].present?
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: 'smtp.resend.com',
+      port: 465,
+      user_name: 'resend',
+      password: ENV['RESEND_API_KEY'],
+      authentication: :plain,
+      tls: true  # Port 465はSSL/TLS接続なのでtlsを使用（enable_starttls_autoは不要）
+    }
+    config.action_mailer.default_options = {
+      from: ENV.fetch('MAIL_FROM_ADDRESS', 'noreply@todays-cocktail.local')
+    }
+  else
+    config.action_mailer.delivery_method = :letter_opener
+  end
+
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
 
   # Set localhost to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch('FRONTEND_URL', 'http://localhost:5173').gsub(%r{https?://}, ''),
+    protocol: ENV.fetch('FRONTEND_URL', 'http://localhost:5173').start_with?('https') ? 'https' : 'http'
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

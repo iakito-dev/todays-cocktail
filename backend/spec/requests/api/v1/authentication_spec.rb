@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Authentication', type: :request do
-  let(:user) { create(:user) }
-  let(:valid_credentials) { { user: { email: user.email, password: user.password } } }
+  let(:user) { create(:user, :confirmed) }
+  let(:valid_credentials) { { user: { email: user.email, password: 'password123' } } }
   let(:invalid_credentials) { { user: { email: user.email, password: 'wrong_password' } } }
 
   describe 'POST /api/v1/signup' do
@@ -30,17 +30,17 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
         expect(response).to have_http_status(:ok)
       end
 
-      it 'JWTトークンを含むレスポンスを返す' do
-        post '/api/v1/signup', params: valid_attributes, as: :json
-        expect(response.headers['Authorization']).to be_present
-        expect(response.headers['Authorization']).to match(/^Bearer .+/)
-      end
-
       it 'ユーザー情報を含むJSONレスポンスを返す' do
         post '/api/v1/signup', params: valid_attributes, as: :json
         json_response = JSON.parse(response.body)
         expect(json_response['status']['code']).to eq(200)
         expect(json_response['data']['user']['email']).to eq('newuser@example.com')
+      end
+
+      it '確認メールを送信する' do
+        expect {
+          post '/api/v1/signup', params: valid_attributes, as: :json
+        }.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
 

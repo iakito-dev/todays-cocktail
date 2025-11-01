@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Zen Kaku Gothic New', 'sans-serif'],
+        sans: ['Noto Sans JP', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         serif: ['Cormorant Garamond', 'serif'],
       },
       borderRadius: {

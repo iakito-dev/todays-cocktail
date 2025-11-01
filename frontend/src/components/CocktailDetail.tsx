@@ -100,7 +100,12 @@ export function CocktailDetail() {
         <div className="space-y-6">
           {/* Header */}
           <div className="space-y-3">
-            <h1 className="text-4xl font-bold text-gray-900">{cocktail.name}</h1>
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold text-gray-900 leading-tight">{cocktail.name_ja || cocktail.name}</h1>
+              {cocktail.name_ja && (
+                <p className="text-xl text-gray-500 font-semibold tracking-wider uppercase">{cocktail.name}</p>
+              )}
+            </div>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge className={`${strengthColors[cocktail.strength]} px-3 py-1 border`}>
                 {STRENGTH_LABELS[cocktail.strength]}
@@ -173,7 +178,7 @@ export function CocktailDetail() {
           <Separator className="my-6" />
 
           {/* Instructions */}
-          {cocktail.instructions && (
+          {(cocktail.description || cocktail.instructions) && (
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-1 h-6 bg-blue-500 rounded-full" />
@@ -181,27 +186,29 @@ export function CocktailDetail() {
               </div>
               <div className="bg-gray-50 p-6 rounded-2xl">
                 <p className="leading-relaxed text-gray-700 whitespace-pre-wrap">
-                  {cocktail.instructions}
+                  {cocktail.description || cocktail.instructions}
                 </p>
               </div>
             </div>
           )}
 
           {/* Tips */}
-          <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">💡</div>
-              <div>
-                <h4 className="mb-2 text-blue-900">初心者の方へ</h4>
-                <p className="text-blue-800 leading-relaxed">
-                  このカクテルは{cocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : cocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
-                  {cocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
-                  {cocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
-                  {cocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
-                </p>
+          {!cocktail.description && (
+            <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+              <div className="flex items-start gap-3">
+                <div className="text-2xl">💡</div>
+                <div>
+                  <h4 className="mb-2 text-blue-900">初心者の方へ</h4>
+                  <p className="text-blue-800 leading-relaxed">
+                    このカクテルは{cocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : cocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
+                    {cocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
+                    {cocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
+                    {cocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

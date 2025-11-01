@@ -2,11 +2,11 @@ class Api::V1::CocktailsController < ApplicationController
   def index
     cocktails = Cocktail.all
 
-    # 名前で部分一致検索
+    # 名前で部分一致検索（日本語名または英語名）
     if params[:q].present?
       keyword = params[:q].to_s.strip
       like = "%#{ActiveRecord::Base.sanitize_sql_like(keyword)}%"
-      cocktails = cocktails.where('name ILIKE ?', like)
+      cocktails = cocktails.where('name ILIKE ? OR name_ja ILIKE ?', like, like)
     end
 
     # ベースで絞り込み（単数 or 複数）。例: base=gin,rum または base[]=gin&base[]=rum
@@ -29,7 +29,17 @@ class Api::V1::CocktailsController < ApplicationController
     end
 
     cocktails = cocktails.order(:name)
-    render json: cocktails
+
+    # 画像URLと日本語データを含めたレスポンス
+    cocktails_with_images = cocktails.map do |cocktail|
+      cocktail.as_json.merge(
+        image_url: cocktail.display_image_url,
+        name_ja: cocktail.name_ja,
+        glass_ja: cocktail.glass_ja
+      )
+    end
+
+    render json: cocktails_with_images
   end
 
   def show
@@ -39,11 +49,18 @@ class Api::V1::CocktailsController < ApplicationController
     cocktail_data = cocktail.as_json.merge(
       ingredients: cocktail.ordered_ingredients.map do |ci|
         {
-          name: ci.ingredient.name,
-          amount: ci.amount_text,
+          name: ci.ingredient.name_ja || ci.ingredient.name,
+          name_en: ci.ingredient.name,
+          amount: ci.amount_ja || ci.amount_text,
+          amount_en: ci.amount_text,
           position: ci.position
         }
-      end
+      end,
+      glass_ja: cocktail.glass_ja,
+      name_ja: cocktail.name_ja,
+      instructions_ja: cocktail.instructions_ja,
+      description: cocktail.description,
+      image_url: cocktail.display_image_url
     )
 
     render json: cocktail_data
@@ -58,11 +75,18 @@ class Api::V1::CocktailsController < ApplicationController
       cocktail_data = cocktail.as_json.merge(
         ingredients: cocktail.ordered_ingredients.map do |ci|
           {
-            name: ci.ingredient.name,
-            amount: ci.amount_text,
+            name: ci.ingredient.name_ja || ci.ingredient.name,
+            name_en: ci.ingredient.name,
+            amount: ci.amount_ja || ci.amount_text,
+            amount_en: ci.amount_text,
             position: ci.position
           }
-        end
+        end,
+        glass_ja: cocktail.glass_ja,
+        name_ja: cocktail.name_ja,
+        instructions_ja: cocktail.instructions_ja,
+        description: cocktail.description,
+        image_url: cocktail.display_image_url
       )
       render json: cocktail_data
     else

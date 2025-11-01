@@ -46,7 +46,7 @@ export function CocktailFilters({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
             type="text"
-            placeholder="マティーニ、モヒート..."
+            placeholder="モヒート、Mojito、マティーニ..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9 pr-9 h-11 bg-white border-gray-200 rounded-xl"

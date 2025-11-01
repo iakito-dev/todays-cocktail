@@ -53,8 +53,8 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
       <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
         <div className="p-8 md:p-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit mb-4">
-            <Sparkles className="w-5 h-5" />
-            <span className="font-medium">Today's Pick</span>
+            <Sparkles className="w-5 h-5 flex-shrink-0" />
+            <span className="font-medium leading-none">Today's Pick</span>
           </div>
           <p className="text-gray-600">読み込み中...</p>
         </div>
@@ -67,8 +67,8 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
       <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
         <div className="p-8 md:p-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit mb-4">
-            <Sparkles className="w-5 h-5" />
-            <span className="font-medium">Today's Pick</span>
+            <Sparkles className="w-5 h-5 flex-shrink-0" />
+            <span className="font-medium leading-none">Today's Pick</span>
           </div>
           <p className="text-gray-600">本日のおすすめカクテルを取得できませんでした。</p>
         </div>
@@ -85,16 +85,23 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
         {/* Left Content */}
         <div className="flex flex-col justify-center space-y-3 md:space-y-6 order-1 md:order-1">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full w-fit text-sm md:text-base">
-            <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="font-medium">Today's Pick</span>
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+            <span className="font-medium leading-none">Today's Pick</span>
           </div>
 
           <div>
-            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4 text-gray-900">
-              {cocktail.name}
-            </h2>
+            <div className="space-y-1 md:space-y-2 mb-2 md:mb-4">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight break-words">
+                {cocktail.name_ja || cocktail.name}
+              </h2>
+              {cocktail.name_ja && (
+                <p className="text-sm md:text-lg text-gray-500 font-semibold tracking-wider uppercase break-words">
+                  {cocktail.name}
+                </p>
+              )}
+            </div>
             <p className="text-sm md:text-base text-gray-600 leading-relaxed line-clamp-2 md:line-clamp-3">
-              {cocktail.instructions}
+              {cocktail.instructions_ja || cocktail.instructions}
             </p>
           </div>
 

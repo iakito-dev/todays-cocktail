@@ -3,11 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Favorites', type: :request do
-  let(:user) { create(:user) }
-  let(:other_user) { create(:user) }
+  let(:user) { create(:user, :confirmed) }
+  let(:other_user) { create(:user, :confirmed) }
   let(:cocktail) { create(:cocktail) }
   let(:auth_headers) do
-    post '/api/v1/login', params: { user: { email: user.email, password: user.password } }, as: :json
+    post '/api/v1/login', params: { user: { email: user.email, password: 'password123' } }, as: :json
     { 'Authorization' => response.headers['Authorization'] }
   end
 

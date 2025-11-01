@@ -7,7 +7,7 @@ export const Footer = () => {
         <div className="text-center mb-6 md:mb-8">
           <div className="flex items-center justify-center gap-2 mb-2 md:mb-3">
             <div className="text-2xl md:text-3xl">🍸</div>
-            <h3 className="text-base md:text-lg font-semibold text-gray-900">Today's Cocktail</h3>
+            <h3 className="text-base md:text-lg font-semibold text-gray-900">Today's Cocktails</h3>
           </div>
           <p className="text-sm md:text-base text-gray-600 mb-1 md:mb-2 px-4">
             家でもバーでも、"今日の一杯"が見つかるカクテル図鑑
@@ -24,7 +24,7 @@ export const Footer = () => {
         </div>
         <div className="pt-4 md:pt-6 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 text-xs md:text-sm text-gray-500 border-t border-gray-200">
           <div className="text-center md:text-left">
-            © 2025 Today's Cocktail. Licensed under MIT License.
+            © 2025 Today's Cocktails. Licensed under MIT License.
           </div>
           <div className="flex items-center gap-2">
             <span>Created by</span>

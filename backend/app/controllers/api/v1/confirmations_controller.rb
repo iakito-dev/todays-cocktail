@@ -8,7 +8,7 @@ module Api
       # GET /api/v1/confirmation?confirmation_token=xxx
       def show
         self.resource = resource_class.confirm_by_token(params[:confirmation_token])
-        
+
         if resource.errors.empty?
           render json: {
             status: { code: 200, message: "メールアドレスが確認されました。" },
@@ -32,7 +32,7 @@ module Api
       # POST /api/v1/confirmation
       def create
         self.resource = resource_class.send_confirmation_instructions(resource_params)
-        
+
         if successfully_sent?(resource)
           render json: {
             status: { code: 200, message: "確認メールを再送信しました。" }

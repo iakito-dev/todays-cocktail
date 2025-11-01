@@ -42,7 +42,7 @@ class PopularCocktailImporter
     'Daiquiri',
     'Whiskey Sour',
     'Moscow Mule',
-    
+
     # トロピカル・フルーティー
     'Pina Colada',
     'Mai Tai',
@@ -50,7 +50,7 @@ class PopularCocktailImporter
     'Sex on the Beach',
     'Tequila Sunrise',
     'Sangria',
-    
+
     # モダン・人気
     'Espresso Martini',
     'Aperol Spritz',
@@ -58,7 +58,7 @@ class PopularCocktailImporter
     'Aviation',
     'Pornstar Martini',
     'Passion Fruit Martini',
-    
+
     # シンプル・定番
     'Gin and Tonic',
     'Cuba Libre',
@@ -67,24 +67,24 @@ class PopularCocktailImporter
     'Tom Collins',
     'Gimlet',
     'Caipirinha',
-    
+
     # ウイスキーベース
     'Mint Julep',
     'Irish Coffee',
     'Sazerac',
     'Boulevardier',
-    
+
     # ラムベース
     'Dark and Stormy',
     'Zombie',
     'Hemingway Special',
-    
+
     # シャンパン・ワインベース
     'Mimosa',
     'Bellini',
     'Kir',
     'Kir Royale',
-    
+
     # その他人気
     'White Russian',
     'Long Island Iced Tea',
@@ -106,14 +106,14 @@ class PopularCocktailImporter
   def import_all
     POPULAR_COCKTAILS.each_with_index do |cocktail_name, index|
       puts "\n[#{index + 1}/#{POPULAR_COCKTAILS.size}] Processing: #{cocktail_name}"
-      
+
       begin
         import_cocktail(cocktail_name)
       rescue StandardError => e
         puts "  ❌ Error: #{e.message}"
         @error_count += 1
       end
-      
+
       # API負荷軽減
       sleep 0.5 if index < POPULAR_COCKTAILS.size - 1
     end
@@ -134,10 +134,10 @@ class PopularCocktailImporter
     # APIから検索
     require 'net/http'
     require 'json'
-    
+
     url = URI("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=#{URI.encode_www_form_component(cocktail_name)}")
     response = Net::HTTP.get_response(url)
-    
+
     unless response.is_a?(Net::HTTPSuccess)
       puts "  ⚠️  API error"
       @error_count += 1
@@ -289,17 +289,17 @@ class CocktailTranslator
 
   def translate_cocktails
     puts "\n1. Translating cocktail names and glasses..."
-    
+
     Cocktail.where(name_ja: nil).find_each.with_index do |cocktail, index|
       begin
         name_ja = @translation_service.translate_cocktail_name(cocktail.name)
         glass_ja = @translation_service.translate_glass(cocktail.glass) if cocktail.glass.present?
-        
+
         cocktail.update!(name_ja: name_ja, glass_ja: glass_ja)
-        
+
         puts "  ✅ [#{index + 1}] #{cocktail.name} → #{name_ja}"
         @translated_count += 1
-        
+
         sleep 1 # API負荷軽減
       rescue StandardError => e
         puts "  ❌ Error: #{cocktail.name} - #{e.message}"
@@ -310,19 +310,19 @@ class CocktailTranslator
 
   def translate_ingredients
     puts "\n2. Translating ingredient names..."
-    
+
     # 重複を避けるため、ユニークな材料名のみを翻訳
     unique_ingredient_names = Ingredient.where(name_ja: nil).distinct.pluck(:name)
-    
+
     unique_ingredient_names.each.with_index do |ingredient_name, index|
       begin
         name_ja = @translation_service.translate_ingredient_name(ingredient_name)
-        
+
         # 同じ名前の材料すべてを更新
         Ingredient.where(name: ingredient_name).update_all(name_ja: name_ja)
-        
+
         puts "  ✅ [#{index + 1}] #{ingredient_name} → #{name_ja}"
-        
+
         sleep 0.5 # API負荷軽減
       rescue StandardError => e
         puts "  ❌ Error: #{ingredient_name} - #{e.message}"

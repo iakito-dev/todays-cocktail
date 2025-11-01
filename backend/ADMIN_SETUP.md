@@ -15,7 +15,7 @@ ADMIN_PASSWORD=your-secure-password
 ADMIN_NAME=Your Name
 ```
 
-**重要**: 
+**重要**:
 - `.env`ファイルは`.gitignore`に含まれているため、Gitにコミットされません
 - パスワードは十分に強力なものを設定してください
 - メールアドレスは実際に使用可能なものを推奨します

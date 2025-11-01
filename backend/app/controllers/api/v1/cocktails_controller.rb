@@ -29,14 +29,14 @@ class Api::V1::CocktailsController < ApplicationController
     end
 
     cocktails = cocktails.order(:name)
-    
+
     # 画像URLを含めたレスポンス
     cocktails_with_images = cocktails.map do |cocktail|
       cocktail.as_json.merge(
         image_url: cocktail.display_image_url
       )
     end
-    
+
     render json: cocktails_with_images
   end
 

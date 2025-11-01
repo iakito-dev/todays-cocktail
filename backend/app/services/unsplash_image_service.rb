@@ -6,7 +6,7 @@ require 'open-uri'
 # Unsplash APIを使用してカクテル画像を検索・ダウンロードするサービス
 class UnsplashImageService
   BASE_URL = 'https://api.unsplash.com'
-  
+
   def initialize
     @access_key = ENV['UNSPLASH_ACCESS_KEY']
     raise 'UNSPLASH_ACCESS_KEY is not set' if @access_key.blank?
@@ -21,11 +21,11 @@ class UnsplashImageService
 
     # 検索クエリを構築（カクテル名 + "cocktail"）
     query = "#{cocktail.name} cocktail drink"
-    
+
     begin
       # Unsplash APIで画像を検索
       photo = search_photo(query)
-      
+
       unless photo
         Rails.logger.warn("No image found on Unsplash for: #{cocktail.name}")
         return false
@@ -33,7 +33,7 @@ class UnsplashImageService
 
       # 画像をダウンロードしてアタッチ
       download_and_attach(cocktail, photo)
-      
+
       Rails.logger.info("Successfully fetched Unsplash image for: #{cocktail.name}")
       true
     rescue StandardError => e
@@ -48,7 +48,7 @@ class UnsplashImageService
   def batch_fetch_images(cocktails)
     success_count = 0
     failure_count = 0
-    
+
     cocktails.each_with_index do |cocktail, index|
       if fetch_and_attach_cocktail_image(cocktail)
         success_count += 1
@@ -57,11 +57,11 @@ class UnsplashImageService
         failure_count += 1
         puts "  ❌ [#{index + 1}/#{cocktails.size}] #{cocktail.name}"
       end
-      
+
       # Unsplash APIのレート制限を考慮（50 requests/hour）
       sleep 2
     end
-    
+
     {
       success: success_count,
       failure: failure_count,
@@ -90,7 +90,7 @@ class UnsplashImageService
     if response.success?
       results = response.parsed_response['results']
       return nil if results.empty?
-      
+
       results.first
     else
       Rails.logger.error("Unsplash API error: #{response.code} - #{response.body}")
@@ -104,14 +104,14 @@ class UnsplashImageService
     image_url = photo.dig('urls', 'regular')
     photographer = photo.dig('user', 'name')
     photo_id = photo['id']
-    
+
     # 画像をダウンロード
     image_data = OpenURI.open_uri(image_url, 'rb')
     file_content = image_data.read
     image_data.close
-    
+
     io = StringIO.new(file_content)
-    
+
     # Active Storageにアタッチ
     cocktail.image.attach(
       io: io,
@@ -123,7 +123,7 @@ class UnsplashImageService
         source: 'unsplash'
       }
     )
-    
+
     # Unsplashのダウンロードエンドポイントを叩く（利用規約で必須）
     track_download(photo)
   end
@@ -131,7 +131,7 @@ class UnsplashImageService
   # Unsplashのダウンロードを追跡（API利用規約で必須）
   def track_download(photo)
     download_location = photo['links']['download_location']
-    
+
     HTTParty.get(
       download_location,
       headers: {

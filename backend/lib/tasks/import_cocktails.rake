@@ -108,7 +108,7 @@ class CocktailImporter
     end
 
     cocktail = nil
-    
+
     begin
       ActiveRecord::Base.transaction do
         # カクテル名を翻訳

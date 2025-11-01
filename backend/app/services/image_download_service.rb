@@ -28,7 +28,7 @@ class ImageDownloadService
       # ファイル内容を読み込んでStringIOに変換（ストリームを閉じても安全）
       file_content = downloaded_file.read
       downloaded_file.close
-      
+
       io = StringIO.new(file_content)
 
       # Active Storageにアタッチ

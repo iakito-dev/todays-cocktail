@@ -52,7 +52,7 @@ class UnsplashImageService
     cocktails.each_with_index do |cocktail, index|
       if fetch_and_attach_cocktail_image(cocktail)
         success_count += 1
-        puts "  ✅ [#{index + 1}/#{cocktails.size}] #{cocktail.name}"
+        puts "   [#{index + 1}/#{cocktails.size}] #{cocktail.name}"
       else
         failure_count += 1
         puts "  ❌ [#{index + 1}/#{cocktails.size}] #{cocktail.name}"

@@ -11,13 +11,8 @@ module Api
         build_resource(sign_up_params)
 
         if resource.save
-          # メール確認が必要な場合は自動ログインしない
-          if resource.active_for_authentication?
-            sign_in(resource)
-            render_resource(resource, "アカウントを作成しました。")
-          else
-            render_resource(resource, "確認メールを送信しました。メールを確認してアカウントを有効化してください。")
-          end
+          # メール確認が必要な場合は自動ログインしない（開発環境でも同様）
+          render_resource(resource, "確認メールを送信しました。メールを確認してアカウントを有効化してください。")
         else
           render_resource(resource, "アカウントの作成に失敗しました。")
         end

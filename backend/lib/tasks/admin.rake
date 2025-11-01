@@ -21,7 +21,7 @@ namespace :admin do
       user.skip_confirmation! # メール確認をスキップ
 
       if user.save
-        puts "✅ 管理者アカウントを作成しました"
+        puts " 管理者アカウントを作成しました"
         puts "   Email: #{user.email}"
         puts "   Name: #{user.name}"
       else
@@ -36,7 +36,7 @@ namespace :admin do
       user.confirm unless user.confirmed? # 未確認の場合は確認する
 
       if user.save
-        puts "✅ 既存アカウントを管理者に設定しました"
+        puts " 既存アカウントを管理者に設定しました"
         puts "   Email: #{user.email}"
         puts "   Name: #{user.name}"
       else
@@ -81,7 +81,7 @@ namespace :admin do
       puts "ℹ️  #{email} は既に管理者です"
     else
       user.update!(admin: true)
-      puts "✅ #{email} を管理者に昇格しました"
+      puts " #{email} を管理者に昇格しました"
     end
   end
 
@@ -105,7 +105,7 @@ namespace :admin do
       puts "ℹ️  #{email} は管理者ではありません"
     else
       user.update!(admin: false)
-      puts "✅ #{email} の管理者権限を削除しました"
+      puts " #{email} の管理者権限を削除しました"
     end
   end
 end

@@ -1,0 +1,39 @@
+ja:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: 'バリデーションに失敗しました: %{errors}'
+        restrict_dependent_destroy:
+          has_one: "%{record}が存在しているので削除できません"
+          has_many: "%{record}が存在しているので削除できません"
+    models:
+      user: ユーザー
+    attributes:
+      user:
+        name: ユーザー名
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード（確認用）
+        current_password: 現在のパスワード
+        confirmation_token: 確認トークン
+        confirmed_at: 確認日時
+        confirmation_sent_at: 確認メール送信日時
+        unconfirmed_email: 未確認のメールアドレス
+  errors:
+    messages:
+      blank: を入力してください
+      too_short: は%{count}文字以上で入力してください
+      too_long: は%{count}文字以内で入力してください
+      invalid: は不正な値です
+      taken: はすでに存在します
+      not_a_number: は数値で入力してください
+      greater_than: は%{count}より大きい値にしてください
+      greater_than_or_equal_to: は%{count}以上の値にしてください
+      less_than: は%{count}より小さい値にしてください
+      less_than_or_equal_to: は%{count}以下の値にしてください
+      confirmation: と%{attribute}の入力が一致しません
+      not_an_integer: は整数で入力してください
+      required: を入力してください
+      present: は入力しないでください
+      inclusion: は一覧にありません
+      exclusion: は予約されています

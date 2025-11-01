@@ -137,7 +137,7 @@ class CocktailImporter
         ImageDownloadService.download_and_attach(cocktail, drink_data['strDrinkThumb'])
       end
 
-      puts "✅ Imported: #{cocktail_name} (#{cocktail&.name_ja})"
+      puts " Imported: #{cocktail_name} (#{cocktail&.name_ja})"
       @imported_count += 1
 
       # API負荷軽減のため少し待機（翻訳API）
@@ -244,7 +244,7 @@ class CocktailImporter
   def print_summary
     puts "\n" + "=" * 50
     puts "Import Summary:"
-    puts "  ✅ Imported: #{@imported_count}"
+    puts "   Imported: #{@imported_count}"
     puts "  ⏭️  Skipped:  #{@skipped_count}"
     puts "  ❌ Errors:   #{@error_count}"
     puts "=" * 50

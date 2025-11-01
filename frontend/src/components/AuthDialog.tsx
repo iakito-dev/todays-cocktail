@@ -43,7 +43,12 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Login failed:', error);
-      setError('ログインに失敗しました');
+      // エラーオブジェクトからメッセージを取得
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('ログインに失敗しました');
+      }
     }
   };
 
@@ -58,14 +63,23 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
 
     try {
       await onSignup(email, password, name);
+      // 成功メッセージを表示
+      setError('');
+      alert('確認メールを送信しました。メールを確認してアカウントを有効化してください。');
       // Reset form
       setEmail('');
       setPassword('');
       setName('');
+      onClose();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Signup failed:', error);
-      setError('アカウント作成に失敗しました');
+      // エラーオブジェクトからメッセージを取得
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('アカウント作成に失敗しました');
+      }
     }
   };
 
@@ -78,7 +92,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
               🍸
             </div>
           </div>
-          <DialogTitle className="text-center text-2xl text-gray-900">Today's Cocktail</DialogTitle>
+          <DialogTitle className="text-center text-2xl text-gray-900">Today's Cocktails</DialogTitle>
           <DialogDescription className="text-center text-base">
             お気に入りのカクテルを保存して、いつでも楽しめます
           </DialogDescription>

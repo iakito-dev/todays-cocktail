@@ -117,7 +117,7 @@ class CocktailCleaner
   def cleanup_cocktails
     Cocktail.find_each do |cocktail|
       if FAMOUS_COCKTAILS.key?(cocktail.name)
-        puts "  ✅ Keeping: #{cocktail.name}"
+        puts "   Keeping: #{cocktail.name}"
         @kept_count += 1
       else
         puts "  ❌ Deleting: #{cocktail.name}"
@@ -131,7 +131,7 @@ class CocktailCleaner
     Cocktail.find_each do |cocktail|
       name_ja = FAMOUS_COCKTAILS[cocktail.name]
       if name_ja && cocktail.update(name_ja: name_ja)
-        puts "  ✅ #{cocktail.name} → #{name_ja}"
+        puts "   #{cocktail.name} → #{name_ja}"
         @translated_count += 1
       end
     end
@@ -160,7 +160,7 @@ class CocktailCleaner
         if translated_text.present?
           # instructionsは英語のまま、descriptionに日本語を保存
           cocktail.update(description: translated_text)
-          puts "  ✅ Translated: #{cocktail.name}"
+          puts "   Translated: #{cocktail.name}"
           translated += 1
           sleep 0.5 # API負荷軽減
         end
@@ -175,7 +175,7 @@ class CocktailCleaner
   def print_summary
     puts "\n" + "=" * 50
     puts "Summary:"
-    puts "  ✅ Kept: #{@kept_count} famous cocktails"
+    puts "   Kept: #{@kept_count} famous cocktails"
     puts "  ❌ Deleted: #{@deleted_count} cocktails"
     puts "  🌐 Translated: #{@translated_count} names"
     puts "=" * 50

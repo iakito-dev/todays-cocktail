@@ -186,7 +186,7 @@ class PopularCocktailImporter
       ImageDownloadService.download_and_attach(cocktail, drink_data['strDrinkThumb'])
     end
 
-    puts "  ✅ Imported: #{drink_data['strDrink']}"
+    puts "   Imported: #{drink_data['strDrink']}"
     @imported_count += 1
   end
 
@@ -262,7 +262,7 @@ class PopularCocktailImporter
   def print_summary
     puts "\n" + "=" * 50
     puts "Summary:"
-    puts "  ✅ Imported:   #{@imported_count}"
+    puts "   Imported:   #{@imported_count}"
     puts "  ⏭️  Skipped:    #{@skipped_count}"
     puts "  ⚠️  Not Found:  #{@not_found_count}"
     puts "  ❌ Errors:     #{@error_count}"
@@ -297,7 +297,7 @@ class CocktailTranslator
 
         cocktail.update!(name_ja: name_ja, glass_ja: glass_ja)
 
-        puts "  ✅ [#{index + 1}] #{cocktail.name} → #{name_ja}"
+        puts "   [#{index + 1}] #{cocktail.name} → #{name_ja}"
         @translated_count += 1
 
         sleep 1 # API負荷軽減
@@ -321,7 +321,7 @@ class CocktailTranslator
         # 同じ名前の材料すべてを更新
         Ingredient.where(name: ingredient_name).update_all(name_ja: name_ja)
 
-        puts "  ✅ [#{index + 1}] #{ingredient_name} → #{name_ja}"
+        puts "   [#{index + 1}] #{ingredient_name} → #{name_ja}"
 
         sleep 0.5 # API負荷軽減
       rescue StandardError => e
@@ -334,7 +334,7 @@ class CocktailTranslator
   def print_summary
     puts "\n" + "=" * 50
     puts "Translation Summary:"
-    puts "  ✅ Translated: #{@translated_count}"
+    puts "   Translated: #{@translated_count}"
     puts "  ⏭️  Skipped:    #{@skipped_count}"
     puts "  ❌ Errors:     #{@error_count}"
     puts "=" * 50

@@ -57,8 +57,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
-      const response = await apiSignup(email, password, name);
-      setUser(response.data.user);
+      await apiSignup(email, password, name);
+      // メール確認が必要なため、自動ログインしない
+      setUser(null);
     } finally {
       setIsLoading(false);
     }

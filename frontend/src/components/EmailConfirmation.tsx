@@ -33,8 +33,20 @@ export function EmailConfirmation() {
         const data = await response.json();
 
         if (response.ok) {
+          // JWTトークンをAuthorizationヘッダーから取得
+          const authHeader = response.headers.get('Authorization');
+          if (authHeader) {
+            const token = authHeader.replace('Bearer ', '');
+            localStorage.setItem('auth_token', token);
+          }
+
           setStatus('success');
-          setMessage('メールアドレスが確認されました。ログインしてご利用ください。');
+          setMessage('メールアドレスの認証が完了しました。ホーム画面へリダイレクトします。');
+
+          // 2秒後にホームへリダイレクト（完全リロード）
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
         } else {
           setStatus('error');
           setMessage(data.status?.message || '確認に失敗しました。');
@@ -81,8 +93,8 @@ export function EmailConfirmation() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">確認完了</h2>
             <p className="text-gray-600 mb-6">{message}</p>
-            <Button onClick={() => navigate('/login')} className="w-full">
-              ログインページへ
+            <Button onClick={() => navigate('/')} className="w-full">
+              ホームへ戻ってログイン
             </Button>
           </div>
         )}

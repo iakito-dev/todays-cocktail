@@ -1,4 +1,4 @@
-# Today's Cocktail 🍹
+# Today's Cocktails 🍹
 
 Ruby on Rails（API） × React（Vite） × Supabase（PostgreSQL）で構築されたカクテル情報アプリです。
 
@@ -117,7 +117,7 @@ VITE_SUPABASE_ANON_KEY=supabase statusで取得
 
 ---
 
-## ✅ 5. Verify Setup
+##  5. Verify Setup
 
 ```bash
 # 1. Supabaseサービス確認

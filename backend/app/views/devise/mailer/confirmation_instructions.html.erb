@@ -1,5 +1,14 @@
-<p>Welcome <%= @email %>!</p>
+<p><%= @resource.name %>様</p>
 
-<p>You can confirm your account email through the link below:</p>
+<p>Today's Cocktailsへようこそ！</p>
 
-<p><%= link_to 'Confirm my account', "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirm?confirmation_token=#{@token}" %></p>
+<p>以下のリンクをクリックして、メールアドレスの確認を完了してください：</p>
+
+<p><%= link_to 'メールアドレスを確認する', "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@token}", style: 'display: inline-block; padding: 12px 24px; background-color: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;' %></p>
+
+<p>または、以下のURLをブラウザにコピー&ペーストしてください：</p>
+<p><%= "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@token}" %></p>
+
+<hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;">
+
+<p style="color: #6b7280; font-size: 14px;">このメールに心当たりがない場合は、無視してください。</p>

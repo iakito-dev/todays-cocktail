@@ -1,4 +1,4 @@
-# Today's Cocktail Backend
+# Today's Cocktails Backend
 
 カクテル情報を提供するRails APIバックエンド
 
@@ -24,6 +24,13 @@ cp .env.example .env
 - `ADMIN_EMAIL`: 管理者アカウントのメールアドレス
 - `ADMIN_PASSWORD`: 管理者アカウントのパスワード
 - `ADMIN_NAME`: 管理者アカウントの名前（オプション）
+
+オプションの環境変数（メール配信用）:
+- `RESEND_API_KEY`: Resend APIキー（メール配信に使用）
+- `MAIL_FROM_ADDRESS`: 送信元メールアドレス
+- `FRONTEND_URL`: フロントエンドURL（メール内リンク用）
+
+**メール配信の設定**: 詳細は[RESEND_SETUP.md](./RESEND_SETUP.md)を参照してください。
 
 ### 3. データベースのセットアップ
 

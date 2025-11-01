@@ -47,13 +47,13 @@ export default function App() {
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     const savedSession = localStorage.getItem('session');
-    
+
     if (savedUser && savedSession) {
       const parsedUser = JSON.parse(savedUser);
       const parsedSession = JSON.parse(savedSession);
       setUser(parsedUser);
       setSession(parsedSession);
-      
+
       // Load favorites from server
       loadFavorites(parsedSession.access_token);
     }
@@ -106,11 +106,11 @@ export default function App() {
       setIsAuthOpen(true);
       return;
     }
-    
+
     try {
       const response = await api.toggleFavorite(cocktailId, session.access_token);
       setFavorites(response.favorites);
-      
+
       const isFavorite = response.favorites.includes(cocktailId);
       toast.success(isFavorite ? 'お気に入りに追加しました' : 'お気に入りから削除しました');
     } catch (error) {
@@ -123,17 +123,17 @@ export default function App() {
     setIsLoading(true);
     try {
       const response = await api.login(email, password);
-      
+
       setUser(response.user);
       setSession(response.session);
-      
+
       // Save to localStorage
       localStorage.setItem('user', JSON.stringify(response.user));
       localStorage.setItem('session', JSON.stringify(response.session));
-      
+
       // Load favorites
       await loadFavorites(response.session.access_token);
-      
+
       toast.success('ログインしました');
       setIsAuthOpen(false);
     } catch (error) {
@@ -150,7 +150,7 @@ export default function App() {
     try {
       await api.signup(email, password, name);
       toast.success('アカウントを作成しました。ログインしてください。');
-      
+
       // Auto login after signup
       await handleLogin(email, password);
     } catch (error) {
@@ -166,11 +166,11 @@ export default function App() {
     setUser(null);
     setSession(null);
     setFavorites([]);
-    
+
     // Clear localStorage
     localStorage.removeItem('user');
     localStorage.removeItem('session');
-    
+
     toast.success('ログアウトしました');
   };
 
@@ -189,7 +189,7 @@ export default function App() {
               </div>
               <div>
                 <h1 className="text-gray-900">
-                  Today's Cocktail
+                  Today's Cocktails
                 </h1>
                 <p className="text-gray-500">今日の一杯がここに</p>
               </div>
@@ -359,7 +359,7 @@ export default function App() {
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
             <div className="text-3xl">🍸</div>
-            <h3 className="text-gray-900">Today's Cocktail</h3>
+            <h3 className="text-gray-900">Today's Cocktails</h3>
           </div>
           <p className="text-gray-600 mb-2">
             家でもバーでも、"今日の一杯"が見つかるカクテル図鑑

@@ -105,8 +105,24 @@ async function apiPostAuth(path: string, body: unknown): Promise<{ data: AuthRes
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`POST ${path} failed: ${res.status} ${text}`);
+    // エラーレスポンスのJSONを取得
+    let errorMessage = `POST ${path} failed: ${res.status}`;
+    try {
+      const errorData = await res.json();
+      // バックエンドからのエラーメッセージを取得
+      if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+        errorMessage = errorData.errors.join(', ');
+      } else if (errorData.status?.message) {
+        errorMessage = errorData.status.message;
+      }
+    } catch {
+      // JSONパースに失敗した場合はテキストを取得
+      const text = await res.text();
+      if (text) {
+        errorMessage = text;
+      }
+    }
+    throw new Error(errorMessage);
   }
 
   const token = res.headers.get('Authorization');

@@ -157,7 +157,7 @@ class JapaneseTranslator
       end
     end
 
-    puts "  ✅ Translated #{Cocktail.where.not(glass_ja: nil).count} glass names"
+    puts "   Translated #{Cocktail.where.not(glass_ja: nil).count} glass names"
   end
 
   def translate_ingredients
@@ -192,7 +192,7 @@ class JapaneseTranslator
       end
     end
 
-    puts "  ✅ Translated #{Ingredient.count} ingredient names"
+    puts "   Translated #{Ingredient.count} ingredient names"
   end
 
   def translate_with_deepl(text, api_key)
@@ -235,7 +235,7 @@ class JapaneseTranslator
       end
     end
 
-    puts "  ✅ Converted #{CocktailIngredient.where.not(amount_ja: nil).count} amounts"
+    puts "   Converted #{CocktailIngredient.where.not(amount_ja: nil).count} amounts"
   end
 
   def convert_amount_to_japanese(amount)

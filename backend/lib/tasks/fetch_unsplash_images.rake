@@ -25,7 +25,7 @@ namespace :cocktails do
 
     puts "\n" + "=" * 50
     puts "Summary:"
-    puts "  ✅ Success: #{result[:success]}"
+    puts "   Success: #{result[:success]}"
     puts "  ❌ Failed:  #{result[:failure]}"
     puts "  📊 Total:   #{result[:total]}"
     puts "=" * 50
@@ -47,7 +47,7 @@ namespace :cocktails do
 
     puts "\n" + "=" * 50
     puts "Summary:"
-    puts "  ✅ Success: #{result[:success]}"
+    puts "   Success: #{result[:success]}"
     puts "  ❌ Failed:  #{result[:failure]}"
     puts "  📊 Total:   #{result[:total]}"
     puts "=" * 50
@@ -74,7 +74,7 @@ namespace :cocktails do
     puts "Fetching image for: #{cocktail.name}"
 
     if service.fetch_and_attach_cocktail_image(cocktail, force: true)
-      puts "✅ Successfully fetched image!"
+      puts " Successfully fetched image!"
     else
       puts "❌ Failed to fetch image"
     end

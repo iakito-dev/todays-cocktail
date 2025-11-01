@@ -8,7 +8,7 @@ import {
 } from './ui/dialog';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
-import { Wine, GlassWater, Hammer, Heart, Edit } from 'lucide-react';
+import { Wine, GlassWater, Hammer, Heart, Edit, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
 import { ImageWithFallback } from './ImageWithFallback';
 import { EditCocktailDialog } from './EditCocktailDialog';
@@ -203,8 +203,20 @@ export function CocktailDetailDialog({
             </div>
           </div>
 
-          {/* Description or Tips */}
-          {!currentCocktail.instructions_ja && (
+          {/* Description - AI生成の説明文、または初心者向けtips */}
+          {currentCocktail.description ? (
+            <div className="bg-blue-50 p-7 rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
+              <div className="flex items-start gap-4">
+                <Sparkles className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold mb-3 text-base text-blue-900">初心者の方へ</h4>
+                  <p className="text-blue-800 leading-relaxed text-base whitespace-pre-wrap">
+                    {currentCocktail.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : !currentCocktail.instructions_ja && (
             <div className="bg-blue-50 p-7 rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="text-2xl">💡</div>

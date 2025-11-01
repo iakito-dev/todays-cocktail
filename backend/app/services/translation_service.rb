@@ -115,6 +115,33 @@ class TranslationService
     nil
   end
 
+  # カクテルの説明文を生成
+  def generate_description(cocktail_name, base, strength, ingredients_list)
+    return nil if cocktail_name.blank?
+
+    prompt = <<~PROMPT
+      あなたはカクテルの専門家です。以下の情報を基に、このカクテルの魅力的な説明文を日本語で生成してください。
+
+      カクテル名: #{cocktail_name}
+      ベース: #{base}
+      強度: #{strength}
+      材料: #{ingredients_list.join(', ')}
+
+      以下の要素を含めた、2-3文程度の説明文を作成してください:
+      - このカクテルの特徴や味わい
+      - どんな場面やシーンに合うか
+      - 初心者向けのアドバイス（あれば）
+
+      フレンドリーで親しみやすい文体で、カクテル初心者でも楽しめる内容にしてください。
+      説明文のみを返してください（見出しや「説明:」などは不要です）。
+    PROMPT
+
+    translate(prompt)
+  rescue StandardError => e
+    Rails.logger.error("Description generation failed for '#{cocktail_name}': #{e.message}")
+    nil
+  end
+
   # カクテルのベース（主原料）を判定
   def determine_base(ingredients_list)
     return 'vodka' if ingredients_list.blank?

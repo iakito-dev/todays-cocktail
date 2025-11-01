@@ -59,6 +59,7 @@ class Api::V1::CocktailsController < ApplicationController
       glass_ja: cocktail.glass_ja,
       name_ja: cocktail.name_ja,
       instructions_ja: cocktail.instructions_ja,
+      description: cocktail.description,
       image_url: cocktail.display_image_url
     )
 
@@ -84,6 +85,7 @@ class Api::V1::CocktailsController < ApplicationController
         glass_ja: cocktail.glass_ja,
         name_ja: cocktail.name_ja,
         instructions_ja: cocktail.instructions_ja,
+        description: cocktail.description,
         image_url: cocktail.display_image_url
       )
       render json: cocktail_data

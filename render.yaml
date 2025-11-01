@@ -76,8 +76,8 @@ services:
       - key: ADMIN_NAME
         value: Admin User
     
-    # ビルドコマンド（マイグレーション実行）
-    buildCommand: bundle install && bundle exec rails db:migrate && bundle exec rails assets:precompile
+    # ビルドコマンド（マイグレーション実行と画像インポート）
+    buildCommand: bundle install && bundle exec rails db:migrate && bundle exec rails assets:precompile && bundle exec rails cocktails:import_popular
     
     # 起動コマンド
     startCommand: bundle exec puma -C config/puma.rb

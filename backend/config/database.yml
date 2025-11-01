@@ -7,15 +7,44 @@ default: &default
   adapter: postgresql              # PostgreSQLデータベースを使用
   encoding: unicode               # Unicode文字エンコーディングを使用
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>  # コネクションプール数（デフォルト5）
-  # データベース接続URL（環境変数から取得、開発環境がデフォルト）
-  url: <%= ENV.fetch("DATABASE_URL") { "postgres://postgres:postgres@host.docker.internal:54322/app_development" } %>
 
 # 開発環境設定
 development:
-  <<: *default  # 上記のdefault設定をすべて継承
+  primary:
+    <<: *default
+    url: <%= ENV.fetch("DATABASE_URL") { "postgres://postgres:postgres@host.docker.internal:54322/app_development" } %>
+  cache:
+    <<: *default
+    database: app_development_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: app_development_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: app_development_cable
+    migrations_paths: db/cable_migrate
 
 # テスト環境設定
 test:
-  <<: *default  # 上記のdefault設定を継承
-  # テスト専用のデータベースURL（開発環境とは別のデータベースを使用）
-  url: <%= ENV.fetch("DATABASE_URL_TEST") { "postgres://postgres:postgres@host.docker.internal:54322/app_test" } %>
+  primary:
+    <<: *default
+    url: <%= ENV.fetch("DATABASE_URL_TEST") { "postgres://postgres:postgres@host.docker.internal:54322/app_test" } %>
+  cache:
+    <<: *default
+    database: app_test_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: app_test_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: app_test_cable
+    migrations_paths: db/cable_migrate
+
+# 本番環境設定（シンプルに単一データベース）
+production:
+  <<: *default
+  url: <%= ENV.fetch("DATABASE_URL") %>

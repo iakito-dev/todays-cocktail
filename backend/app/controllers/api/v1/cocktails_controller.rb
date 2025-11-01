@@ -29,7 +29,15 @@ class Api::V1::CocktailsController < ApplicationController
     end
 
     cocktails = cocktails.order(:name)
-    render json: cocktails
+    
+    # 画像URLを含めたレスポンス
+    cocktails_with_images = cocktails.map do |cocktail|
+      cocktail.as_json.merge(
+        image_url: cocktail.display_image_url
+      )
+    end
+    
+    render json: cocktails_with_images
   end
 
   def show
@@ -47,7 +55,8 @@ class Api::V1::CocktailsController < ApplicationController
         }
       end,
       glass_ja: cocktail.glass_ja,
-      name_ja: cocktail.name_ja
+      name_ja: cocktail.name_ja,
+      image_url: cocktail.display_image_url
     )
 
     render json: cocktail_data
@@ -70,7 +79,8 @@ class Api::V1::CocktailsController < ApplicationController
           }
         end,
         glass_ja: cocktail.glass_ja,
-        name_ja: cocktail.name_ja
+        name_ja: cocktail.name_ja,
+        image_url: cocktail.display_image_url
       )
       render json: cocktail_data
     else

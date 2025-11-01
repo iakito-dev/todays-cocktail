@@ -187,6 +187,7 @@ export interface AuthResponse {
       id: number;
       email: string;
       name: string;
+      admin: boolean;
     };
   };
 }
@@ -249,3 +250,53 @@ export async function logout(): Promise<void> {
 export async function getCurrentUser(): Promise<AuthResponse> {
   return apiGet('/api/v1/users/me');
 }
+
+/**
+ * PUTリクエストを送信する
+ * @param path - APIエンドポイントのパス
+ * @param body - リクエストボディ
+ * @param init - 追加のfetchオプション
+ * @returns レスポンスのJSONデータ
+ * @throws {Error} リクエストが失敗した場合
+ */
+export async function apiPut(path: string, body?: unknown, init?: RequestInit) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+    ...init,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`PUT ${path} failed: ${res.status} ${text}`);
+  }
+
+  return res.json().catch(() => ({}));
+}
+
+/**
+ * カクテル情報を更新（管理者専用）
+ * @param id - カクテルID
+ * @param data - 更新するカクテルデータ
+ * @returns Promise<Cocktail> 更新後のカクテル情報
+ */
+export interface UpdateCocktailRequest {
+  cocktail: {
+    name?: string;
+    name_ja?: string;
+    glass?: string;
+    glass_ja?: string;
+    instructions?: string;
+    instructions_ja?: string;
+    base?: string;
+    strength?: string;
+    technique?: string;
+    image_url_override?: string;
+  };
+}
+
+export async function updateCocktail(id: number, data: UpdateCocktailRequest): Promise<Cocktail> {
+  return apiPut(`/api/v1/admin/cocktails/${id}`, data);
+}
+

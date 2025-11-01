@@ -3,6 +3,7 @@ import { CocktailList } from './components/CocktailList';
 import { CocktailDetail } from './components/CocktailDetail';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { EmailConfirmation } from './components/EmailConfirmation';
 import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Routes>
             <Route path="/" element={<CocktailList />} />
             <Route path="/cocktails/:id" element={<CocktailDetail />} />
+            <Route path="/confirmation" element={<EmailConfirmation />} />
           </Routes>
           <Footer />
         </div>

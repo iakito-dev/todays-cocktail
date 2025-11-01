@@ -13,7 +13,9 @@ export interface Cocktail {
   strength: 'light' | 'medium' | 'strong';
   technique: 'build' | 'stir' | 'shake';
   image_url: string | null;
+  image_url_override?: string | null;
   instructions: string | null;
+  instructions_ja?: string | null;
   glass?: string;
   glass_ja?: string;
   description?: string;

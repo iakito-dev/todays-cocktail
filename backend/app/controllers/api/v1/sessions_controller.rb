@@ -36,15 +36,29 @@ module Api
       private
 
       def respond_with(resource, _opts = {})
-        render json: {
-          status: { code: 200, message: "ログインに成功しました。" },
-          data: {
-            user: {
-              id: resource.id,
-              email: resource.email,
-              name: resource.name
+        if resource.persisted?
+          render json: {
+            status: { code: 200, message: "ログインに成功しました。" },
+            data: {
+              user: {
+                id: resource.id,
+                email: resource.email,
+                name: resource.name,
+                admin: resource.admin
+              }
             }
-          }
+          }, status: :ok
+        else
+          render json: {
+            status: { code: 401, message: "ログインに失敗しました。" },
+            errors: resource.errors.full_messages
+          }, status: :unauthorized
+        end
+      end
+
+      def respond_to_on_destroy
+        render json: {
+          status: { code: 200, message: "ログアウトしました。" }
         }, status: :ok
       end
     end

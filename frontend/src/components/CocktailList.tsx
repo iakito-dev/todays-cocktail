@@ -314,6 +314,13 @@ export function CocktailList() {
         onClose={handleCloseDialog}
         isFavorite={selectedCocktail ? isFavorite(selectedCocktail.id) : false}
         onToggleFavorite={handleFavoriteToggle}
+        onUpdate={(updatedCocktail) => {
+          // カクテルリストを更新
+          setCocktails((prev) =>
+            prev ? prev.map((c) => (c.id === updatedCocktail.id ? updatedCocktail : c)) : prev
+          );
+          setSelectedCocktail(updatedCocktail);
+        }}
       />
 
       {/* Auth Dialog */}

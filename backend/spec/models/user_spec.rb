@@ -29,8 +29,47 @@ RSpec.describe User, type: :model do
       expect(User.devise_modules).to include(:validatable)
     end
 
+    it 'includes confirmable module' do
+      expect(User.devise_modules).to include(:confirmable)
+    end
+
     it 'includes jwt_authenticatable module' do
       expect(User.devise_modules).to include(:jwt_authenticatable)
+    end
+  end
+
+  describe 'confirmable機能' do
+    let(:user) { create(:user) }
+
+    it '新規作成時は未確認状態' do
+      new_user = create(:user)
+      expect(new_user.confirmed?).to be false
+    end
+
+    it '確認トークンが生成される' do
+      new_user = create(:user)
+      expect(new_user.confirmation_token).to be_present
+    end
+
+    it 'confirmメソッドで確認済みにできる' do
+      user.confirm
+      expect(user.confirmed?).to be true
+    end
+
+    it '確認メールが送信される' do
+      expect { create(:user) }.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+  end
+
+  describe 'admin機能' do
+    it 'デフォルトでadminはfalse' do
+      user = create(:user)
+      expect(user.admin).to be false
+    end
+
+    it 'adminフラグをtrueに設定できる' do
+      admin = create(:user, :admin)
+      expect(admin.admin).to be true
     end
   end
 

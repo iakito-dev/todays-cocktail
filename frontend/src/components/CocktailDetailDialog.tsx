@@ -198,13 +198,13 @@ export function CocktailDetailDialog({
             </div>
             <div className="bg-gray-50 p-7 rounded-2xl hover:bg-gray-100 transition-colors">
               <p className="leading-relaxed text-base text-gray-700 whitespace-pre-wrap">
-                {currentCocktail.instructions_ja || currentCocktail.description || currentCocktail.instructions}
+                {currentCocktail.instructions_ja || currentCocktail.instructions}
               </p>
             </div>
           </div>
 
           {/* Description or Tips */}
-          {!currentCocktail.description && (
+          {!currentCocktail.instructions_ja && (
             <div className="bg-blue-50 p-7 rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="text-2xl">💡</div>

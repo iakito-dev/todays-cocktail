@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_01_093452) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_01_115224) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -68,6 +68,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_01_093452) do
     t.string "name_ja"
     t.string "glass_ja"
     t.string "image_url_override"
+    t.text "instructions_ja"
     t.index ["name"], name: "index_cocktails_on_name"
   end
 

@@ -101,7 +101,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
               )}
             </div>
             <p className="text-sm md:text-base text-gray-600 leading-relaxed line-clamp-2 md:line-clamp-3">
-              {cocktail.description || cocktail.instructions}
+              {cocktail.instructions_ja || cocktail.instructions}
             </p>
           </div>
 

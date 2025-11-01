@@ -50,16 +50,27 @@ class TranslationService
     nil
   end
 
-  # 分量を翻訳
+  # 分量を日本人に馴染みのある単位に変換
   def translate_measure(measure)
     return nil if measure.blank?
 
     prompt = <<~PROMPT
-      以下のカクテルの分量表記を日本語に翻訳してください。
-      単位（oz, ml, dash, etc.）も含めて自然な日本語にしてください。
-      翻訳結果のみを返してください（説明は不要です）。
+      以下のカクテルの分量を日本人に馴染みのある単位に変換してください。
 
-      分量: #{measure}
+      変換ルール:
+      - oz（オンス）→ ml に変換（1 oz = 30ml）
+      - tsp（ティースプーン）→ ml に変換（1 tsp = 5ml）
+      - tbsp（テーブルスプーン）→ ml に変換（1 tbsp = 15ml）
+      - dash → 「ダッシュ」または「少々」
+      - splash → 「少量」
+      - top → 「適量」または「満たす」
+      - fill → 「満たす」
+      - 数値がない場合 → 「適量」
+      - 既にmlやg、個などの日本の単位の場合はそのまま
+
+      元の分量: #{measure}
+
+      変換後の分量のみを返してください（説明不要）。
     PROMPT
 
     translate(prompt)
@@ -95,13 +106,88 @@ class TranslationService
       自然で分かりやすい日本語で、カクテル作りの手順として翻訳してください。
       翻訳結果のみを返してください（説明は不要です）。
 
-      作り方: #{instructions}
+      #{instructions}
     PROMPT
 
     translate(prompt)
   rescue StandardError => e
     Rails.logger.error("Translation failed for instructions: #{e.message}")
     nil
+  end
+
+  # カクテルのベース（主原料）を判定
+  def determine_base(ingredients_list)
+    return 'vodka' if ingredients_list.blank?
+
+    prompt = <<~PROMPT
+      You are a cocktail expert. Based on the following ingredient list, determine the base spirit of this cocktail.
+
+      Ingredients: #{ingredients_list.join(', ')}
+
+      Return ONLY ONE of these exact words (nothing else):
+      gin
+      rum
+      whisky
+      vodka
+      tequila
+      wine
+      beer
+
+      Rules:
+      - If the list contains any type of rum (light rum, dark rum, white rum, etc.), return: rum
+      - If the list contains gin, return: gin
+      - If the list contains whiskey/whisky/bourbon/rye, return: whisky
+      - If the list contains vodka, return: vodka
+      - If the list contains tequila/mezcal, return: tequila
+      - If the list contains champagne/prosecco/sparkling wine/wine/aperol, return: wine
+      - If the list contains beer, return: beer
+      - If multiple spirits are present, choose the primary one (usually the first or most prominent)
+
+      Your response (one word only):
+    PROMPT
+
+    result = translate(prompt)&.strip&.downcase
+
+    # 有効な値のみを返す
+    valid_bases = %w[gin rum whisky vodka tequila wine beer]
+    valid_bases.include?(result) ? result : 'vodka'
+  rescue StandardError => e
+    Rails.logger.error("Base determination failed: #{e.message}")
+    'vodka'
+  end
+
+  # カクテルの強度を判定
+  def determine_strength(ingredients_list, alcoholic_type)
+    return 'light' if alcoholic_type == 'Non alcoholic'
+    return 'light' if ingredients_list.blank?
+
+    prompt = <<~PROMPT
+      You are a cocktail expert. Based on the following ingredients, determine the alcohol strength of this cocktail.
+
+      Ingredients: #{ingredients_list.join(', ')}
+      Alcoholic: #{alcoholic_type}
+
+      Return ONLY ONE of these exact words (nothing else):
+      light
+      medium
+      strong
+
+      Rules:
+      - light: Beer-based, wine-based, or heavily diluted cocktails (e.g., Mimosa, Aperol Spritz)
+      - medium: Standard cocktails with moderate alcohol (e.g., Mojito, Margarita, most highballs)
+      - strong: Short drinks, spirit-forward cocktails, multiple spirits (e.g., Martini, Manhattan, Old Fashioned, Long Island Iced Tea)
+
+      Your response (one word only):
+    PROMPT
+
+    result = translate(prompt)&.strip&.downcase
+
+    # 有効な値のみを返す
+    valid_strengths = %w[light medium strong]
+    valid_strengths.include?(result) ? result : 'medium'
+  rescue StandardError => e
+    Rails.logger.error("Strength determination failed: #{e.message}")
+    'medium'
   end
 
   # バッチ翻訳（複数の材料名を一度に翻訳）

@@ -282,6 +282,8 @@ class CocktailTranslator
   def translate_all
     translate_cocktails
     translate_ingredients
+    translate_amounts
+    translate_instructions
     print_summary
   end
 
@@ -326,6 +328,48 @@ class CocktailTranslator
         sleep 0.5 # API負荷軽減
       rescue StandardError => e
         puts "  ❌ Error: #{ingredient_name} - #{e.message}"
+        @error_count += 1
+      end
+    end
+  end
+
+  def translate_amounts
+    puts "\n3. Translating amounts..."
+
+    CocktailIngredient.where(amount_ja: nil).or(CocktailIngredient.where(amount_ja: '')).find_each.with_index do |ci, index|
+      next if ci.amount_text.blank?
+
+      begin
+        amount_ja = @translation_service.translate_measure(ci.amount_text)
+
+        if amount_ja.present?
+          ci.update!(amount_ja: amount_ja)
+          puts "   [#{index + 1}] #{ci.amount_text} → #{amount_ja}"
+          @translated_count += 1
+          sleep 0.3 # API負荷軽減
+        end
+      rescue StandardError => e
+        puts "  ❌ Error: #{ci.amount_text} - #{e.message}"
+        @error_count += 1
+      end
+    end
+  end
+
+  def translate_instructions
+    puts "\n4. Translating instructions..."
+
+    Cocktail.where(instructions_ja: nil).where.not(instructions: nil).find_each.with_index do |cocktail, index|
+      begin
+        instructions_ja = @translation_service.translate_instructions(cocktail.instructions)
+
+        if instructions_ja.present?
+          cocktail.update!(instructions_ja: instructions_ja)
+          puts "   [#{index + 1}] #{cocktail.name} instructions translated"
+          @translated_count += 1
+          sleep 1 # API負荷軽減
+        end
+      rescue StandardError => e
+        puts "  ❌ Error: #{cocktail.name} - #{e.message}"
         @error_count += 1
       end
     end

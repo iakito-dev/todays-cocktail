@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Cocktail } from '../lib/types';
 import {
   Dialog,
@@ -37,6 +37,22 @@ export function EditCocktailDialog({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // ダイアログが開かれたとき、またはカクテルが変更されたときにフォームデータを更新
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        name: cocktail.name || '',
+        name_ja: cocktail.name_ja || '',
+        glass: cocktail.glass || '',
+        glass_ja: cocktail.glass_ja || '',
+        instructions: cocktail.instructions || '',
+        instructions_ja: cocktail.instructions_ja || '',
+        image_url_override: cocktail.image_url_override || '',
+      });
+      setError(null);
+    }
+  }, [isOpen, cocktail]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

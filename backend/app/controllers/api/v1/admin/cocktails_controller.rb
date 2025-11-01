@@ -57,7 +57,7 @@ module Api
 
         def require_admin!
           unless current_user&.admin?
-            render json: { error: 'Admin access required' }, status: :forbidden
+            render json: { error: '管理者権限が必要です' }, status: :forbidden
           end
         end
       end

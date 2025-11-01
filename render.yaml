@@ -1,0 +1,83 @@
+# ================================
+# Render デプロイ設定ファイル
+# ================================
+# このファイルは Render でのデプロイを自動化します
+# 詳細: https://render.com/docs/infrastructure-as-code
+
+services:
+  # Rails API バックエンドサービス
+  - type: web
+    name: todays-cocktail-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free  # 無料プラン（スリープあり）
+    region: singapore  # 東京リージョンがないためシンガポールを選択
+    branch: main  # デプロイするブランチ
+    
+    # ヘルスチェック設定
+    healthCheckPath: /up
+    
+    # 環境変数設定
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      
+      - key: RAILS_MASTER_KEY
+        sync: false  # Render ダッシュボードで手動設定（秘密鍵）
+      
+      - key: DATABASE_URL
+        sync: false  # Supabase の接続文字列を手動設定
+      
+      - key: SECRET_KEY_BASE
+        generateValue: true  # Render が自動生成
+      
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
+      
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      
+      # API Keys（Render ダッシュボードで手動設定）
+      - key: OPENAI_API_KEY
+        sync: false
+      
+      - key: DEEPL_API_KEY
+        sync: false
+      
+      - key: UNSPLASH_ACCESS_KEY
+        sync: false
+      
+      - key: RESEND_API_KEY
+        sync: false
+      
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      
+      # フロントエンドURL（Vercel デプロイ後に更新）
+      - key: FRONTEND_URL
+        value: https://todays-cocktail.vercel.app
+      
+      # CORS設定用（Vercel デプロイ後に更新）
+      - key: ALLOWED_ORIGINS
+        value: https://todays-cocktail.vercel.app,http://localhost:5173
+      
+      # JWT認証設定
+      - key: DEVISE_JWT_SECRET_KEY
+        generateValue: true
+      
+      # 管理者アカウント設定
+      - key: ADMIN_EMAIL
+        sync: false
+      
+      - key: ADMIN_PASSWORD
+        sync: false
+      
+      - key: ADMIN_NAME
+        value: Admin User
+    
+    # ビルドコマンド（マイグレーション実行）
+    buildCommand: bundle install && bundle exec rails db:migrate && bundle exec rails assets:precompile
+    
+    # 起動コマンド
+    startCommand: bundle exec puma -C config/puma.rb

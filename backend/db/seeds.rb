@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
-puts "Cleaning up existing data..."
+# Seeds file - データベースへの初期データ投入用
+#
+# 本番環境では既にデータが投入されているため、このファイルは実行されません。
+# 開発環境で新規にデータベースをセットアップする場合は、
+# 以下のrakeタスクを使用してください:
+#   bin/rails cocktails:import_popular
+#
+# または、個別にカクテルを追加する場合は、Rails consoleを使用してください。
 
-CocktailIngredient.destroy_all
-Ingredient.destroy_all
-Cocktail.destroy_all
-
-puts "Seeding cocktails and ingredients..."
+puts "Seeds file is empty. Use 'rails cocktails:import_popular' to import cocktails."
 
 BASE_MAP = {
   'ジン' => :gin,

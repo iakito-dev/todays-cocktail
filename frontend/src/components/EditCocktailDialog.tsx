@@ -31,6 +31,7 @@ export function EditCocktailDialog({
     name_ja: cocktail.name_ja || '',
     glass: cocktail.glass || '',
     glass_ja: cocktail.glass_ja || '',
+    description: cocktail.description || '',
     instructions: cocktail.instructions || '',
     instructions_ja: cocktail.instructions_ja || '',
     image_url_override: cocktail.image_url_override || '',
@@ -46,6 +47,7 @@ export function EditCocktailDialog({
         name_ja: cocktail.name_ja || '',
         glass: cocktail.glass || '',
         glass_ja: cocktail.glass_ja || '',
+        description: cocktail.description || '',
         instructions: cocktail.instructions || '',
         instructions_ja: cocktail.instructions_ja || '',
         image_url_override: cocktail.image_url_override || '',
@@ -66,6 +68,7 @@ export function EditCocktailDialog({
           name_ja: formData.name_ja,
           glass: formData.glass,
           glass_ja: formData.glass_ja,
+          description: formData.description,
           instructions: formData.instructions,
           instructions_ja: formData.instructions_ja,
           image_url_override: formData.image_url_override || undefined,
@@ -146,6 +149,17 @@ export function EditCocktailDialog({
             <p className="text-sm text-gray-500">
               画像URLを指定すると、自動取得した画像より優先して表示されます
             </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">説明文</Label>
+            <Textarea
+              id="description"
+              rows={3}
+              placeholder="カクテルの特徴や魅力を説明してください"
+              value={formData.description}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
+            />
           </div>
 
           <div className="space-y-2">

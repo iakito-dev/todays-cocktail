@@ -91,17 +91,25 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
 
           <div>
             <div className="space-y-1 md:space-y-2 mb-2 md:mb-4">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight break-words">
+              <h2 className={`${
+                (cocktail.name_ja || cocktail.name).length > 10
+                  ? 'text-xl md:text-2xl lg:text-3xl'
+                  : 'text-2xl md:text-3xl lg:text-4xl'
+              } font-bold text-gray-900 leading-tight`}>
                 {cocktail.name_ja || cocktail.name}
               </h2>
               {cocktail.name_ja && (
-                <p className="text-sm md:text-lg text-gray-500 font-semibold tracking-wider uppercase break-words">
+                <p className={`${
+                  cocktail.name.length > 20
+                    ? 'text-xs md:text-base'
+                    : 'text-sm md:text-lg'
+                } text-gray-500 font-semibold tracking-wider uppercase`}>
                   {cocktail.name}
                 </p>
               )}
             </div>
             <p className="text-sm md:text-base text-gray-600 leading-relaxed line-clamp-2 md:line-clamp-3">
-              {cocktail.instructions_ja || cocktail.instructions}
+              {cocktail.description}
             </p>
           </div>
 

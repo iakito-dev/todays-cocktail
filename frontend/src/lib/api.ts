@@ -303,6 +303,7 @@ export interface UpdateCocktailRequest {
     name_ja?: string;
     glass?: string;
     glass_ja?: string;
+    description?: string;
     instructions?: string;
     instructions_ja?: string;
     base?: string;

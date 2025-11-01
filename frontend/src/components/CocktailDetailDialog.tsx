@@ -144,23 +144,23 @@ export function CocktailDetailDialog({
           </div>
 
           {/* Glass and Technique */}
-          <div className="grid grid-cols-2 gap-5">
-            <div className="flex items-center gap-4 p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
-              <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center">
+          <div className="space-y-3 md:grid md:grid-cols-2 md:gap-5 md:space-y-0">
+            <div className="flex items-center gap-3 md:gap-4 p-4 md:p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+              <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                 <GlassWater className="w-5 h-5 text-blue-600" />
               </div>
-              <div>
-                <div className="text-sm text-gray-500 mb-1">グラス</div>
-                <div className="text-base font-medium text-gray-900">{currentCocktail.glass_ja || currentCocktail.glass}</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs md:text-sm text-gray-500 mb-1">グラス</div>
+                <div className="text-sm md:text-base font-medium text-gray-900 leading-tight">{currentCocktail.glass_ja || currentCocktail.glass}</div>
               </div>
             </div>
-            <div className="flex items-center gap-4 p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
-              <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center">
+            <div className="flex items-center gap-3 md:gap-4 p-4 md:p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+              <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
                 <Hammer className="w-5 h-5 text-orange-600" />
               </div>
-              <div>
-                <div className="text-sm text-gray-500 mb-1">技法</div>
-                <div className="text-base font-medium text-gray-900">{TECHNIQUE_LABELS[currentCocktail.technique]}</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs md:text-sm text-gray-500 mb-1">技法</div>
+                <div className="text-sm md:text-base font-medium text-gray-900 leading-tight">{TECHNIQUE_LABELS[currentCocktail.technique]}</div>
               </div>
             </div>
           </div>
@@ -209,7 +209,7 @@ export function CocktailDetailDialog({
               <div className="flex items-start gap-4">
                 <Sparkles className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold mb-3 text-base text-blue-900">初心者の方へ</h4>
+                  <h4 className="font-semibold mb-3 text-base text-blue-900">Note</h4>
                   <p className="text-blue-800 leading-relaxed text-base whitespace-pre-wrap">
                     {currentCocktail.description}
                   </p>
@@ -221,7 +221,7 @@ export function CocktailDetailDialog({
               <div className="flex items-start gap-4">
                 <div className="text-2xl">💡</div>
                 <div>
-                  <h4 className="font-semibold mb-3 text-base text-blue-900">初心者の方へ</h4>
+                  <h4 className="font-semibold mb-3 text-base text-blue-900">Note</h4>
                   <p className="text-blue-800 leading-relaxed text-base">
                     このカクテルは{currentCocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : currentCocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
                     {currentCocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}

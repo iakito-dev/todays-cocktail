@@ -145,7 +145,7 @@ export function CocktailDetailDialog({
             <div className="flex items-start gap-3">
               <div className="text-2xl">💡</div>
               <div>
-                <h4 className="mb-2 text-blue-900">初心者の方へ</h4>
+                <h4 className="mb-2 text-blue-900">Note</h4>
                 <p className="text-blue-800 leading-relaxed">
                   このカクテルは{cocktail.strength === 'ライト' ? '飲みやすく、初心者の方にもおすすめです' : cocktail.strength === 'ミディアム' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
                   {cocktail.technique === 'ビルド' && 'グラスで直接作れるので、家でも簡単に作れます。'}

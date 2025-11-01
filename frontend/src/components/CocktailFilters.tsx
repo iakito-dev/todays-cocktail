@@ -31,9 +31,11 @@ export function CocktailFilters({
 }: CocktailFiltersProps) {
   const handleBaseToggle = (baseValue: string) => {
     if (selectedBases.includes(baseValue)) {
-      onBasesChange(selectedBases.filter(b => b !== baseValue));
+      // すでに選択されている場合は解除
+      onBasesChange([]);
     } else {
-      onBasesChange([...selectedBases, baseValue]);
+      // 新しく選択（単一選択なので配列に1つだけ）
+      onBasesChange([baseValue]);
     }
   };
 
@@ -98,7 +100,7 @@ export function CocktailFilters({
             className="mt-3 w-full bg-white border-gray-200 hover:bg-gray-50 h-10 rounded-xl"
           >
             <X className="w-4 h-4 mr-2" />
-            クリア
+            選択を解除
           </Button>
         )}
       </div>

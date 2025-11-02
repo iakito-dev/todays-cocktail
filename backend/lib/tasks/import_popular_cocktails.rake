@@ -3,16 +3,19 @@
 namespace :cocktails do
   desc 'Import popular cocktails that Japanese people love'
   task import_popular: :environment do
-    puts "Importing popular cocktails..."
-    puts "=" * 50
+    puts "\n" + "=" * 80
+    puts "🍸 IMPORTING POPULAR COCKTAILS"
+    puts "=" * 80
 
     importer = PopularCocktailImporter.new
     importer.import_all
 
-    puts "\n" + "=" * 50
-    puts "Import completed!"
-    puts "Total cocktails: #{Cocktail.count}"
-    puts "Total ingredients: #{Ingredient.count}"
+    puts "\n" + "=" * 80
+    puts "✅ IMPORT COMPLETED!"
+    puts "   Total cocktails: #{Cocktail.count}"
+    puts "   Total ingredients: #{Ingredient.count}"
+    puts "   Cocktails with images: #{Cocktail.where.not(image_url_override: nil).count}"
+    puts "=" * 80 + "\n"
   end
 
   desc 'Translate existing cocktails to Japanese'

@@ -24,7 +24,8 @@ COPY . .
 # Railsアプリケーションのポートを公開
 EXPOSE 3000
 
-# データベースの準備とサーバー起動
+# データベースの準備、画像インポート、サーバー起動
 # - db:prepare: データベースの作成とマイグレーション
+# - cocktails:import_popular: カクテル画像のインポート
 # - rails s -b 0.0.0.0: 全IPアドレスからのアクセスを許可
-CMD ["bash", "-c", "bundle exec rails db:prepare && bundle exec rails s -b 0.0.0.0"]
+CMD ["bash", "-c", "bundle exec rails db:prepare && bundle exec rails cocktails:import_popular && bundle exec rails s -b 0.0.0.0"]

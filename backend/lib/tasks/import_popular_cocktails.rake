@@ -125,8 +125,9 @@ class PopularCocktailImporter
 
   def import_cocktail(cocktail_name)
     # 既存チェック
-    if Cocktail.exists?(name: cocktail_name)
-      puts "  ⏭️  Already exists"
+    existing_cocktail = Cocktail.find_by(name: cocktail_name)
+    if existing_cocktail && existing_cocktail.image_url_override.present?
+      puts "  ⏭️  Already exists with image"
       @skipped_count += 1
       return
     end
@@ -160,28 +161,31 @@ class PopularCocktailImporter
     cocktail = nil
 
     ActiveRecord::Base.transaction do
-      # 翻訳はスキップして後でバッチ処理
-      # cocktail_name_ja = @translation_service.translate_cocktail_name(drink_data['strDrink'])
-      # glass_ja = @translation_service.translate_glass(drink_data['strGlass'])
+      if existing_cocktail
+        # 既存のカクテルの画像URLを更新
+        existing_cocktail.update!(image_url_override: drink_data['strDrinkThumb'])
+        cocktail = existing_cocktail
+        puts "  🔄 Updated image: #{drink_data['strDrink']}"
+      else
+        # 新規カクテル作成
+        cocktail = Cocktail.create!(
+          name: drink_data['strDrink'],
+          name_ja: nil, # 後で翻訳
+          base: map_base(drink_data),
+          strength: map_strength(drink_data),
+          technique: map_technique(drink_data),
+          glass: drink_data['strGlass'],
+          glass_ja: nil, # 後で翻訳
+          image_url_override: drink_data['strDrinkThumb'], # 外部URLを直接使用
+          instructions: drink_data['strInstructions']
+        )
 
-      # カクテル作成
-      cocktail = Cocktail.create!(
-        name: drink_data['strDrink'],
-        name_ja: nil, # 後で翻訳
-        base: map_base(drink_data),
-        strength: map_strength(drink_data),
-        technique: map_technique(drink_data),
-        glass: drink_data['strGlass'],
-        glass_ja: nil, # 後で翻訳
-        image_url_override: drink_data['strDrinkThumb'], # 外部URLを直接使用
-        instructions: drink_data['strInstructions']
-      )
-
-      # 材料追加
-      import_ingredients(cocktail, drink_data)
+        # 材料追加
+        import_ingredients(cocktail, drink_data)
+        puts "  ✅ Imported: #{drink_data['strDrink']}"
+      end
     end
 
-    puts "  ✅ Imported: #{drink_data['strDrink']}"
     @imported_count += 1
   end
 

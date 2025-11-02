@@ -315,7 +315,7 @@ export function CocktailDetailDialog({
               <div className="flex items-start gap-3 sm:gap-4">
                 <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">Note</h4>
+                  <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">カクテルノート</h4>
                   <p className="text-blue-800 leading-relaxed text-sm sm:text-base whitespace-pre-wrap">
                     {currentCocktail.description}
                   </p>

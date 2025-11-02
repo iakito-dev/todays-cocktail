@@ -344,7 +344,7 @@ export function CocktailList() {
       <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
         <SheetTrigger asChild>
           <Button
-            className="lg:hidden fixed bottom-6 left-6 w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all z-50 p-0"
+            className="lg:hidden fixed bottom-32 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all z-50 p-0"
           >
             <SlidersHorizontal className="w-6 h-6" />
           </Button>

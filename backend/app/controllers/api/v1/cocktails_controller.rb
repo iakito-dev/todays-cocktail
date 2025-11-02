@@ -69,25 +69,30 @@ class Api::V1::CocktailsController < ApplicationController
   end
 
   def show
-    cocktail = Cocktail.includes(cocktail_ingredients: :ingredient).find(params[:id])
+    cache_key = "cocktail_show_#{params[:id]}"
 
-    # フロントエンド用のフォーマットに変換
-    cocktail_data = cocktail.as_json.merge(
-      ingredients: cocktail.ordered_ingredients.map do |ci|
-        {
-          name: ci.ingredient.name_ja || ci.ingredient.name,
-          name_en: ci.ingredient.name,
-          amount: ci.amount_ja || ci.amount_text,
-          amount_en: ci.amount_text,
-          position: ci.position
-        }
-      end,
-      glass_ja: cocktail.glass_ja,
-      name_ja: cocktail.name_ja,
-      instructions_ja: cocktail.instructions_ja,
-      description: cocktail.description,
-      image_url: cocktail.display_image_url
-    )
+    # キャッシュ時間を24時間に延長（カクテル情報はほとんど変わらない）
+    cocktail_data = Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+      cocktail = Cocktail.includes(cocktail_ingredients: :ingredient).find(params[:id])
+
+      # フロントエンド用のフォーマットに変換
+      cocktail.as_json.merge(
+        ingredients: cocktail.ordered_ingredients.map do |ci|
+          {
+            name: ci.ingredient.name_ja || ci.ingredient.name,
+            name_en: ci.ingredient.name,
+            amount: ci.amount_ja || ci.amount_text,
+            amount_en: ci.amount_text,
+            position: ci.position
+          }
+        end,
+        glass_ja: cocktail.glass_ja,
+        name_ja: cocktail.name_ja,
+        instructions_ja: cocktail.instructions_ja,
+        description: cocktail.description,
+        image_url: cocktail.display_image_url
+      )
+    end
 
     render json: cocktail_data
   end

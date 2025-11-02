@@ -186,7 +186,26 @@ export async function fetchCocktails(params?: CocktailQuery): Promise<CocktailsR
  * @returns Promise<Cocktail> カクテルの詳細情報
  */
 export async function fetchCocktail(id: string | number): Promise<Cocktail> {
-  return apiGet(`/api/v1/cocktails/${id}`);
+  const cacheKey = `cocktail_detail_${id}`;
+
+  // キャッシュをチェック
+  const cached = sessionStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch {
+      // キャッシュ読み込み失敗時は再取得
+      sessionStorage.removeItem(cacheKey);
+    }
+  }
+
+  // APIから取得
+  const data = await apiGet(`/api/v1/cocktails/${id}`);
+
+  // キャッシュに保存
+  sessionStorage.setItem(cacheKey, JSON.stringify(data));
+
+  return data;
 }
 
 /**

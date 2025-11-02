@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from './ui/dialog';
 import { Badge } from './ui/badge';
+import { Skeleton } from './ui/skeleton';
 import { Separator } from './ui/separator';
 import { Wine, GlassWater, Hammer, Heart, Edit, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
@@ -74,12 +75,42 @@ export function CocktailDetailDialog({
     onUpdate?.(updatedCocktail);
   };
 
-  if (!currentCocktail) return null;
-
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col p-0 [&>button]:hidden">
+          {!currentCocktail ? (
+            // ローディング状態
+            <div className="p-6 sm:p-8 space-y-6">
+              <div className="space-y-4">
+                <Skeleton className="h-10 w-3/4" />
+                <Skeleton className="h-6 w-1/2" />
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-8 w-20" />
+              </div>
+              <div className="relative w-full aspect-[16/9]">
+                <Skeleton className="absolute inset-0 rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+              <Skeleton className="h-px w-full" />
+              <div className="space-y-3">
+                <Skeleton className="h-6 w-32" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            // コンテンツ表示
+            <>
           {/* Fixed Header */}
           <DialogHeader className="text-left sticky top-0 bg-white z-10 p-6 sm:p-8 pb-4 sm:pb-6 border-b border-gray-100">
             <div className="flex items-start justify-between gap-4">
@@ -234,18 +265,20 @@ export function CocktailDetailDialog({
           )}
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
-    {/* 編集ダイアログ */}
-    {isAdmin && (
-      <EditCocktailDialog
-        cocktail={currentCocktail}
-        isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
-        onSuccess={handleUpdateSuccess}
-      />
-    )}
+      {/* 編集ダイアログ */}
+      {isAdmin && currentCocktail && (
+        <EditCocktailDialog
+          cocktail={currentCocktail}
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+          onSuccess={handleUpdateSuccess}
+        />
+      )}
     </>
   );
 }

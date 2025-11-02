@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { Skeleton } from './ui/skeleton';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { ImageWithFallback } from './ImageWithFallback';
 import type { Cocktail } from '../lib/types';
@@ -73,11 +74,34 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
     return (
       <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
         <div className="p-8 md:p-12">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit mb-4">
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit mb-6">
             <Sparkles className="w-5 h-5 flex-shrink-0" />
             <span className="font-medium leading-none">Today's Pick</span>
           </div>
-          <p className="text-gray-600">読み込み中...</p>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* 画像スケルトン */}
+            <div className="relative aspect-square md:aspect-[4/3]">
+              <Skeleton className="absolute inset-0 rounded-2xl" />
+            </div>
+            {/* コンテンツスケルトン */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-3/4" />
+                <Skeleton className="h-6 w-1/2" />
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="h-6 w-20" />
+                <Skeleton className="h-6 w-20" />
+                <Skeleton className="h-6 w-20" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+              <Skeleton className="h-10 w-32 rounded-full" />
+            </div>
+          </div>
         </div>
       </Card>
     );

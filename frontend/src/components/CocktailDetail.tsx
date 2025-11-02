@@ -4,6 +4,7 @@ import { fetchCocktail } from '../lib/api';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from '../components/ui/badge';
+import { Skeleton } from './ui/skeleton';
 import { Separator } from './ui/separator';
 import { Wine, GlassWater, Hammer, ArrowLeft } from 'lucide-react';
 import { ImageWithFallback } from './ImageWithFallback';
@@ -60,11 +61,63 @@ export function CocktailDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background text-foreground p-6">
+      <div className="min-h-screen bg-gray-50 text-foreground p-6">
         <div className="max-w-3xl mx-auto">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-96 bg-gray-200 rounded"></div>
+          <Skeleton className="h-10 w-24 mb-6" />
+          <div className="space-y-6">
+            {/* カード全体 */}
+            <Card>
+              <CardContent className="p-0">
+                {/* 画像スケルトン */}
+                <div className="relative w-full aspect-[16/9]">
+                  <Skeleton className="absolute inset-0" />
+                </div>
+                {/* コンテンツ */}
+                <div className="p-6 space-y-6">
+                  {/* タイトル */}
+                  <div className="space-y-3">
+                    <Skeleton className="h-10 w-3/4" />
+                    <Skeleton className="h-6 w-1/2" />
+                  </div>
+                  {/* バッジ群 */}
+                  <div className="flex flex-wrap gap-2">
+                    <Skeleton className="h-8 w-24" />
+                    <Skeleton className="h-8 w-24" />
+                    <Skeleton className="h-8 w-24" />
+                    <Skeleton className="h-8 w-24" />
+                  </div>
+                  {/* 説明文 */}
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+                  {/* セパレーター */}
+                  <Skeleton className="h-px w-full" />
+                  {/* 作り方 */}
+                  <div className="space-y-3">
+                    <Skeleton className="h-6 w-32" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            {/* 材料カード */}
+            <Card>
+              <CardContent className="p-6">
+                <Skeleton className="h-6 w-24 mb-4" />
+                <div className="space-y-3">
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-5 w-4/5" />
+                  <Skeleton className="h-5 w-full" />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

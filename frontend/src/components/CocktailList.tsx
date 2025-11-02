@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchCocktails, fetchCocktail, type CocktailQuery } from '../lib/api';
 import { Card, CardContent } from './ui/card';
+import { Skeleton } from './ui/skeleton';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
@@ -251,7 +252,25 @@ export function CocktailList() {
                     <p className="text-sm text-red-500">Failed to load: {cocktailsError}</p>
                   )}
                   {!cocktails && !cocktailsError && (
-                    <div className="text-center py-12 text-gray-500">Loading...</div>
+                    <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-3">
+                      {Array.from({ length: itemsPerPage }).map((_, i) => (
+                        <Card key={i} className="overflow-hidden border bg-white border-gray-200 rounded-xl">
+                          <div className="relative aspect-[4/3]">
+                            <Skeleton className="absolute inset-0" />
+                          </div>
+                          <CardContent className="p-3 md:p-5">
+                            <div className="mb-2 md:mb-3">
+                              <Skeleton className="h-6 w-3/4 mb-2" />
+                              <Skeleton className="h-4 w-1/2" />
+                            </div>
+                            <div className="flex flex-wrap gap-1.5 md:gap-2">
+                              <Skeleton className="h-5 w-16" />
+                              <Skeleton className="h-5 w-16" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
                   )}
                   {cocktails && (
                     <>

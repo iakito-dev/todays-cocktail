@@ -64,11 +64,13 @@ export function CocktailDetailDialog({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [currentCocktail, setCurrentCocktail] = useState(cocktail);
   const { isAdmin } = useAuth();
-  
+
   // スワイプダウンで閉じる機能
   const scrollRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [translateY, setTranslateY] = useState(0);
 
   // cocktailが変更されたら更新
   if (cocktail && cocktail.id !== currentCocktail?.id) {
@@ -92,19 +94,28 @@ export function CocktailDetailDialog({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (touchStart === null) return;
-    setTouchEnd(e.targetTouches[0].clientY);
+    const currentTouch = e.targetTouches[0].clientY;
+    setTouchEnd(currentTouch);
+
+    const distance = currentTouch - touchStart;
+    // 下方向のみ、かつ一定距離まで追従
+    if (distance > 0) {
+      setTranslateY(Math.min(distance, 300)); // 最大300pxまで移動
+    }
   };
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchEnd - touchStart;
-    const isDownSwipe = distance > 100; // 100px以上下にスワイプした場合
-    
+    const isDownSwipe = distance > 150; // 150px以上下にスワイプした場合
+
     if (isDownSwipe) {
       onClose();
     }
-    
+
+    // リセット
+    setTranslateY(0);
     setTouchStart(null);
     setTouchEnd(null);
   };
@@ -112,7 +123,16 @@ export function CocktailDetailDialog({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl h-[calc(100vh-2rem)] max-h-[90vh] sm:h-auto flex flex-col p-0 gap-0 [&>button]:hidden">
+        <DialogContent
+          ref={dialogRef}
+          className="w-[95vw] sm:w-[90vw] max-w-2xl h-[90vh] sm:h-auto max-h-[90vh] flex flex-col p-0 gap-0 border-gray-200 [&>button]:hidden"
+          style={{
+            transform: touchStart !== null && translateY > 0
+              ? `translate(-50%, calc(-50% + ${translateY}px))`
+              : undefined,
+            transition: touchStart === null ? 'transform 0.3s ease-out' : 'none'
+          }}
+        >
           {!currentCocktail ? (
             // ローディング状態
             <div className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
@@ -149,7 +169,7 @@ export function CocktailDetailDialog({
           <div className="sm:hidden flex justify-center pt-2 pb-1">
             <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
           </div>
-          
+
           {/* Fixed Header */}
           <DialogHeader className="text-left sticky top-0 bg-white z-10 p-4 sm:p-6 md:p-8 pb-3 sm:pb-4 md:pb-6 border-b border-gray-100 shrink-0">
             <div className="flex items-start justify-between gap-3 sm:gap-4">
@@ -211,7 +231,7 @@ export function CocktailDetailDialog({
           </DialogHeader>
 
         {/* Scrollable Content */}
-        <div 
+        <div
           ref={scrollRef}
           className="flex-1 overflow-y-auto overscroll-contain"
           onTouchStart={handleTouchStart}
@@ -219,7 +239,7 @@ export function CocktailDetailDialog({
           onTouchEnd={handleTouchEnd}
         >
           <div className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
-            
+
           {/* カクテル画像 */}
           <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100">
             <ImageWithFallback

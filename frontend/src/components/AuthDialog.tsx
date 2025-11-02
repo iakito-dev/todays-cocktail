@@ -85,34 +85,34 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="w-[95vw] sm:w-[90vw] max-w-md">
         <DialogHeader className="space-y-3">
           <div className="flex items-center justify-center mb-2">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-3xl shadow-sm">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl sm:text-3xl shadow-sm">
               🍸
             </div>
           </div>
-          <DialogTitle className="text-center text-2xl text-gray-900">Today's Cocktails</DialogTitle>
-          <DialogDescription className="text-center text-base">
+          <DialogTitle className="text-center text-xl sm:text-2xl text-gray-900">Today's Cocktails</DialogTitle>
+          <DialogDescription className="text-center text-sm sm:text-base">
             お気に入りのカクテルを保存して、いつでも楽しめます
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="login" className="mt-6">
-          <TabsList className="grid w-full grid-cols-2 bg-gray-100 h-11">
-            <TabsTrigger value="login" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">ログイン</TabsTrigger>
-            <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">新規登録</TabsTrigger>
+        <Tabs defaultValue="login" className="mt-4 sm:mt-6">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 h-10 sm:h-11">
+            <TabsTrigger value="login" className="data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm">ログイン</TabsTrigger>
+            <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm">新規登録</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="login" className="space-y-4 mt-6">
-            <form onSubmit={handleLogin} className="space-y-4">
+          <TabsContent value="login" className="space-y-3 sm:space-y-4 mt-4 sm:mt-6">
+            <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200rounded-xl text-red-800">
+                <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-lg sm:rounded-xl text-red-800 text-sm">
                   {error}
                 </div>
               )}
-              <div className="space-y-2">
-                <Label htmlFor="login-email" className="text-sm font-medium text-gray-700">メールアドレス</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="login-email" className="text-xs sm:text-sm font-medium text-gray-700">メールアドレス</Label>
                 <Input
                   id="login-email"
                   type="email"
@@ -121,11 +121,11 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-11"
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="login-password" className="text-sm font-medium text-gray-700">パスワード</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="login-password" className="text-xs sm:text-sm font-medium text-gray-700">パスワード</Label>
                 <Input
                   id="login-password"
                   type="password"
@@ -134,12 +134,12 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-11"
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                 />
               </div>
               <Button
                 type="submit"
-                className="w-full h-11 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm mt-2"
+                className="w-full h-10 sm:h-11 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm mt-1 sm:mt-2 text-sm sm:text-base"
                 disabled={isLoading}
               >
                 {isLoading ? 'ログイン中...' : 'ログイン'}
@@ -147,15 +147,15 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
             </form>
           </TabsContent>
 
-          <TabsContent value="signup" className="space-y-4 mt-6">
-            <form onSubmit={handleSignup} className="space-y-4">
+          <TabsContent value="signup" className="space-y-3 sm:space-y-4 mt-4 sm:mt-6">
+            <form onSubmit={handleSignup} className="space-y-3 sm:space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200rounded-xl text-red-800 text-sm">
+                <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-lg sm:rounded-xl text-red-800 text-sm">
                   {error}
                 </div>
               )}
-              <div className="space-y-2">
-                <Label htmlFor="signup-name" className="text-sm font-medium text-gray-700">ユーザー名</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="signup-name" className="text-xs sm:text-sm font-medium text-gray-700">ユーザー名</Label>
                 <Input
                   id="signup-name"
                   type="text"
@@ -164,11 +164,11 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
                   onChange={(e) => setName(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-11"
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-email" className="text-sm font-medium text-gray-700">メールアドレス</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="signup-email" className="text-xs sm:text-sm font-medium text-gray-700">メールアドレス</Label>
                 <Input
                   id="signup-email"
                   type="email"
@@ -177,11 +177,11 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-11"
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-password" className="text-sm font-medium text-gray-700">パスワード</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="signup-password" className="text-xs sm:text-sm font-medium text-gray-700">パスワード</Label>
                 <Input
                   id="signup-password"
                   type="password"
@@ -191,12 +191,12 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
                   required
                   disabled={isLoading}
                   minLength={6}
-                  className="h-11"
+                  className="h-10 sm:h-11 text-sm sm:text-base"
                 />
               </div>
               <Button
                 type="submit"
-                className="w-full h-11 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm mt-2"
+                className="w-full h-10 sm:h-11 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm mt-1 sm:mt-2 text-sm sm:text-base"
                 disabled={isLoading}
               >
                 {isLoading ? '登録中...' : '新規登録'}

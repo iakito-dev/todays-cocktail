@@ -102,8 +102,8 @@ class PopularCocktailImporter
     @skipped_count = 0
     @error_count = 0
     @not_found_count = 0
-    # 翻訳はスキップ
-    @translation_service = nil
+    # 翻訳サービスを初期化
+    @translation_service = TranslationService.new
   end
 
   def import_all
@@ -220,7 +220,7 @@ class PopularCocktailImporter
       ingredient = Ingredient.find_or_create_by!(name: ing_data[:name]) do |ing|
         ing.name_ja = ingredient_name_ja
       end
-      
+
       # 既存の材料でname_jaが空の場合は更新
       if ingredient.name_ja.blank? && ingredient_name_ja.present?
         ingredient.update!(name_ja: ingredient_name_ja)

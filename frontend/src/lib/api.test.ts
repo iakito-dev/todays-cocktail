@@ -129,37 +129,55 @@ describe('API Client', () => {
 
   describe('fetchCocktails', () => {
     it('カクテル一覧を取得する', async () => {
-      const mockCocktails = [
-        {
-          id: 1,
-          name: 'マティーニ',
-          base: 'gin',
-          technique: 'stir',
-          strength: 'strong',
-          image_url: null,
-          instructions: null,
-          created_at: '2023-01-01',
-          updated_at: '2023-01-01',
+      const mockResponse = {
+        cocktails: [
+          {
+            id: 1,
+            name: 'マティーニ',
+            base: 'gin',
+            technique: 'stir',
+            strength: 'strong',
+            image_url: null,
+            instructions: null,
+            created_at: '2023-01-01',
+            updated_at: '2023-01-01',
+          },
+        ],
+        meta: {
+          current_page: 1,
+          per_page: 20,
+          total_count: 1,
+          total_pages: 1,
         },
-      ];
+      };
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ data: mockCocktails }),
+        json: async () => mockResponse,
       } as Response);
 
       const result = await fetchCocktails();
 
-      expect(result).toEqual({ data: mockCocktails });
+      expect(result).toEqual(mockResponse);
     });
 
     it('クエリパラメータを含めて取得する', async () => {
+      const mockResponse = {
+        cocktails: [],
+        meta: {
+          current_page: 1,
+          per_page: 20,
+          total_count: 0,
+          total_pages: 0,
+        },
+      };
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ data: [] }),
+        json: async () => mockResponse,
       } as Response);
 
-      await fetchCocktails({ q: 'mojito', base: 'rum', ingredients: 'mint' });
+      await fetchCocktails({ q: 'mojito', base: 'rum', ingredients: 'mint', page: 1, per_page: 20 });
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/cocktails?'),
@@ -169,6 +187,8 @@ describe('API Client', () => {
       expect(url).toContain('q=mojito');
       expect(url).toContain('base=rum');
       expect(url).toContain('ingredients=mint');
+      expect(url).toContain('page=1');
+      expect(url).toContain('per_page=20');
     });
   });
 

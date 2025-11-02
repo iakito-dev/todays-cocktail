@@ -10,16 +10,17 @@ rm -f tmp/pids/server.pid
 echo "📦 Installing dependencies..."
 bundle install
 
-# データベースの準備
+# データベースの準備（エラーを無視）
 echo "🗄️  Preparing database..."
-bundle exec rails db:prepare
+bundle exec rails db:prepare || echo "⚠️  Database prepare failed, continuing..."
 
 # データベースが空の場合のみSeedを実行
-if [ $(bundle exec rails runner "puts Cocktail.count") -eq 0 ]; then
+COCKTAIL_COUNT=$(bundle exec rails runner "puts Cocktail.count" 2>/dev/null || echo "0")
+if [ "$COCKTAIL_COUNT" -eq 0 ]; then
   echo "🌱 Seeding database (first time setup)..."
-  bundle exec rails db:seed
+  bundle exec rails db:seed || echo "⚠️  Seeding failed, continuing..."
 else
-  echo " Database already seeded, skipping..."
+  echo "✅ Database already seeded, skipping..."
 fi
 
 # Railsサーバーを起動

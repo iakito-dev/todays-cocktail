@@ -26,12 +26,33 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
   useEffect(() => {
     const fetchTodaysPick = async () => {
       try {
+        // 今日の日付をキーとしてキャッシュ
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD形式
+        const cacheKey = `todays_pick_${today}`;
+
+        // キャッシュをチェック
+        const cached = sessionStorage.getItem(cacheKey);
+        if (cached) {
+          try {
+            const data = JSON.parse(cached);
+            setCocktail(data);
+            setLoading(false);
+            return;
+          } catch {
+            // キャッシュ読み込み失敗時は再取得
+            sessionStorage.removeItem(cacheKey);
+          }
+        }
+
         const response = await fetch(`${API_BASE}/api/v1/cocktails/todays_pick`);
         if (!response.ok) {
           throw new Error('Failed to fetch today\'s pick');
         }
         const data = await response.json();
         setCocktail(data);
+
+        // キャッシュに保存
+        sessionStorage.setItem(cacheKey, JSON.stringify(data));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {

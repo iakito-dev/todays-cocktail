@@ -36,6 +36,8 @@ const useItemsPerPage = () => {
 export function CocktailList() {
   const itemsPerPage = useItemsPerPage();
   const [cocktails, setCocktails] = useState<Cocktail[] | null>(null);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [cocktailsError, setCocktailsError] = useState<string | null>(null);
   const [selectedCocktail, setSelectedCocktail] = useState<Cocktail | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -60,14 +62,44 @@ export function CocktailList() {
   const debouncedIngredients = useDebounce(ingredients, 300);
 
   useEffect(() => {
-    const params: CocktailQuery = {};
+    // セッションストレージのキャッシュキーを生成
+    const cacheKey = `cocktails_${JSON.stringify({ q: debouncedQ, base: selectedBases, ingredients: debouncedIngredients, page: currentPage, per_page: itemsPerPage })}`;
+
+    // キャッシュをチェック
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        setCocktails(data.cocktails);
+        setTotalPages(data.meta.total_pages);
+        setTotalCount(data.meta.total_count);
+        return;
+      } catch {
+        // キャッシュ読み込み失敗時は再取得
+      }
+    }
+
+    const params: CocktailQuery = {
+      page: currentPage,
+      per_page: itemsPerPage
+    };
     if (debouncedQ) params.q = debouncedQ;
     if (selectedBases.length) params.base = selectedBases;
     if (debouncedIngredients) params.ingredients = debouncedIngredients;
+
     fetchCocktails(params)
-      .then(setCocktails)
+      .then((response) => {
+        setCocktails(response.cocktails);
+        setTotalPages(response.meta.total_pages);
+        setTotalCount(response.meta.total_count);
+        // キャッシュに保存（セッション中のみ有効）
+        sessionStorage.setItem(cacheKey, JSON.stringify(response));
+      })
       .catch((e) => setCocktailsError(e.message));
-    // フィルター変更時はページを1にリセット
+  }, [debouncedQ, selectedBases, debouncedIngredients, currentPage, itemsPerPage]);
+
+  // フィルター変更時はページを1にリセット
+  useEffect(() => {
     setCurrentPage(1);
   }, [debouncedQ, selectedBases, debouncedIngredients]);
 
@@ -121,12 +153,8 @@ export function CocktailList() {
   const favoriteCocktails = favorites.map(fav => fav.cocktail);
 
   // ページネーション用の計算
-  const allCocktailsTotal = cocktails?.length || 0;
-  const allCocktailsTotalPages = Math.ceil(allCocktailsTotal / itemsPerPage);
-  const allCocktailsPaginated = cocktails?.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  ) || [];
+  // バックエンドからページネーションされたデータを受け取るため、スライスは不要
+  const allCocktailsPaginated = cocktails || [];
 
   const favoritesTotal = favoriteCocktails.length;
   const favoritesTotalPages = Math.ceil(favoritesTotal / itemsPerPage);
@@ -207,7 +235,7 @@ export function CocktailList() {
               <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 <TabsList className="grid w-full max-w-md grid-cols-2">
                   <TabsTrigger value="all" className="flex items-center gap-2">
-                    すべて ({cocktails?.length || 0})
+                    すべて ({totalCount || 0})
                   </TabsTrigger>
                   <TabsTrigger
                     value="favorites"
@@ -246,7 +274,7 @@ export function CocktailList() {
                       )}
                       <Pagination
                         currentPage={currentPage}
-                        totalPages={allCocktailsTotalPages}
+                        totalPages={totalPages}
                         onPageChange={setCurrentPage}
                       />
                     </>

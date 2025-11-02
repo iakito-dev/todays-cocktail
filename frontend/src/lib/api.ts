@@ -146,13 +146,27 @@ export interface CocktailQuery {
   q?: string;
   base?: string | string[]; // enum key(s)
   ingredients?: string; // comma/space separated
+  page?: number;
+  per_page?: number;
 }
 
-export async function fetchCocktails(params?: CocktailQuery): Promise<Cocktail[]> {
+export interface CocktailsResponse {
+  cocktails: Cocktail[];
+  meta: {
+    current_page: number;
+    per_page: number;
+    total_count: number;
+    total_pages: number;
+  };
+}
+
+export async function fetchCocktails(params?: CocktailQuery): Promise<CocktailsResponse> {
   const qs = new URLSearchParams();
   if (params) {
     if (params.q) qs.set('q', params.q);
     if (params.ingredients) qs.set('ingredients', params.ingredients);
+    if (params.page) qs.set('page', params.page.toString());
+    if (params.per_page) qs.set('per_page', params.per_page.toString());
     if (params.base) {
       const bases = Array.isArray(params.base) ? params.base : params.base.split(',');
       if (bases.length === 1) {

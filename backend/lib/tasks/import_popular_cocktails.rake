@@ -170,22 +170,27 @@ class PopularCocktailImporter
         cocktail = existing_cocktail
         puts "  🔄 Updated image: #{drink_data['strDrink']}"
       else
-        # 新規カクテル作成
+        # 新規カクテル作成（翻訳付き）
+        name_ja = @translation_service.translate_cocktail_name(drink_data['strDrink'])
+        glass_ja = @translation_service.translate_glass(drink_data['strGlass'])
+        instructions_ja = @translation_service.translate_instructions(drink_data['strInstructions'])
+
         cocktail = Cocktail.create!(
           name: drink_data['strDrink'],
-          name_ja: nil, # 後で翻訳
+          name_ja: name_ja,
           base: map_base(drink_data),
           strength: map_strength(drink_data),
           technique: map_technique(drink_data),
           glass: drink_data['strGlass'],
-          glass_ja: nil, # 後で翻訳
-          image_url_override: drink_data['strDrinkThumb'], # 外部URLを直接使用
-          instructions: drink_data['strInstructions']
+          glass_ja: glass_ja,
+          image_url_override: drink_data['strDrinkThumb'],
+          instructions: drink_data['strInstructions'],
+          instructions_ja: instructions_ja
         )
 
-        # 材料追加
+        # 材料追加（翻訳付き）
         import_ingredients(cocktail, drink_data)
-        puts "  ✅ Imported: #{drink_data['strDrink']}"
+        puts "  ✅ Imported: #{drink_data['strDrink']} (#{name_ja})"
       end
     end
 
@@ -208,15 +213,27 @@ class PopularCocktailImporter
       }
     end
 
-    # 材料作成（翻訳なし）
+    # 材料作成（翻訳付き）
     ingredients_list.each do |ing_data|
-      ingredient = Ingredient.find_or_create_by!(name: ing_data[:name])
+      # 材料の翻訳
+      ingredient_name_ja = @translation_service.translate_ingredient_name(ing_data[:name])
+      ingredient = Ingredient.find_or_create_by!(name: ing_data[:name]) do |ing|
+        ing.name_ja = ingredient_name_ja
+      end
+      
+      # 既存の材料でname_jaが空の場合は更新
+      if ingredient.name_ja.blank? && ingredient_name_ja.present?
+        ingredient.update!(name_ja: ingredient_name_ja)
+      end
+
+      # 分量の翻訳
+      amount_ja = @translation_service.translate_measure(ing_data[:amount])
 
       CocktailIngredient.create!(
         cocktail: cocktail,
         ingredient: ingredient,
         amount_text: ing_data[:amount],
-        amount_ja: nil, # 後で翻訳
+        amount_ja: amount_ja,
         position: position
       )
 

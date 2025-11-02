@@ -201,38 +201,8 @@ export function CocktailList() {
               <TodaysPick onViewDetails={handleCocktailClick} />
             </div>
 
-            {/* Mobile Filter Button */}
-            <div className="lg:hidden order-2">
-              <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full bg-white border-gray-200 hover:bg-gray-50 h-12 rounded-xl"
-                  >
-                    <SlidersHorizontal className="w-5 h-5 mr-2" />
-                    検索・絞り込み
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[320px] sm:w-[380px] overflow-y-auto">
-                  <SheetHeader>
-                    <SheetTitle className="text-lg font-semibold">検索・絞り込み</SheetTitle>
-                  </SheetHeader>
-                  <div className="mt-6">
-                    <CocktailFilters
-                      searchQuery={q}
-                      onSearchChange={setQ}
-                      selectedBases={selectedBases}
-                      onBasesChange={setSelectedBases}
-                      ingredientSearch={ingredients}
-                      onIngredientSearchChange={setIngredients}
-                    />
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-
             {/* Cocktails Section */}
-            <section className="space-y-4 order-3">
+            <section className="space-y-4 order-2">
               <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 <TabsList className="grid w-full max-w-md grid-cols-2">
                   <TabsTrigger value="all" className="flex items-center gap-2">
@@ -369,6 +339,32 @@ export function CocktailList() {
           setSelectedCocktail(updatedCocktail);
         }}
       />
+
+      {/* Floating Action Button - Mobile Only */}
+      <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+        <SheetTrigger asChild>
+          <Button
+            className="lg:hidden fixed bottom-6 left-6 w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all z-50 p-0"
+          >
+            <SlidersHorizontal className="w-6 h-6" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[320px] sm:w-[380px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="text-lg font-semibold">検索・絞り込み</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6">
+            <CocktailFilters
+              searchQuery={q}
+              onSearchChange={setQ}
+              selectedBases={selectedBases}
+              onBasesChange={setSelectedBases}
+              ingredientSearch={ingredients}
+              onIngredientSearchChange={setIngredients}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Auth Dialog */}
       <AuthDialog

@@ -173,7 +173,7 @@ class PopularCocktailImporter
         technique: map_technique(drink_data),
         glass: drink_data['strGlass'],
         glass_ja: nil, # 後で翻訳
-        image_url: drink_data['strDrinkThumb'],
+        image_url_override: drink_data['strDrinkThumb'], # 外部URLを直接使用
         instructions: drink_data['strInstructions']
       )
 
@@ -181,12 +181,7 @@ class PopularCocktailImporter
       import_ingredients(cocktail, drink_data)
     end
 
-    # 画像ダウンロード
-    if cocktail && drink_data['strDrinkThumb'].present?
-      ImageDownloadService.download_and_attach(cocktail, drink_data['strDrinkThumb'])
-    end
-
-    puts "   Imported: #{drink_data['strDrink']}"
+    puts "  ✅ Imported: #{drink_data['strDrink']}"
     @imported_count += 1
   end
 

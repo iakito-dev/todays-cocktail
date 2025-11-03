@@ -105,22 +105,27 @@ async function apiPostAuth(path: string, body: unknown): Promise<{ data: AuthRes
   });
 
   if (!res.ok) {
-    // エラーレスポンスのJSONを取得
+    // エラーレスポンスを取得（一度だけ読み取る）
     let errorMessage = `POST ${path} failed: ${res.status}`;
     try {
-      const errorData = await res.json();
-      // バックエンドからのエラーメッセージを取得
-      if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
-        errorMessage = errorData.errors.join(', ');
-      } else if (errorData.status?.message) {
-        errorMessage = errorData.status.message;
+      const text = await res.text();
+      // JSONとしてパース試行
+      try {
+        const errorData = JSON.parse(text);
+        // バックエンドからのエラーメッセージを取得
+        if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+          errorMessage = errorData.errors.join(', ');
+        } else if (errorData.status?.message) {
+          errorMessage = errorData.status.message;
+        }
+      } catch {
+        // JSONパースに失敗した場合はテキストをそのまま使用
+        if (text) {
+          errorMessage = text;
+        }
       }
     } catch {
-      // JSONパースに失敗した場合はテキストを取得
-      const text = await res.text();
-      if (text) {
-        errorMessage = text;
-      }
+      // レスポンス読み取り失敗時はデフォルトメッセージ
     }
     throw new Error(errorMessage);
   }

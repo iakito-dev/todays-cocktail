@@ -102,7 +102,7 @@ class CocktailImporter
 
     # find_or_initialize_byを使用してより安全に
     cocktail = Cocktail.find_or_initialize_by(name: cocktail_name)
-    
+
     if cocktail.persisted?
       puts "⏭️  Skipped (already exists): #{cocktail_name}"
       @skipped_count += 1

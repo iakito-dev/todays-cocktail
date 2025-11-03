@@ -56,11 +56,11 @@ services:
 
       # フロントエンドURL（Vercel デプロイ後に更新）
       - key: FRONTEND_URL
-        value: https://todays-cocktail.vercel.app
+        value: https://todayscocktails.com
 
       # CORS設定用（Vercel デプロイ後に更新）
       - key: ALLOWED_ORIGINS
-        value: https://todays-cocktail.vercel.app,http://localhost:5173
+        value: https://todayscocktails.com,https://todays-cocktail.vercel.app,http://localhost:5173
 
       # JWT認証設定
       - key: DEVISE_JWT_SECRET_KEY

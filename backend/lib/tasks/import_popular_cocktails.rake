@@ -166,7 +166,7 @@ class PopularCocktailImporter
     ActiveRecord::Base.transaction do
       # find_or_initialize_byでより安全に
       cocktail = Cocktail.find_or_initialize_by(name: drink_data['strDrink'])
-      
+
       if cocktail.persisted?
         # 既存のカクテルの画像URLを更新
         cocktail.update!(image_url_override: drink_data['strDrinkThumb'])

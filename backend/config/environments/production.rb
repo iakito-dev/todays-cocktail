@@ -59,21 +59,14 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.delivery_method = :smtp
+  
+  # Resend HTTP API経由でメール送信（RenderではSMTPポートがブロックされているため）
+  config.action_mailer.delivery_method = :resend
+  config.action_mailer.resend_settings = {}
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = {
     host: ENV.fetch('FRONTEND_URL', 'https://yourdomain.com').gsub(%r{https?://}, '')
-  }
-
-  # Resend SMTP settings
-  config.action_mailer.smtp_settings = {
-    address: 'smtp.resend.com',
-    port: 465,
-    user_name: 'resend',
-    password: ENV['RESEND_API_KEY'],
-    authentication: :plain,
-    tls: true  # Port 465はSSL/TLS接続なのでtlsを使用（enable_starttls_autoは不要）
   }
 
   # Default mail sender

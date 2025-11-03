@@ -15,6 +15,7 @@ gem "rack-cors"
 gem "ruby-openai" # OpenAI API（翻訳用）
 gem "httparty"    # HTTPリクエスト
 gem "dotenv-rails" # 環境変数管理
+gem "resend"      # Resend API（メール送信）
 
 # タスク管理・ジョブ・キャッシュ
 gem "solid_cache"

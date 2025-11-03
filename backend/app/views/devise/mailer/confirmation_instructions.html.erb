@@ -20,7 +20,7 @@
       
       <div class="button-container">
         <%= link_to 'メールアドレスを確認する', 
-            "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@token}", 
+            "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@resource.confirmation_token}", 
             class: 'button' %>
       </div>
       
@@ -30,7 +30,7 @@
       
       <div class="url-box">
         <p class="url-text">
-          <%= "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@token}" %>
+          <%= "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@resource.confirmation_token}" %>
         </p>
       </div>
     </div>

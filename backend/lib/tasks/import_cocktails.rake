@@ -100,14 +100,14 @@ class CocktailImporter
   def import_cocktail(drink_data)
     cocktail_name = drink_data['strDrink']
 
-    # 既存チェック
-    if Cocktail.exists?(name: cocktail_name)
+    # find_or_initialize_byを使用してより安全に
+    cocktail = Cocktail.find_or_initialize_by(name: cocktail_name)
+    
+    if cocktail.persisted?
       puts "⏭️  Skipped (already exists): #{cocktail_name}"
       @skipped_count += 1
       return
     end
-
-    cocktail = nil
 
     begin
       ActiveRecord::Base.transaction do
@@ -115,9 +115,8 @@ class CocktailImporter
         cocktail_name_ja = @translation_service.translate_cocktail_name(cocktail_name)
         glass_ja = @translation_service.translate_glass(drink_data['strGlass'])
 
-        # カクテルを作成
-        cocktail = Cocktail.create!(
-          name: cocktail_name,
+        # カクテルの属性を設定して保存
+        cocktail.assign_attributes(
           name_ja: cocktail_name_ja,
           base: map_base(drink_data),
           strength: map_strength(drink_data),
@@ -127,6 +126,7 @@ class CocktailImporter
           image_url: drink_data['strDrinkThumb'],
           instructions: drink_data['strInstructions']
         )
+        cocktail.save!
 
         # 材料を追加（翻訳付き）
         import_ingredients(cocktail, drink_data)
@@ -142,6 +142,9 @@ class CocktailImporter
 
       # API負荷軽減のため少し待機（翻訳API）
       sleep 1.5
+    rescue ActiveRecord::RecordNotUnique => e
+      puts "⚠️  Duplicate detected, skipping: #{cocktail_name}"
+      @skipped_count += 1
     rescue StandardError => e
       puts "❌ Error importing #{cocktail_name}: #{e.message}"
       Rails.logger.error("Full error: #{e.class}: #{e.message}\n#{e.backtrace.join("\n")}")

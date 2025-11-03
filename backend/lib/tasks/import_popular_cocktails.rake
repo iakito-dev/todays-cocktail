@@ -164,10 +164,12 @@ class PopularCocktailImporter
     cocktail = nil
 
     ActiveRecord::Base.transaction do
-      if existing_cocktail
+      # find_or_initialize_byでより安全に
+      cocktail = Cocktail.find_or_initialize_by(name: drink_data['strDrink'])
+      
+      if cocktail.persisted?
         # 既存のカクテルの画像URLを更新
-        existing_cocktail.update!(image_url_override: drink_data['strDrinkThumb'])
-        cocktail = existing_cocktail
+        cocktail.update!(image_url_override: drink_data['strDrinkThumb'])
         puts "  🔄 Updated image: #{drink_data['strDrink']}"
       else
         # 新規カクテル作成（翻訳付き）
@@ -175,8 +177,7 @@ class PopularCocktailImporter
         glass_ja = @translation_service.translate_glass(drink_data['strGlass'])
         instructions_ja = @translation_service.translate_instructions(drink_data['strInstructions'])
 
-        cocktail = Cocktail.create!(
-          name: drink_data['strDrink'],
+        cocktail.assign_attributes(
           name_ja: name_ja,
           base: map_base(drink_data),
           strength: map_strength(drink_data),
@@ -187,6 +188,7 @@ class PopularCocktailImporter
           instructions: drink_data['strInstructions'],
           instructions_ja: instructions_ja
         )
+        cocktail.save!
 
         # 材料追加（翻訳付き）
         import_ingredients(cocktail, drink_data)
@@ -195,6 +197,9 @@ class PopularCocktailImporter
     end
 
     @imported_count += 1
+  rescue ActiveRecord::RecordNotUnique => e
+    puts "  ⚠️  Duplicate detected, skipping: #{drink_data['strDrink']}"
+    @skipped_count += 1
   end
 
   def import_ingredients(cocktail, drink_data)

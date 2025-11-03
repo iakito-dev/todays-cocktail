@@ -1,14 +1,47 @@
-<p><%= @resource.name %>様</p>
-
-<p>Today's Cocktailsへようこそ！</p>
-
-<p>以下のリンクをクリックして、メールアドレスの確認を完了してください：</p>
-
-<p><%= link_to 'メールアドレスを確認する', "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@token}", style: 'display: inline-block; padding: 12px 24px; background-color: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;' %></p>
-
-<p>または、以下のURLをブラウザにコピー&ペーストしてください：</p>
-<p><%= "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@token}" %></p>
-
-<hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;">
-
-<p style="color: #6b7280; font-size: 14px;">このメールに心当たりがない場合は、無視してください。</p>
+<div class="email-wrapper">
+  <div class="email-container">
+    <div class="email-header">
+      <h1 class="logo">🍸</h1>
+      <h2 class="brand-name">Today's Cocktails</h2>
+    </div>
+    
+    <div class="email-body">
+      <p class="greeting">
+        <%= @resource.name.present? ? "#{@resource.name}様" : "こんにちは" %>
+      </p>
+      
+      <p class="content-text">
+        Today's Cocktailsへようこそ！アカウントのご登録ありがとうございます。
+      </p>
+      
+      <p class="content-text">
+        以下のボタンをクリックして、メールアドレスの確認を完了してください：
+      </p>
+      
+      <div class="button-container">
+        <%= link_to 'メールアドレスを確認する', 
+            "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@token}", 
+            class: 'button' %>
+      </div>
+      
+      <p class="help-text">
+        ボタンが機能しない場合は、以下のURLをコピーしてブラウザに貼り付けてください：
+      </p>
+      
+      <div class="url-box">
+        <p class="url-text">
+          <%= "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@token}" %>
+        </p>
+      </div>
+    </div>
+    
+    <div class="email-footer">
+      <p class="footer-text">
+        このメールに心当たりがない場合は、無視していただいて問題ありません。
+      </p>
+      <p class="copyright">
+        © 2025 Today's Cocktails. All rights reserved.
+      </p>
+    </div>
+  </div>
+</div>

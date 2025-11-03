@@ -16,6 +16,8 @@ gem "ruby-openai" # OpenAI API（翻訳用）
 gem "httparty"    # HTTPリクエスト
 gem "dotenv-rails" # 環境変数管理
 gem "resend"      # Resend API（メール送信）
+gem "premailer-rails"  # メールのインラインCSS変換
+gem "nokogiri"    # HTMLパーサー（premailer依存）
 
 # タスク管理・ジョブ・キャッシュ
 gem "solid_cache"

@@ -70,11 +70,19 @@ module Api
         {
           id: cocktail.id,
           name: cocktail.name,
+          name_ja: cocktail.name_ja,
           base: cocktail.base,
+          glass: cocktail.glass,
+          glass_ja: cocktail.glass_ja,
+          description: cocktail.description,
           strength: cocktail.strength,
           technique: cocktail.technique,
           image_url: cocktail.display_image_url,
           instructions: cocktail.instructions,
+          instructions_ja: cocktail.instructions_ja,
+          image_url_override: cocktail.image_url_override,
+          created_at: cocktail.created_at,
+          updated_at: cocktail.updated_at,
           is_favorited: true # お気に入り一覧では常にtrue
         }
       end

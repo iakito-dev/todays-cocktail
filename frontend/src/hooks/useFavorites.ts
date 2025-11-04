@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { Favorite } from '../lib/types';
 import { apiDelete, apiGet, apiPost } from '../lib/api';
+import { toast } from '../components/ui/sonner';
 
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
@@ -11,7 +12,9 @@ export const useFavorites = () => {
   const fetchFavorites = useCallback(async () => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
-      setError('ログインが必要です');
+      const message = 'ログインが必要です';
+      setError(message);
+      toast.error(message);
       return;
     }
 
@@ -22,7 +25,9 @@ export const useFavorites = () => {
       const data = await apiGet('/api/v1/favorites');
       setFavorites(Array.isArray(data?.data) ? data.data : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'エラーが発生しました');
+      const message = err instanceof Error ? err.message : 'エラーが発生しました';
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -32,7 +37,9 @@ export const useFavorites = () => {
   const addFavorite = useCallback(async (cocktailId: number) => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
-      setError('ログインが必要です');
+      const message = 'ログインが必要です';
+      setError(message);
+      toast.error(message);
       return false;
     }
 
@@ -43,9 +50,12 @@ export const useFavorites = () => {
       await apiPost('/api/v1/favorites', { cocktail_id: cocktailId });
       // お気に入り一覧を再取得
       await fetchFavorites();
+      toast.success('お気に入りに追加しました');
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'エラーが発生しました');
+      const message = err instanceof Error ? err.message : 'エラーが発生しました';
+      setError(message);
+      toast.error(message);
       return false;
     } finally {
       setLoading(false);
@@ -56,7 +66,9 @@ export const useFavorites = () => {
   const removeFavorite = useCallback(async (favoriteId: number) => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
-      setError('ログインが必要です');
+      const message = 'ログインが必要です';
+      setError(message);
+      toast.error(message);
       return false;
     }
 
@@ -67,9 +79,12 @@ export const useFavorites = () => {
       await apiDelete(`/api/v1/favorites/${favoriteId}`);
       // お気に入り一覧を再取得
       await fetchFavorites();
+      toast.success('お気に入りから削除しました');
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'エラーが発生しました');
+      const message = err instanceof Error ? err.message : 'エラーが発生しました';
+      setError(message);
+      toast.error(message);
       return false;
     } finally {
       setLoading(false);

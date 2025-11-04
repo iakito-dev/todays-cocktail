@@ -2,6 +2,24 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useFavorites } from './useFavorites';
 
+var mockToast: {
+  success: ReturnType<typeof vi.fn>;
+  error: ReturnType<typeof vi.fn>;
+  info: ReturnType<typeof vi.fn>;
+};
+
+vi.mock('../components/ui/sonner', () => {
+  mockToast = {
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+  };
+
+  return {
+    toast: mockToast,
+  };
+});
+
 // Mock fetch
 const mockFetch = vi.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,6 +50,9 @@ describe('useFavorites', () => {
   beforeEach(() => {
     mockFetch.mockClear();
     localStorageMock.clear();
+    mockToast.success.mockClear();
+    mockToast.error.mockClear();
+    mockToast.info.mockClear();
   });
 
   describe('fetchFavorites', () => {
@@ -44,6 +65,7 @@ describe('useFavorites', () => {
         expect(result.current.error).toBe('ログインが必要です');
       });
       expect(result.current.favorites).toEqual([]);
+      expect(mockToast.error).toHaveBeenCalledWith('ログインが必要です');
     });
 
     it('正常にお気に入り一覧を取得する', async () => {
@@ -80,6 +102,7 @@ describe('useFavorites', () => {
         expect(result.current.favorites).toEqual(mockFavorites);
         expect(result.current.error).toBeNull();
       });
+      expect(mockToast.error).not.toHaveBeenCalled();
     });
 
     it('APIエラー時にエラーを設定する', async () => {
@@ -97,6 +120,7 @@ describe('useFavorites', () => {
       await waitFor(() => {
         expect(result.current.error).toBe('エラーが発生しました');
       });
+      expect(mockToast.error).toHaveBeenCalledWith('エラーが発生しました');
     });
   });
 
@@ -110,6 +134,7 @@ describe('useFavorites', () => {
       await waitFor(() => {
         expect(result.current.error).toBe('ログインが必要です');
       });
+      expect(mockToast.error).toHaveBeenCalledWith('ログインが必要です');
     });
 
     it('正常にお気に入りを追加する', async () => {
@@ -149,6 +174,7 @@ describe('useFavorites', () => {
           body: JSON.stringify({ cocktail_id: 10 }),
         })
       );
+      expect(mockToast.success).toHaveBeenCalledWith('お気に入りに追加しました');
     });
   });
 
@@ -183,6 +209,7 @@ describe('useFavorites', () => {
           method: 'DELETE',
         })
       );
+      expect(mockToast.success).toHaveBeenCalledWith('お気に入りから削除しました');
     });
   });
 

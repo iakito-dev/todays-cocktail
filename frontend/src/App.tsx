@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { EmailConfirmation } from './components/EmailConfirmation';
 import { AuthProvider } from './contexts/AuthContext';
+import { Toaster } from './components/ui/sonner';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/confirmation" element={<EmailConfirmation />} />
           </Routes>
           <Footer />
+          <Toaster />
         </div>
       </Router>
     </AuthProvider>

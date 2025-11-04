@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { Favorite } from '../lib/types';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+import { apiDelete, apiGet, apiPost } from '../lib/api';
 
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
@@ -20,21 +19,8 @@ export const useFavorites = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/favorites`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.status?.message || 'お気に入りの取得に失敗しました');
-      }
-
-      setFavorites(data.data);
+      const data = await apiGet('/api/v1/favorites');
+      setFavorites(Array.isArray(data?.data) ? data.data : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'エラーが発生しました');
     } finally {
@@ -54,21 +40,7 @@ export const useFavorites = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/favorites`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ cocktail_id: cocktailId }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.status?.message || 'お気に入りの追加に失敗しました');
-      }
-
+      await apiPost('/api/v1/favorites', { cocktail_id: cocktailId });
       // お気に入り一覧を再取得
       await fetchFavorites();
       return true;
@@ -92,20 +64,7 @@ export const useFavorites = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/favorites/${favoriteId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.status?.message || 'お気に入りの削除に失敗しました');
-      }
-
+      await apiDelete(`/api/v1/favorites/${favoriteId}`);
       // お気に入り一覧を再取得
       await fetchFavorites();
       return true;

@@ -68,6 +68,7 @@ describe('useFavorites', () => {
       localStorageMock.setItem('auth_token', 'test-token');
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        status: 200,
         json: async () => ({ data: mockFavorites }),
       });
 
@@ -85,7 +86,8 @@ describe('useFavorites', () => {
       localStorageMock.setItem('auth_token', 'test-token');
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        json: async () => ({ status: { message: 'エラーが発生しました' } }),
+        status: 500,
+        text: async () => JSON.stringify({ status: { message: 'エラーが発生しました' } }),
       });
 
       const { result } = renderHook(() => useFavorites());
@@ -116,6 +118,7 @@ describe('useFavorites', () => {
       // addFavorite用のモック
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        status: 201,
         json: async () => ({
           data: {
             id: 1,
@@ -127,6 +130,7 @@ describe('useFavorites', () => {
       // fetchFavorites用のモック
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        status: 200,
         json: async () => ({ data: [] }),
       });
 
@@ -155,6 +159,7 @@ describe('useFavorites', () => {
       // removeFavorite用のモック
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        status: 200,
         json: async () => ({
           status: { message: 'お気に入りから削除しました。' },
         }),
@@ -163,6 +168,7 @@ describe('useFavorites', () => {
       // fetchFavorites用のモック
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        status: 200,
         json: async () => ({ data: [] }),
       });
 
@@ -203,6 +209,7 @@ describe('useFavorites', () => {
       localStorageMock.setItem('auth_token', 'test-token');
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        status: 200,
         json: async () => ({ data: mockFavorites }),
       });
 
@@ -240,6 +247,7 @@ describe('useFavorites', () => {
       localStorageMock.setItem('auth_token', 'test-token');
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        status: 200,
         json: async () => ({ data: mockFavorites }),
       });
 

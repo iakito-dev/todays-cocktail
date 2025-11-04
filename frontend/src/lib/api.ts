@@ -8,6 +8,31 @@ import type { Cocktail } from './types';
 // 環境変数VITE_API_BASE_URLから取得、未設定時はローカル開発環境をデフォルトとする
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
+function extractErrorMessage(method: string, path: string, status: number, bodyText: string | null): string {
+  if (bodyText) {
+    try {
+      const data = JSON.parse(bodyText);
+      if (Array.isArray(data.errors) && data.errors.length > 0) {
+        return data.errors.join(', ');
+      }
+      if (typeof data.error === 'string' && data.error.trim().length > 0) {
+        return data.error.trim();
+      }
+      if (data.status?.message) {
+        return String(data.status.message);
+      }
+      if (typeof data.message === 'string' && data.message.trim().length > 0) {
+        return data.message.trim();
+      }
+    } catch {
+      if (bodyText.trim().length > 0) {
+        return bodyText.trim();
+      }
+    }
+  }
+  return `${method} ${path} failed: ${status}`;
+}
+
 /**
  * 認証トークンを取得
  */
@@ -58,7 +83,7 @@ export async function apiGet(path: string, init?: RequestInit) {
   // レスポンスステータスが200番台以外の場合はエラー
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`GET ${path} failed: ${res.status} ${text}`);
+    throw new Error(extractErrorMessage('GET', path, res.status, text));
   }
 
   // JSONパースに失敗した場合は空オブジェクトを返す
@@ -83,7 +108,7 @@ export async function apiPost(path: string, body?: unknown, init?: RequestInit) 
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`POST ${path} failed: ${res.status} ${text}`);
+    throw new Error(extractErrorMessage('POST', path, res.status, text));
   }
 
   return res.json().catch(() => ({}));
@@ -323,7 +348,29 @@ export async function apiPut(path: string, body?: unknown, init?: RequestInit) {
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`PUT ${path} failed: ${res.status} ${text}`);
+    throw new Error(extractErrorMessage('PUT', path, res.status, text));
+  }
+
+  return res.json().catch(() => ({}));
+}
+
+/**
+ * DELETEリクエストを送信する
+ * @param path - APIエンドポイントのパス
+ * @param init - 追加のfetchオプション
+ * @returns レスポンスのJSONデータ
+ * @throws {Error} リクエストが失敗した場合
+ */
+export async function apiDelete(path: string, init?: RequestInit) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+    ...init,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(extractErrorMessage('DELETE', path, res.status, text));
   }
 
   return res.json().catch(() => ({}));
@@ -354,4 +401,3 @@ export interface UpdateCocktailRequest {
 export async function updateCocktail(id: number, data: UpdateCocktailRequest): Promise<Cocktail> {
   return apiPut(`/api/v1/admin/cocktails/${id}`, data);
 }
-

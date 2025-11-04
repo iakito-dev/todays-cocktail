@@ -38,7 +38,7 @@ cocktails_data = [
     name: 'マティーニ',
     base: 'ジン',
     strength: 'ストロング',
-    image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
     ingredients: [
       { name: 'ドライジン', amount: '45ml' },
       { name: 'ドライベルモット', amount: '15ml' },
@@ -52,7 +52,7 @@ cocktails_data = [
     name: 'ジントニック',
     base: 'ジン',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=800',
     ingredients: [
       { name: 'ドライジン', amount: '45ml' },
       { name: 'トニックウォーター', amount: '適量' },
@@ -66,7 +66,7 @@ cocktails_data = [
     name: 'モスコミュール',
     base: 'ウォッカ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
     ingredients: [
       { name: 'ウォッカ', amount: '45ml' },
       { name: 'ジンジャーエール', amount: '適量' },
@@ -80,7 +80,7 @@ cocktails_data = [
     name: 'マルガリータ',
     base: 'テキーラ',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
     ingredients: [
       { name: 'テキーラ', amount: '30ml' },
       { name: 'ホワイトキュラソー', amount: '15ml' },
@@ -95,7 +95,7 @@ cocktails_data = [
     name: 'モヒート',
     base: 'ラム',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=800',
     ingredients: [
       { name: 'ホワイトラム', amount: '45ml' },
       { name: 'ライム', amount: '1/2個' },
@@ -111,7 +111,7 @@ cocktails_data = [
     name: 'ウイスキーサワー',
     base: 'ウイスキー',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800',
     ingredients: [
       { name: 'ウイスキー', amount: '45ml' },
       { name: 'レモンジュース', amount: '20ml' },
@@ -126,7 +126,7 @@ cocktails_data = [
     name: 'マンハッタン',
     base: 'ウイスキー',
     strength: 'ストロング',
-    image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
     ingredients: [
       { name: 'ライウイスキー', amount: '50ml' },
       { name: 'スイートベルモット', amount: '25ml' },
@@ -141,7 +141,7 @@ cocktails_data = [
     name: 'コスモポリタン',
     base: 'ウォッカ',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
     ingredients: [
       { name: 'ウォッカ', amount: '40ml' },
       { name: 'ホワイトキュラソー', amount: '15ml' },
@@ -156,7 +156,7 @@ cocktails_data = [
     name: 'ネグローニ',
     base: 'ジン',
     strength: 'ストロング',
-    image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
     ingredients: [
       { name: 'ジン', amount: '30ml' },
       { name: 'カンパリ', amount: '30ml' },
@@ -171,7 +171,7 @@ cocktails_data = [
     name: 'ダイキリ',
     base: 'ラム',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=800',
     ingredients: [
       { name: 'ホワイトラム', amount: '45ml' },
       { name: 'ライムジュース', amount: '15ml' },
@@ -185,7 +185,7 @@ cocktails_data = [
     name: 'テキーラサンライズ',
     base: 'テキーラ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
     ingredients: [
       { name: 'テキーラ', amount: '45ml' },
       { name: 'オレンジジュース', amount: '90ml' },
@@ -199,7 +199,7 @@ cocktails_data = [
     name: 'オールドファッション',
     base: 'ウイスキー',
     strength: 'ストロング',
-    image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
     ingredients: [
       { name: 'バーボンウイスキー', amount: '60ml' },
       { name: '角砂糖', amount: '1個' },
@@ -214,7 +214,7 @@ cocktails_data = [
     name: 'エスプレッソマティーニ',
     base: 'ウォッカ',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800',
     ingredients: [
       { name: 'ウォッカ', amount: '50ml' },
       { name: 'カルーアコーヒーリキュール', amount: '25ml' },
@@ -229,7 +229,7 @@ cocktails_data = [
     name: 'ピニャコラーダ',
     base: 'ラム',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1546171753-97d7676e4602?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1546171753-97d7676e4602?w=800',
     ingredients: [
       { name: 'ホワイトラム', amount: '45ml' },
       { name: 'ココナッツクリーム', amount: '30ml' },
@@ -244,7 +244,7 @@ cocktails_data = [
     name: 'ブラッディメアリー',
     base: 'ウォッカ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=800',
     ingredients: [
       { name: 'ウォッカ', amount: '45ml' },
       { name: 'トマトジュース', amount: '90ml' },
@@ -260,7 +260,7 @@ cocktails_data = [
     name: 'カイピリーニャ',
     base: 'ラム',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=800',
     ingredients: [
       { name: 'カシャーサ', amount: '60ml' },
       { name: 'ライム', amount: '1個' },
@@ -274,7 +274,7 @@ cocktails_data = [
     name: 'アマレットサワー',
     base: 'ウイスキー',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800',
     ingredients: [
       { name: 'アマレット', amount: '45ml' },
       { name: 'レモンジュース', amount: '30ml' },
@@ -289,7 +289,7 @@ cocktails_data = [
     name: 'ロングアイランドアイスティー',
     base: 'ウォッカ',
     strength: 'ストロング',
-    image_url: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=800',
     ingredients: [
       { name: 'ウォッカ', amount: '15ml' },
       { name: 'ホワイトラム', amount: '15ml' },
@@ -307,7 +307,7 @@ cocktails_data = [
     name: 'ギムレット',
     base: 'ジン',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
     ingredients: [
       { name: 'ドライジン', amount: '45ml' },
       { name: 'ライムジュース', amount: '15ml' },
@@ -321,7 +321,7 @@ cocktails_data = [
     name: 'サイドカー',
     base: 'ウイスキー',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
     ingredients: [
       { name: 'ブランデー', amount: '30ml' },
       { name: 'ホワイトキュラソー', amount: '15ml' },
@@ -336,7 +336,7 @@ cocktails_data = [
     name: 'アペロールスピリッツ',
     base: 'ジン',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
     ingredients: [
       { name: 'アペロール', amount: '60ml' },
       { name: 'プロセッコ', amount: '90ml' },
@@ -351,7 +351,7 @@ cocktails_data = [
     name: 'フレンチ75',
     base: 'ジン',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
     ingredients: [
       { name: 'ドライジン', amount: '30ml' },
       { name: 'レモンジュース', amount: '15ml' },
@@ -366,7 +366,7 @@ cocktails_data = [
     name: 'パロマ',
     base: 'テキーラ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
     ingredients: [
       { name: 'テキーラ', amount: '50ml' },
       { name: 'グレープフルーツジュース', amount: '75ml' },
@@ -382,7 +382,7 @@ cocktails_data = [
     name: 'ウイスキーハイボール',
     base: 'ウイスキー',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800',
     ingredients: [
       { name: 'ウイスキー', amount: '45ml' },
       { name: 'ソーダ', amount: '適量' },
@@ -396,7 +396,7 @@ cocktails_data = [
     name: 'ケープコッダー',
     base: 'ウォッカ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
     ingredients: [
       { name: 'ウォッカ', amount: '45ml' },
       { name: 'クランベリージュース', amount: '120ml' },
@@ -410,7 +410,7 @@ cocktails_data = [
     name: 'ミントジュレップ',
     base: 'ウイスキー',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800',
     ingredients: [
       { name: 'バーボンウイスキー', amount: '60ml' },
       { name: 'ミントの葉', amount: '10枚' },
@@ -425,7 +425,7 @@ cocktails_data = [
     name: 'ブルーハワイ',
     base: 'ラム',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=800',
     ingredients: [
       { name: 'ホワイトラム', amount: '30ml' },
       { name: 'ブルーキュラソー', amount: '15ml' },
@@ -440,7 +440,7 @@ cocktails_data = [
     name: 'アヴィエーション',
     base: 'ジン',
     strength: 'ミディアム',
-    image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
     ingredients: [
       { name: 'ドライジン', amount: '45ml' },
       { name: 'マラスキーノリキュール', amount: '15ml' },
@@ -455,7 +455,7 @@ cocktails_data = [
     name: 'ソルティドッグ',
     base: 'ウォッカ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800',
     ingredients: [
       { name: 'ウォッカ', amount: '45ml' },
       { name: 'グレープフルーツジュース', amount: '適量' },
@@ -469,7 +469,7 @@ cocktails_data = [
     name: 'メキシカンミュール',
     base: 'テキーラ',
     strength: 'ライト',
-    image_url: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
+    image_url_override: 'https://images.unsplash.com/photo-1582824042461-cc2c9e5c6e4d?w=800',
     ingredients: [
       { name: 'テキーラ', amount: '50ml' },
       { name: 'ライムジュース', amount: '15ml' },
@@ -498,7 +498,7 @@ cocktails_data.each do |data|
     base: base,
     strength: strength,
     technique: technique,
-    image_url: data[:image_url],
+    image_url_override: data[:image_url_override],
     instructions: data[:instructions],
     glass: data[:glass]
   )

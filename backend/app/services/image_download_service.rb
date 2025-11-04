@@ -51,15 +51,17 @@ class ImageDownloadService
 
   # 複数のレコードに対して画像をバッチダウンロード
   # @param records [Array<ActiveRecord::Base>] 画像をアタッチする対象のレコード配列
-  # @param url_method [Symbol] 画像URLを取得するメソッド名（デフォルト: :image_url）
+  # @param url_method [Symbol] 画像URLを取得するメソッド名（デフォルト: :image_url_override）
   # @param attachment_name [Symbol] アタッチメント名（デフォルト: :image）
   # @return [Hash] 成功数と失敗数
-  def self.batch_download(records, url_method: :image_url, attachment_name: :image)
+  def self.batch_download(records, url_method: :image_url_override, attachment_name: :image)
     success_count = 0
     failure_count = 0
 
     records.each do |record|
-      image_url = record.send(url_method)
+      next unless record.respond_to?(url_method)
+
+      image_url = record.public_send(url_method)
       next if image_url.blank?
 
       if download_and_attach(record, image_url, attachment_name: attachment_name)

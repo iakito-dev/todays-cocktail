@@ -68,7 +68,7 @@ Deviseによるユーザーアカウント管理。
 | base | integer | not null, default: 0 | ベース（enum: ジン、ラム、ウイスキー等） |
 | strength | integer | not null, default: 0 | アルコール強度（enum: ライト／ミディアム／ストロング） |
 | technique | integer | not null, default: 0 | 作り方（enum: ビルド／ステア／シェイク） |
-| image_url | string |  | 画像URL（UnsplashやCloudinary想定） |
+| image_url_override | string |  | 外部画像URL（Active Storage画像が無い場合の手動設定用） |
 | instructions | text |  | レシピ手順（文章） |
 | created_at | datetime |  | 作成日時 |
 | updated_at | datetime |  | 更新日時 |

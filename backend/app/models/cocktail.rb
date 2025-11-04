@@ -7,9 +7,6 @@ class Cocktail < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :favorited_by_users, through: :favorites, source: :user
 
-  # 画像の関連付け（Active Storage）
-  has_one_attached :image
-
   enum :base, {
     gin: 0,
     rum: 1,
@@ -45,10 +42,8 @@ class Cocktail < ApplicationRecord
     favorites.exists?(user_id: user.id)
   end
 
-  # 画像URLを取得（優先順位: 手動設定 > Active Storage > nil）
+  # 画像URLを取得（手動設定のみを利用）
   def display_image_url
-    return image_url_override if image_url_override.present?
-    return Rails.application.routes.url_helpers.url_for(image) if image.attached?
-    nil
+    image_url_override.presence
   end
 end

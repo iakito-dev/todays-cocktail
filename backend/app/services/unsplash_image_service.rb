@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 require 'httparty'
-require 'open-uri'
 
-# Unsplash APIを使用してカクテル画像を検索・ダウンロードするサービス
+# Unsplash APIを使用してカクテル画像を検索・保存するサービス
 class UnsplashImageService
   BASE_URL = 'https://api.unsplash.com'
 
@@ -12,12 +11,12 @@ class UnsplashImageService
     raise 'UNSPLASH_ACCESS_KEY is not set' if @access_key.blank?
   end
 
-  # カクテル名で画像を検索してダウンロード
+  # カクテル名で画像を検索して保存
   # @param cocktail [Cocktail] 画像を取得するカクテルオブジェクト
   # @param force [Boolean] 既存の画像を上書きするか
   # @return [Boolean] 成功したかどうか
   def fetch_and_attach_cocktail_image(cocktail, force: false)
-    return false if cocktail.image.attached? && !force
+    return false if cocktail.image_url_override.present? && !force
 
     # 検索クエリを構築（カクテル名 + "cocktail"）
     query = "#{cocktail.name} cocktail drink"
@@ -31,8 +30,8 @@ class UnsplashImageService
         return false
       end
 
-      # 画像をダウンロードしてアタッチ
-      download_and_attach(cocktail, photo)
+      # 画像URLを保存
+      assign_image_url(cocktail, photo)
 
       Rails.logger.info("Successfully fetched Unsplash image for: #{cocktail.name}")
       true
@@ -98,31 +97,15 @@ class UnsplashImageService
     end
   end
 
-  # 画像をダウンロードしてActive Storageにアタッチ
-  def download_and_attach(cocktail, photo)
+  # 画像URLをoverrideカラムに保存
+  def assign_image_url(cocktail, photo)
     # 高品質な画像URLを取得（regular サイズ: 1080px）
     image_url = photo.dig('urls', 'regular')
-    photographer = photo.dig('user', 'name')
     photo_id = photo['id']
 
-    # 画像をダウンロード
-    image_data = OpenURI.open_uri(image_url, 'rb')
-    file_content = image_data.read
-    image_data.close
+    raise 'Unsplash response missing image URL' if image_url.blank?
 
-    io = StringIO.new(file_content)
-
-    # Active Storageにアタッチ
-    cocktail.image.attach(
-      io: io,
-      filename: "#{cocktail.name.parameterize}_unsplash_#{photo_id}.jpg",
-      content_type: 'image/jpeg',
-      metadata: {
-        unsplash_id: photo_id,
-        photographer: photographer,
-        source: 'unsplash'
-      }
-    )
+    cocktail.update!(image_url_override: image_url)
 
     # Unsplashのダウンロードエンドポイントを叩く（利用規約で必須）
     track_download(photo)

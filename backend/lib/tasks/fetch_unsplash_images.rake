@@ -8,9 +8,8 @@ namespace :cocktails do
 
     service = UnsplashImageService.new
 
-    # 画像が添付されていないカクテルを取得
-    cocktails_without_images = Cocktail.left_joins(:image_attachment)
-                                       .where(active_storage_attachments: { id: nil })
+    # 画像URLが設定されていないカクテルを取得
+    cocktails_without_images = Cocktail.where(image_url_override: [nil, ''])
                                        .order(:name)
 
     if cocktails_without_images.empty?

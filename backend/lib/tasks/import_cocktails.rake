@@ -123,7 +123,7 @@ class CocktailImporter
           technique: map_technique(drink_data),
           glass: drink_data['strGlass'],
           glass_ja: glass_ja,
-          image_url: drink_data['strDrinkThumb'],
+          image_url_override: drink_data['strDrinkThumb'],
           instructions: drink_data['strInstructions']
         )
         cocktail.save!

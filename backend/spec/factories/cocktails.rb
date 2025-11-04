@@ -4,7 +4,6 @@ FactoryBot.define do
     base { :gin }
     strength { :medium }
     technique { :build }
-    image_url { "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800" }
     instructions { "グラスに材料を入れて軽くステアする。" }
     glass { "タンブラー" }
 

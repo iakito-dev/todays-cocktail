@@ -106,7 +106,7 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
       it 'エラーメッセージを含むJSONレスポンスを返す' do
         post '/api/v1/login', params: invalid_credentials, as: :json
         json_response = JSON.parse(response.body)
-        expect(json_response['error']).to be_present
+        expect(json_response['errors']).to be_present
       end
 
       it 'JWTトークンを含まない' do

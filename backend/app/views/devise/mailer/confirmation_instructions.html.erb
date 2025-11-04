@@ -4,37 +4,37 @@
       <h1 class="logo">🍸</h1>
       <h2 class="brand-name">Today's Cocktails</h2>
     </div>
-    
+
     <div class="email-body">
       <p class="greeting">
         <%= @resource.name.present? ? "#{@resource.name}様" : "こんにちは" %>
       </p>
-      
+
       <p class="content-text">
         Today's Cocktailsへようこそ！アカウントのご登録ありがとうございます。
       </p>
-      
+
       <p class="content-text">
         以下のボタンをクリックして、メールアドレスの確認を完了してください：
       </p>
-      
+
       <div class="button-container">
-        <%= link_to 'メールアドレスを確認する', 
-            "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@resource.confirmation_token}", 
+        <%= link_to 'メールアドレスを確認する',
+            "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@resource.confirmation_token}",
             class: 'button' %>
       </div>
-      
+
       <p class="help-text">
         ボタンが機能しない場合は、以下のURLをコピーしてブラウザに貼り付けてください：
       </p>
-      
+
       <div class="url-box">
         <p class="url-text">
           <%= "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@resource.confirmation_token}" %>
         </p>
       </div>
     </div>
-    
+
     <div class="email-footer">
       <p class="footer-text">
         このメールに心当たりがない場合は、無視していただいて問題ありません。

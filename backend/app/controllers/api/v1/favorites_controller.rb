@@ -73,7 +73,7 @@ module Api
           base: cocktail.base,
           strength: cocktail.strength,
           technique: cocktail.technique,
-          image_url: cocktail.image_url,
+          image_url: cocktail.display_image_url,
           instructions: cocktail.instructions,
           is_favorited: true # お気に入り一覧では常にtrue
         }

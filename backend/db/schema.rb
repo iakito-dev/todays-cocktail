@@ -10,9 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_01_115224) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_02_235934) do
+  create_schema "_realtime"
+  create_schema "auth"
+  create_schema "extensions"
+  create_schema "graphql"
+  create_schema "graphql_public"
+  create_schema "net"
+  create_schema "pgbouncer"
+  create_schema "realtime"
+  create_schema "storage"
+  create_schema "supabase_functions"
+  create_schema "vault"
+
   # These are extensions that must be enabled in order to support this database
+  enable_extension "extensions.pg_net"
+  enable_extension "extensions.pg_stat_statements"
+  enable_extension "extensions.pgcrypto"
+  enable_extension "extensions.uuid-ossp"
+  enable_extension "graphql.pg_graphql"
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "vault.supabase_vault"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -59,7 +77,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_01_115224) do
     t.integer "base", default: 0, null: false
     t.integer "strength", default: 0, null: false
     t.integer "technique", default: 0, null: false
-    t.string "image_url"
     t.text "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -69,7 +86,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_01_115224) do
     t.string "glass_ja"
     t.string "image_url_override"
     t.text "instructions_ja"
-    t.index ["name"], name: "index_cocktails_on_name"
+    t.index ["base"], name: "index_cocktails_on_base"
+    t.index ["name"], name: "index_cocktails_on_name", unique: true
+    t.index ["name_ja"], name: "index_cocktails_on_name_ja"
   end
 
   create_table "favorites", force: :cascade do |t|

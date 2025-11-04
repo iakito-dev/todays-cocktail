@@ -18,25 +18,25 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
     it 'filters by name q' do
       get '/api/v1/cocktails', params: { q: 'モヒ' }
       json = JSON.parse(response.body)
-      expect(json.map { |c| c['name'] }).to eq(['モヒート'])
+      expect(json['cocktails'].map { |c| c['name'] }).to eq(['モヒート'])
     end
 
     it 'filters by base' do
       get '/api/v1/cocktails', params: { base: 'gin' }
       json = JSON.parse(response.body)
-      expect(json.map { |c| c['name'] }).to eq(['マティーニ'])
+      expect(json['cocktails'].map { |c| c['name'] }).to eq(['マティーニ'])
     end
 
     it 'filters by multiple bases' do
       get '/api/v1/cocktails', params: { base: %w[gin rum] }
       json = JSON.parse(response.body)
-      expect(json.size).to eq(2)
+      expect(json['cocktails'].size).to eq(2)
     end
 
     it 'filters by ingredients tokens (AND match)' do
       get '/api/v1/cocktails', params: { ingredients: 'ラム, ミント' }
       json = JSON.parse(response.body)
-      expect(json.map { |c| c['name'] }).to eq(['モヒート'])
+      expect(json['cocktails'].map { |c| c['name'] }).to eq(['モヒート'])
     end
   end
 

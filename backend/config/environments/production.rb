@@ -59,7 +59,7 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
-  
+
   # Resend HTTP API経由でメール送信（RenderではSMTPポートがブロックされているため）
   config.action_mailer.delivery_method = :resend
   config.action_mailer.resend_settings = {}

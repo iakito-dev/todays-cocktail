@@ -412,6 +412,8 @@ export async function updateCocktail(id: number, data: UpdateCocktailRequest): P
       }
     }
     keysToRemove.forEach((k) => sessionStorage.removeItem(k));
-  } catch {}
+  } catch {
+    // セッションストレージが使用できない環境ではキャッシュ削除を無視
+  }
   return updated;
 }

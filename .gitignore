@@ -108,3 +108,6 @@ kamal.lock
 # 環境変数ファイル構成:
 # - backend/.env  : Rails用（DATABASE_URL等）
 # - frontend/.env : React用（VITE_*環境変数）
+
+# 誤ってプロジェクト一式を入れ子にしないようルート配下のバックアップを除外
+todays-cocktail/

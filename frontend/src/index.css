@@ -83,4 +83,20 @@
   .animate-fade-in-up {
     animation: fadeInUp 0.5s ease-out;
   }
+
+  @keyframes toastProgress {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
+  }
+
+  .toast-progress {
+    transform-origin: left;
+    animation-name: toastProgress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
 }

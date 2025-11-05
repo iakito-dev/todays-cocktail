@@ -22,10 +22,7 @@ export const Footer = () => {
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">ご利用にあたって</p>
             <div className="mt-2 space-y-4 text-sm md:text-base leading-relaxed">
               <p>
-                Today's Cocktailsは、「あなただけの特別な一杯」と出会えるカクテル図鑑です。グラスを傾ける前のときめきや、バーでメニューを開く高揚感をそのままアプリに閉じ込めました。
-              </p>
-              <p>
-                ベースや材料、人気順などから直感的にレシピを探せるので、カクテル初心者でも自分だけの定番が見つかります。今日の気分に合わせて、お家でもバーでも特別なひとときをお楽しみください。
+                Today's Cocktailsは、「あなただけの特別な一杯」と出会えるカクテル図鑑です。ベースや材料、人気順などから直感的にレシピを探せるので、カクテル初心者でも自分だけの定番が見つかります。今日の気分に合わせて、お家でもバーでも特別なひとときをお楽しみください。
               </p>
               <p className="text-xs md:text-sm text-slate-400">
                 ※掲載レシピは参考情報です。20歳未満の飲酒および飲酒運転は法律で禁止されています。

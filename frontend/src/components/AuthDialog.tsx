@@ -92,7 +92,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
               🍸
             </div>
           </div>
-          <DialogTitle className="text-center text-xl sm:text-2xl text-gray-900">Today's Cocktails</DialogTitle>
+          <DialogTitle className="text-center text-xl sm:text-2xl text-gray-900">Today's Cocktail</DialogTitle>
           <DialogDescription className="text-center text-sm sm:text-base">
             お気に入りのカクテルを保存して、いつでも楽しめます
           </DialogDescription>

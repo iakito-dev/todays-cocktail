@@ -189,7 +189,7 @@ export default function App() {
               </div>
               <div>
                 <h1 className="text-gray-900">
-                  Today's Cocktails
+                  Today's Cocktail
                 </h1>
                 <p className="text-gray-500">今日の一杯がここに</p>
               </div>
@@ -359,7 +359,7 @@ export default function App() {
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
             <div className="text-3xl">🍸</div>
-            <h3 className="text-gray-900">Today's Cocktails</h3>
+            <h3 className="text-gray-900">Today's Cocktail</h3>
           </div>
           <p className="text-gray-600 mb-2">
             家でもバーでも、"今日の一杯"が見つかるカクテル図鑑

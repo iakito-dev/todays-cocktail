@@ -39,7 +39,7 @@ class Api::V1::CocktailsController < ApplicationController
       per_page = 9 if per_page <= 0  # デフォルト9件
       per_page = [per_page, 100].min # 最大100件
 
-      sort = params[:sort].to_s
+      sort = params[:sort].presence || 'id'
       filtered_cocktails = cocktails
 
       total_count = filtered_cocktails.count
@@ -158,7 +158,7 @@ class Api::V1::CocktailsController < ApplicationController
       ingredients: params[:ingredients],
       page: params[:page],
       per_page: params[:per_page],
-      sort: params[:sort]
+      sort: params[:sort].presence || 'id'
     }.to_json
   end
 end

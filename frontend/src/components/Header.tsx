@@ -35,8 +35,8 @@ export function Header() {
                 🍸
               </div>
               <div className="leading-tight">
-                <h1 className="text-lg sm:text-2xl font-semibold text-gray-900">Today's Cocktails</h1>
-                <p className="text-xs sm:text-sm text-gray-500 mt-0.5">今日の一杯が見つかるカクテル検索アプリ</p>
+                <h1 className="text-lg sm:text-2xl font-semibold text-gray-900">Today's Cocktail</h1>
+                <p className="text-xs sm:text-sm text-gray-500 mt-0.5">"今日の一杯"が見つかるカクテル検索アプリ</p>
               </div>
             </Link>
 

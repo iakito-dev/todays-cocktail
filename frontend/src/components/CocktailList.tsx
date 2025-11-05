@@ -58,13 +58,21 @@ export function CocktailList() {
   const [q, setQ] = useState('');
   const [selectedBases, setSelectedBases] = useState<string[]>([]);
   const [ingredients, setIngredients] = useState('');
+  const [sort, setSort] = useState<'id' | 'popular'>('id');
   // simple debounce
   const debouncedQ = useDebounce(q, 300);
   const debouncedIngredients = useDebounce(ingredients, 300);
 
   useEffect(() => {
     // セッションストレージのキャッシュキーを生成
-    const cacheKey = `cocktails_${JSON.stringify({ q: debouncedQ, base: selectedBases, ingredients: debouncedIngredients, page: currentPage, per_page: itemsPerPage })}`;
+    const cacheKey = `cocktails_${JSON.stringify({
+      q: debouncedQ,
+      base: selectedBases,
+      ingredients: debouncedIngredients,
+      page: currentPage,
+      per_page: itemsPerPage,
+      sort
+    })}`;
 
     // キャッシュをチェック
     const cached = sessionStorage.getItem(cacheKey);
@@ -87,6 +95,7 @@ export function CocktailList() {
     if (debouncedQ) params.q = debouncedQ;
     if (selectedBases.length) params.base = selectedBases;
     if (debouncedIngredients) params.ingredients = debouncedIngredients;
+    if (sort === 'popular') params.sort = 'popular';
 
     fetchCocktails(params)
       .then((response) => {
@@ -97,12 +106,12 @@ export function CocktailList() {
         sessionStorage.setItem(cacheKey, JSON.stringify(response));
       })
       .catch((e) => setCocktailsError(e.message));
-  }, [debouncedQ, selectedBases, debouncedIngredients, currentPage, itemsPerPage]);
+  }, [debouncedQ, selectedBases, debouncedIngredients, currentPage, itemsPerPage, sort]);
 
   // フィルター変更時はページを1にリセット
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedQ, selectedBases, debouncedIngredients]);
+  }, [debouncedQ, selectedBases, debouncedIngredients, sort]);
 
   // お気に入り一覧を取得 or クリア
   useEffect(() => {
@@ -189,6 +198,8 @@ export function CocktailList() {
                   onBasesChange={setSelectedBases}
                   ingredientSearch={ingredients}
                   onIngredientSearchChange={setIngredients}
+                  sort={sort}
+                  onSortChange={setSort}
                 />
               </CardContent>
             </Card>
@@ -244,6 +255,29 @@ export function CocktailList() {
                   )}
                   {cocktails && (
                     <>
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <span className="text-sm text-gray-600">
+                          全{totalCount}件のカクテル
+                        </span>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant={sort === 'id' ? 'default' : 'outline'}
+                            onClick={() => setSort('id')}
+                            className="h-9 rounded-xl"
+                          >
+                            登録順
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={sort === 'popular' ? 'default' : 'outline'}
+                            onClick={() => setSort('popular')}
+                            className="h-9 rounded-xl"
+                          >
+                            人気順
+                          </Button>
+                        </div>
+                      </div>
                       <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-3">
                         {allCocktailsPaginated.map((c) => (
                           <CocktailCard
@@ -361,6 +395,8 @@ export function CocktailList() {
               onBasesChange={setSelectedBases}
               ingredientSearch={ingredients}
               onIngredientSearchChange={setIngredients}
+              sort={sort}
+              onSortChange={setSort}
             />
           </div>
         </SheetContent>

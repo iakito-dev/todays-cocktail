@@ -177,7 +177,7 @@ describe('API Client', () => {
         json: async () => mockResponse,
       } as Response);
 
-      await fetchCocktails({ q: 'mojito', base: 'rum', ingredients: 'mint', page: 1, per_page: 20 });
+      await fetchCocktails({ q: 'mojito', base: 'rum', ingredients: 'mint', page: 1, per_page: 20, sort: 'popular' });
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/cocktails?'),
@@ -189,6 +189,7 @@ describe('API Client', () => {
       expect(url).toContain('ingredients=mint');
       expect(url).toContain('page=1');
       expect(url).toContain('per_page=20');
+      expect(url).toContain('sort=popular');
     });
   });
 
@@ -306,4 +307,3 @@ describe('API Client', () => {
     });
   });
 });
-

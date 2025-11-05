@@ -33,15 +33,28 @@ class Api::V1::CocktailsController < ApplicationController
         end
       end
 
-      cocktails = cocktails.order(:name)
-
       # ページネーション
       page = [params[:page].to_i, 1].max
       per_page = params[:per_page].to_i
       per_page = 9 if per_page <= 0  # デフォルト9件
       per_page = [per_page, 100].min # 最大100件
-      total_count = cocktails.count
+
+      sort = params[:sort].to_s
+      filtered_cocktails = cocktails
+
+      total_count = filtered_cocktails.count
       total_pages = (total_count.to_f / per_page).ceil
+
+      cocktails =
+        case sort
+        when 'popular'
+          filtered_cocktails
+            .left_joins(:favorites)
+            .group('cocktails.id')
+            .order(Arel.sql('COUNT(favorites.id) DESC'), 'cocktails.id ASC')
+        else
+          filtered_cocktails.order(:id)
+        end
 
       paginated_cocktails = cocktails.offset((page - 1) * per_page).limit(per_page)
 
@@ -144,7 +157,8 @@ class Api::V1::CocktailsController < ApplicationController
       base: params[:base],
       ingredients: params[:ingredients],
       page: params[:page],
-      per_page: params[:per_page]
+      per_page: params[:per_page],
+      sort: params[:sort]
     }.to_json
   end
 end

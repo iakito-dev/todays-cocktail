@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_04_233508) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_05_090000) do
   create_schema "_realtime"
   create_schema "auth"
   create_schema "extensions"
@@ -107,7 +107,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_04_233508) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "cocktail_ingredients", "cocktails"
+  add_foreign_key "cocktail_ingredients", "cocktails", on_delete: :cascade
   add_foreign_key "cocktail_ingredients", "ingredients"
   add_foreign_key "favorites", "cocktails", on_delete: :cascade
   add_foreign_key "favorites", "users", on_delete: :cascade

@@ -178,6 +178,7 @@ export interface CocktailQuery {
   ingredients?: string; // comma/space separated
   page?: number;
   per_page?: number;
+  sort?: 'id' | 'popular';
 }
 
 export interface CocktailsResponse {
@@ -197,6 +198,7 @@ export async function fetchCocktails(params?: CocktailQuery): Promise<CocktailsR
     if (params.ingredients) qs.set('ingredients', params.ingredients);
     if (params.page) qs.set('page', params.page.toString());
     if (params.per_page) qs.set('per_page', params.per_page.toString());
+    if (params.sort) qs.set('sort', params.sort);
     if (params.base) {
       const bases = Array.isArray(params.base) ? params.base : params.base.split(',');
       if (bases.length === 1) {

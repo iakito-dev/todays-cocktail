@@ -38,6 +38,26 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
       json = JSON.parse(response.body)
       expect(json['cocktails'].map { |c| c['name'] }).to eq(['モヒート'])
     end
+
+    it 'orders by id ascending by default' do
+      create(:cocktail, name: 'サイドカー')
+      get '/api/v1/cocktails'
+      ids = JSON.parse(response.body)['cocktails'].map { |c| c['id'] }
+      expect(ids).to eq(ids.sort)
+    end
+
+    it 'sorts by favorites count when sort=popular' do
+      mojito = Cocktail.find_by!(name: 'モヒート')
+      martini = Cocktail.find_by!(name: 'マティーニ')
+
+      create(:favorite, cocktail: mojito)
+      create(:favorite, cocktail: mojito)
+      create(:favorite, cocktail: martini)
+
+      get '/api/v1/cocktails', params: { sort: 'popular' }
+      names = JSON.parse(response.body)['cocktails'].map { |c| c['name'] }
+      expect(names.first).to eq('モヒート')
+    end
   end
 
   describe "GET /api/v1/cocktails/:id" do
@@ -135,7 +155,10 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
     end
 
     context 'when no cocktails exist' do
-      before { Cocktail.destroy_all }
+      before do
+        Rails.cache.clear
+        Cocktail.destroy_all
+      end
 
       it 'returns 404' do
         get '/api/v1/cocktails/todays_pick'

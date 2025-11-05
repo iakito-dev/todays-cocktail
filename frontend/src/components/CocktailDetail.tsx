@@ -172,7 +172,7 @@ export function CocktailDetail() {
 
           {/* Image */}
           {cocktail.image_url && (
-            <div className="aspect-video rounded-2xl overflow-hidden shadow-lg border border-gray-200">
+            <div className="aspect-square rounded-2xl overflow-hidden shadow-lg border border-gray-200">
               <ImageWithFallback
                 src={cocktail.image_url}
                 alt={cocktail.name}

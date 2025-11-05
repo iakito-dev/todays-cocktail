@@ -241,7 +241,7 @@ export function CocktailDetailDialog({
           <div className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
 
           {/* カクテル画像 */}
-          <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100">
+          <div className="relative w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100">
             <ImageWithFallback
               src={currentCocktail.image_url || ''}
               alt={currentCocktail.name}

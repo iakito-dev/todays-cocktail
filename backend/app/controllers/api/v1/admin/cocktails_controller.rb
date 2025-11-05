@@ -11,6 +11,8 @@ module Api
         # PUT /api/v1/admin/cocktails/:id
         def update
           if @cocktail.update(cocktail_params)
+            # 更新後に詳細キャッシュを削除して即時反映
+            Rails.cache.delete("cocktail_show_#{@cocktail.id}")
             cocktail_data = @cocktail.as_json.merge(
               ingredients: @cocktail.ordered_ingredients.map do |ci|
                 {

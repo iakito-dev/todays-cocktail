@@ -399,5 +399,10 @@ export interface UpdateCocktailRequest {
 }
 
 export async function updateCocktail(id: number, data: UpdateCocktailRequest): Promise<Cocktail> {
-  return apiPut(`/api/v1/admin/cocktails/${id}`, data);
+  const updated = await apiPut(`/api/v1/admin/cocktails/${id}`, data);
+  // 詳細ページのセッションキャッシュを無効化
+  try {
+    sessionStorage.removeItem(`cocktail_detail_${id}`);
+  } catch {}
+  return updated;
 }

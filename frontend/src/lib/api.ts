@@ -403,6 +403,15 @@ export async function updateCocktail(id: number, data: UpdateCocktailRequest): P
   // 詳細ページのセッションキャッシュを無効化
   try {
     sessionStorage.removeItem(`cocktail_detail_${id}`);
+    // 一覧ページのセッションキャッシュも無効化（該当キーを総ざらい）
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && key.startsWith('cocktails_')) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => sessionStorage.removeItem(k));
   } catch {}
   return updated;
 }

@@ -13,6 +13,13 @@ module Api
           if @cocktail.update(cocktail_params)
             # 更新後に詳細キャッシュを削除して即時反映
             Rails.cache.delete("cocktail_show_#{@cocktail.id}")
+            # 一覧系キャッシュと今日のおすすめも無効化
+            begin
+              Rails.cache.delete_matched("cocktails_index_*")
+              Rails.cache.delete("todays_pick_#{Date.today}")
+            rescue StandardError
+              # 一部ストアでは delete_matched 未対応のため、失敗しても処理続行
+            end
             cocktail_data = @cocktail.as_json.merge(
               ingredients: @cocktail.ordered_ingredients.map do |ci|
                 {

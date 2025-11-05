@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchCocktails, fetchCocktail, type CocktailQuery } from '../lib/api';
 import { Card, CardContent } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
-import { Heart, LogIn, SlidersHorizontal } from 'lucide-react';
+import { Heart, LogIn, SlidersHorizontal, ChevronDown, Check } from 'lucide-react';
 import { TodaysPick } from './TodaysPick';
 import { CocktailCard } from './CocktailCard';
 import { CocktailFilters } from './CocktailFilters';
@@ -45,6 +45,7 @@ export function CocktailList() {
   const [activeTab, setActiveTab] = useState('all');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,6 +60,7 @@ export function CocktailList() {
   const [selectedBases, setSelectedBases] = useState<string[]>([]);
   const [ingredients, setIngredients] = useState('');
   const [sort, setSort] = useState<'id' | 'popular'>('id');
+  const sortMenuRef = useRef<HTMLDivElement>(null);
   // simple debounce
   const debouncedQ = useDebounce(q, 300);
   const debouncedIngredients = useDebounce(ingredients, 300);
@@ -112,6 +114,32 @@ export function CocktailList() {
   useEffect(() => {
     setCurrentPage(1);
   }, [debouncedQ, selectedBases, debouncedIngredients, sort]);
+
+  useEffect(() => {
+    if (!isSortMenuOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sortMenuRef.current && !sortMenuRef.current.contains(event.target as Node)) {
+        setIsSortMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsSortMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isSortMenuOpen]);
 
   // お気に入り一覧を取得 or クリア
   useEffect(() => {
@@ -183,6 +211,11 @@ export function CocktailList() {
     }
   };
 
+  const handleSortSelect = (value: 'id' | 'popular') => {
+    setSort(value);
+    setIsSortMenuOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
       <div className="max-w-7xl mx-auto p-6">
@@ -198,8 +231,6 @@ export function CocktailList() {
                   onBasesChange={setSelectedBases}
                   ingredientSearch={ingredients}
                   onIngredientSearchChange={setIngredients}
-                  sort={sort}
-                  onSortChange={setSort}
                 />
               </CardContent>
             </Card>
@@ -257,25 +288,48 @@ export function CocktailList() {
                     <>
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <span className="text-sm text-gray-600">
-                          全{totalCount}件のカクテル
+                          {totalCount}種類のカクテルが見つかりました
                         </span>
-                        <div className="flex gap-2">
+                        <div className="relative" ref={sortMenuRef}>
                           <Button
                             type="button"
-                            variant={sort === 'id' ? 'default' : 'outline'}
-                            onClick={() => setSort('id')}
-                            className="h-9 rounded-xl"
+                            variant="outline"
+                            className="h-9 rounded-xl bg-white border-gray-200 hover:bg-gray-50"
+                            onClick={() => setIsSortMenuOpen((prev) => !prev)}
+                            aria-haspopup="menu"
+                            aria-expanded={isSortMenuOpen}
                           >
-                            登録順
+                            並べ替え
+                            <ChevronDown className="h-4 w-4" />
                           </Button>
-                          <Button
-                            type="button"
-                            variant={sort === 'popular' ? 'default' : 'outline'}
-                            onClick={() => setSort('popular')}
-                            className="h-9 rounded-xl"
-                          >
-                            人気順
-                          </Button>
+                          {isSortMenuOpen && (
+                            <div className="absolute right-0 mt-2 w-40 rounded-xl border border-gray-200 bg-white shadow-lg z-50">
+                              <div className="py-2">
+                                <button
+                                  type="button"
+                                  className={`flex w-full items-center justify-between px-3 py-2 text-sm transition ${
+                                    sort === 'id' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50'
+                                  }`}
+                                  onClick={() => handleSortSelect('id')}
+                                >
+                                  <span>デフォルト</span>
+                                  {sort === 'id' && <Check className="h-4 w-4" />}
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`flex w-full items-center justify-between px-3 py-2 text-sm transition ${
+                                    sort === 'popular'
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-600 hover:bg-gray-50'
+                                  }`}
+                                  onClick={() => handleSortSelect('popular')}
+                                >
+                                  <span>人気順</span>
+                                  {sort === 'popular' && <Check className="h-4 w-4" />}
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-3">
@@ -395,8 +449,6 @@ export function CocktailList() {
               onBasesChange={setSelectedBases}
               ingredientSearch={ingredients}
               onIngredientSearchChange={setIngredients}
-              sort={sort}
-              onSortChange={setSort}
             />
           </div>
         </SheetContent>

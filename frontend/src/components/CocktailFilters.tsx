@@ -9,8 +9,6 @@ interface CocktailFiltersProps {
   onBasesChange: (bases: string[]) => void;
   ingredientSearch: string;
   onIngredientSearchChange: (query: string) => void;
-  sort: 'id' | 'popular';
-  onSortChange: (value: 'id' | 'popular') => void;
 }
 
 const bases: { value: string; label: string; icon: string }[] = [
@@ -29,9 +27,7 @@ export function CocktailFilters({
   selectedBases,
   onBasesChange,
   ingredientSearch,
-  onIngredientSearchChange,
-  sort,
-  onSortChange
+  onIngredientSearchChange
 }: CocktailFiltersProps) {
   const handleBaseToggle = (baseValue: string) => {
     if (selectedBases.includes(baseValue)) {
@@ -67,29 +63,6 @@ export function CocktailFilters({
               <X className="w-4 h-4" />
             </Button>
           )}
-        </div>
-      </div>
-
-      {/* Sort Options */}
-      <div>
-        <label className="block mb-3 text-sm font-medium text-gray-700">並び順</label>
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            type="button"
-            variant={sort === 'id' ? 'default' : 'outline'}
-            onClick={() => onSortChange('id')}
-            className="h-10 rounded-xl"
-          >
-            登録順
-          </Button>
-          <Button
-            type="button"
-            variant={sort === 'popular' ? 'default' : 'outline'}
-            onClick={() => onSortChange('popular')}
-            className="h-10 rounded-xl"
-          >
-            人気順
-          </Button>
         </div>
       </div>
 

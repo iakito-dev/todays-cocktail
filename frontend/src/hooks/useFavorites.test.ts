@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useFavorites } from './useFavorites';
 
-var mockToast: {
+let mockToast: {
   success: ReturnType<typeof vi.fn>;
   error: ReturnType<typeof vi.fn>;
   info: ReturnType<typeof vi.fn>;
@@ -140,7 +140,6 @@ describe('useFavorites', () => {
     it('正常にお気に入りを追加する', async () => {
       localStorageMock.setItem('auth_token', 'test-token');
 
-      // addFavorite用のモック
       mockFetch.mockResolvedValueOnce({
         ok: true,
         status: 201,
@@ -152,18 +151,15 @@ describe('useFavorites', () => {
         }),
       });
 
-      // fetchFavorites用のモック
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: async () => ({ data: [] }),
-      });
-
       const { result } = renderHook(() => useFavorites());
 
       const success = await result.current.addFavorite(10);
 
       expect(success).toBe(true);
+      await waitFor(() => {
+        expect(result.current.favorites).toHaveLength(1);
+        expect(result.current.favorites[0].cocktail.id).toBe(10);
+      });
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/favorites'),
         expect.objectContaining({
@@ -182,7 +178,29 @@ describe('useFavorites', () => {
     it('正常にお気に入りを削除する', async () => {
       localStorageMock.setItem('auth_token', 'test-token');
 
-      // removeFavorite用のモック
+      const mockFavorite = {
+        id: 1,
+        cocktail: {
+          id: 10,
+          name: 'マティーニ',
+          base: 'gin',
+          strength: 'strong',
+          technique: 'stir',
+          image_url: null,
+          instructions: null,
+          created_at: '2023-01-01',
+          updated_at: '2023-01-01',
+        },
+        created_at: '2023-01-01',
+      };
+
+      // fetchFavorites -> removeFavorite の順でレスポンスを用意
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ data: [mockFavorite] }),
+      });
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         status: 200,
@@ -191,18 +209,19 @@ describe('useFavorites', () => {
         }),
       });
 
-      // fetchFavorites用のモック
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: async () => ({ data: [] }),
-      });
-
       const { result } = renderHook(() => useFavorites());
+
+      await result.current.fetchFavorites();
+      await waitFor(() => {
+        expect(result.current.favorites).toHaveLength(1);
+      });
 
       const success = await result.current.removeFavorite(1);
 
       expect(success).toBe(true);
+      await waitFor(() => {
+        expect(result.current.favorites).toHaveLength(0);
+      });
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/favorites/1'),
         expect.objectContaining({

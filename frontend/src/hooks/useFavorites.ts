@@ -8,13 +8,20 @@ export const useFavorites = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // お気に入り一覧を取得
-  const fetchFavorites = useCallback(async () => {
+  const requireToken = useCallback(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
       const message = 'ログインが必要です';
       setError(message);
       toast.error(message);
+      return null;
+    }
+    return token;
+  }, []);
+
+  // お気に入り一覧を取得
+  const fetchFavorites = useCallback(async () => {
+    if (!requireToken()) {
       return;
     }
 
@@ -31,25 +38,53 @@ export const useFavorites = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [requireToken]);
 
   // お気に入りに追加
   const addFavorite = useCallback(async (cocktailId: number) => {
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      const message = 'ログインが必要です';
-      setError(message);
-      toast.error(message);
+    if (!requireToken()) {
       return false;
     }
 
-    setLoading(true);
     setError(null);
 
     try {
-      await apiPost('/api/v1/favorites', { cocktail_id: cocktailId });
-      // お気に入り一覧を再取得
-      await fetchFavorites();
+      const response = await apiPost('/api/v1/favorites', { cocktail_id: cocktailId });
+      const favoriteData = response?.data;
+
+      if (favoriteData?.id && favoriteData?.cocktail) {
+        const createdAt =
+          typeof favoriteData.created_at === 'string'
+            ? favoriteData.created_at
+            : new Date().toISOString();
+
+        setFavorites((prev) => {
+          const exists = prev.find((fav) => fav.cocktail.id === favoriteData.cocktail.id);
+          if (exists) {
+            return prev.map((fav) =>
+              fav.cocktail.id === favoriteData.cocktail.id
+                ? {
+                    id: favoriteData.id,
+                    cocktail: { ...favoriteData.cocktail, is_favorited: true },
+                    created_at: createdAt,
+                  }
+                : fav
+            );
+          }
+
+          return [
+            {
+              id: favoriteData.id,
+              cocktail: { ...favoriteData.cocktail, is_favorited: true },
+              created_at: createdAt,
+            },
+            ...prev,
+          ];
+        });
+      } else {
+        await fetchFavorites();
+      }
+
       toast.success('お気に入りに追加しました');
       return true;
     } catch (err) {
@@ -57,28 +92,20 @@ export const useFavorites = () => {
       setError(message);
       toast.error(message);
       return false;
-    } finally {
-      setLoading(false);
     }
-  }, [fetchFavorites]);
+  }, [fetchFavorites, requireToken]);
 
   // お気に入りから削除
   const removeFavorite = useCallback(async (favoriteId: number) => {
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      const message = 'ログインが必要です';
-      setError(message);
-      toast.error(message);
+    if (!requireToken()) {
       return false;
     }
 
-    setLoading(true);
     setError(null);
 
     try {
       await apiDelete(`/api/v1/favorites/${favoriteId}`);
-      // お気に入り一覧を再取得
-      await fetchFavorites();
+      setFavorites((prev) => prev.filter((fav) => fav.id !== favoriteId));
       toast.success('お気に入りから削除しました');
       return true;
     } catch (err) {
@@ -86,10 +113,8 @@ export const useFavorites = () => {
       setError(message);
       toast.error(message);
       return false;
-    } finally {
-      setLoading(false);
     }
-  }, [fetchFavorites]);
+  }, [requireToken]);
 
   // カクテルIDからお気に入りIDを取得
   const getFavoriteId = useCallback((cocktailId: number) => {

@@ -250,14 +250,6 @@ export function Toaster({ position = 'top-center' }: ToasterProps) {
                 ×
               </button>
             </div>
-            {toastItem.duration !== Infinity ? (
-              <div className="mt-3 h-1 w-full rounded-full bg-black/10 dark:bg-white/15">
-                <span
-                  className="toast-progress block h-full w-full rounded-full bg-current/40"
-                  style={{ animationDuration: `${toastItem.duration}ms` }}
-                />
-              </div>
-            ) : null}
           </div>
         );
       })}

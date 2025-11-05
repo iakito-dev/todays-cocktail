@@ -219,11 +219,11 @@ export function Toaster({ position = 'top-center' }: ToasterProps) {
             role={isDestructive ? 'alert' : 'status'}
             aria-live={isDestructive ? 'assertive' : 'polite'}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex flex-1 gap-3">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-1 items-center gap-3">
                 <span
                   className={cn(
-                    'mt-[3px] flex h-7 w-7 items-center justify-center rounded-full text-base ring-1 ring-inset ring-black/5',
+                    'flex h-7 w-7 items-center justify-center rounded-full text-base ring-1 ring-inset ring-black/5',
                     ICON_STYLES[toastType]
                   )}
                   aria-hidden

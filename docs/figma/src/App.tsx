@@ -362,7 +362,7 @@ export default function App() {
             <h3 className="text-gray-900">Today's Cocktail</h3>
           </div>
           <p className="text-gray-600 mb-2">
-            家でもバーでも、"今日の一杯"が見つかるカクテル図鑑
+            家でもバーでも、今日の一杯が見つかるカクテル図鑑
           </p>
           <p className="text-gray-500">
             カクテル初心者から愛好家まで、あなたにぴったりのレシピを

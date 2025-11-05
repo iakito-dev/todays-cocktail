@@ -15,7 +15,7 @@ export const Footer = () => {
             <div className="text-3xl md:text-4xl">🍸</div>
             <div>
               <h3 className="text-lg md:text-xl font-semibold text-white">Today's Cocktail</h3>
-              <p className="text-sm md:text-base text-slate-300">"今日の一杯"が見つかるカクテル検索アプリ</p>
+              <p className="text-sm md:text-base text-slate-300">今日の一杯が見つかるカクテル検索アプリ</p>
             </div>
           </div>
           <div className="md:col-span-7 md:col-start-6 text-slate-200 md:pl-6">

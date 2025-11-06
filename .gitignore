@@ -118,3 +118,9 @@ frontend/dist/assets/index-DqF5yT3g.js
 # Terraform 環境固有のシークレット
 infra/terraform/envs/prod/backend-secrets.auto.tfvars
 .terraform/
+
+# Terraform cache and state files
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup

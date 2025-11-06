@@ -11,9 +11,9 @@
     "format": "prettier --write 'src/**/*.{ts,tsx,css,json}'",
     "format:check": "prettier --check 'src/**/*.{ts,tsx,css,json}'",
     "preview": "vite preview",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test": "node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs",
+    "test:ui": "node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs --ui",
+    "test:coverage": "node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs --coverage"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -38,6 +38,7 @@
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
+    "happy-dom": "^13.5.0",
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_05_090000) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_06_100000) do
   create_schema "_realtime"
   create_schema "auth"
   create_schema "extensions"
@@ -35,11 +35,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_090000) do
   create_table "cocktail_ingredients", force: :cascade do |t|
     t.bigint "cocktail_id", null: false
     t.bigint "ingredient_id", null: false
-    t.string "amount_text"
+    t.string "amount_text", null: false
     t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "amount_ja"
+    t.index ["cocktail_id", "ingredient_id"], name: "index_cocktail_ingredients_on_cocktail_id_and_ingredient_id", unique: true
     t.index ["cocktail_id"], name: "index_cocktail_ingredients_on_cocktail_id"
     t.index ["ingredient_id"], name: "index_cocktail_ingredients_on_ingredient_id"
   end
@@ -74,10 +75,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_090000) do
   end
 
   create_table "ingredients", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name_ja"
+    t.index ["name"], name: "index_ingredients_on_name", unique: true
   end
 
   create_table "jwt_denylists", force: :cascade do |t|

@@ -1,12 +1,10 @@
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-
 const abDescriptor = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'resizable');
 if (!abDescriptor) {
   Object.defineProperty(ArrayBuffer.prototype, 'resizable', {
     configurable: true,
-    get: () => false,
+    get() {
+      return false;
+    },
   });
 }
 
@@ -15,21 +13,9 @@ if (typeof SharedArrayBuffer !== 'undefined') {
   if (!sabDescriptor) {
     Object.defineProperty(SharedArrayBuffer.prototype, 'growable', {
       configurable: true,
-      get: () => false,
+      get() {
+        return false;
+      },
     });
   }
 }
-
-export default defineConfig({
-  plugins: [react()],
-  test: {
-    globals: true,
-    environment: 'happy-dom',
-    setupFiles: ['./src/test/setup.ts'],
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-});

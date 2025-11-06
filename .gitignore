@@ -114,3 +114,6 @@ todays-cocktail/
 frontend/dist/assets/index-DqF5yT3g.js
 frontend/dist/assets/index-DqF5yT3g.js
 .gitignore
+
+# Terraform 環境固有のシークレット
+infra/terraform/envs/prod/backend-secrets.auto.tfvars

@@ -1,6 +1,6 @@
 # 技術選定（Tech Stack）
 
-最終更新: 2025-11-06  
+最終更新: 2025-11-06（2025-11-06 デプロイ反映）  
 対象リポジトリ: `iakito-dev/todays-cocktail`
 
 ---
@@ -11,9 +11,9 @@
 | --- | --- | --- |
 | フロントエンド | React 19 + TypeScript + Vite | SPA として API を操作。React Router で画面遷移。 |
 | バックエンド API | Ruby 3.4.6 / Rails 8.0.3 (API mode) | RESTful API + Devise 認証 + キャッシュ管理。 |
-| データベース | Supabase（PostgreSQL 15 系） | 本番/開発ともにマネージド PostgreSQL。 |
+| データベース | Supabase Cloud（PostgreSQL 15 系） | 本番/開発ともに Supabase プロジェクトで管理。 |
 | 認証 | Devise + devise-jwt | メール確認付きユーザー登録と JWT ベースのセッション管理。 |
-| インフラ | Docker Compose（ローカル） / Render (Rails) / Vercel (React) | ローカル開発と将来のホスティングを分離。 |
+| インフラ | Docker Compose（ローカル） / Render (API) / Vercel (フロント) / Cloudflare DNS | ローカル開発と本番ホスティングを明確に分離。 |
 | CI/CD | GitHub Actions | lint / test / build を自動化。 |
 | IaC | Terraform | 将来的な AWS 等への移行を見据えたコード化。 |
 
@@ -56,7 +56,7 @@
 
 ## 4. データベース / ストレージ
 
-- Supabase のローカルホスト（`supabase start`）またはクラウド環境を利用。
+- Supabase Cloud（プロジェクト `todays-cocktail-prod`）を本番に利用。ローカル検証時は `supabase start` で立ち上げ。
 - PostgreSQL 拡張（`uuid-ossp`, `pg_stat_statements` 等）は Supabase 側で有効化済み。
 - Rails 側は `config/database.yml` で `DATABASE_URL` を参照し、環境変数で切り替え。
 - マイグレーションは Rails 標準。Active Storage は現時点で未使用（画像は URL 参照）。
@@ -75,10 +75,11 @@
 ## 6. インフラ / デプロイ戦略
 
 - **ローカル開発**: Docker Compose で `backend`, `frontend`, `supabase` サービスを起動。
-- **クラウド想定**
-  - Rails API: Render（Docker デプロイ）を想定。環境変数で Supabase を参照。
-  - フロントエンド: Vercel の静的ホスティング（`vite build` 産物をデプロイ）。
-  - Supabase: 本番用プロジェクトを想定（マネージド Postgres + Auth + Storage）。
+- **本番環境**
+  - Rails API: Render（Docker イメージを自動ビルド）。環境変数で Supabase Cloud を参照。
+  - フロントエンド: Vercel（`main` ブランチから自動デプロイ）。
+  - DNS: Cloudflare で apex / サブドメインを管理し、Render と Vercel へ振り分け。
+  - Supabase: Cloud プロジェクトで稼働（PostgreSQL + Studio + 将来的な Storage）。
 - **IaC**: Terraform で AWS 等へ移行できるようリソーステンプレートを整備中。
 
 ---

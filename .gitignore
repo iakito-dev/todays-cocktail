@@ -112,3 +112,5 @@ kamal.lock
 # 誤ってプロジェクト一式を入れ子にしないようルート配下のバックアップを除外
 todays-cocktail/
 frontend/dist/assets/index-DqF5yT3g.js
+frontend/dist/assets/index-DqF5yT3g.js
+.gitignore

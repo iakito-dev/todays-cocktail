@@ -1,17 +1,11 @@
 # frozen_string_literal: true
 
-require 'net/http'
-require 'json'
-
 # OpenAI APIを使用してカクテル関連のテキストを翻訳するサービス
-# レート制限時はDeepL APIにフォールバック
 class TranslationService
   class TranslationError < StandardError; end
 
   def initialize
     @client = OpenAI::Client.new(access_token: ENV.fetch('OPENAI_API_KEY'))
-    @deepl_api_key = ENV['DEEPL_API_KEY']
-    @use_deepl_fallback = @deepl_api_key.present?
   end
 
   # カクテル名を翻訳
@@ -55,22 +49,28 @@ class TranslationService
     return nil if measure.blank?
 
     prompt = <<~PROMPT
-      以下のカクテルの分量を日本人に馴染みのある単位に変換してください。
+      以下のカクテルレシピに含まれる分量表現を、日本人に馴染みやすい単位に変換してください。
 
-      変換ルール:
-      - oz（オンス）→ ml に変換（1 oz = 30ml）
-      - tsp（ティースプーン）→ ml に変換（1 tsp = 5ml）
-      - tbsp（テーブルスプーン）→ ml に変換（1 tbsp = 15ml）
-      - dash → 「ダッシュ」または「少々」
-      - splash → 「少量」
-      - top → 「適量」または「満たす」
-      - fill → 「満たす」
-      - 数値がない場合 → 「適量」
-      - 既にmlやg、個などの日本の単位の場合はそのまま
+      # 変換ルール
+      - oz（オンス） → ml に変換（1 oz = 約30ml）
+      - tsp（ティースプーン） → ml に変換（1 tsp = 約5ml）
+      - tbsp（テーブルスプーン） → ml に変換（1 tbsp = 約15ml）
+      - dash → 「1〜2滴」または「少々」
+      - splash → 「10〜20ml程度」または「少量」
+      - top / fill / to top → 「グラスを満たす程度」や「適量」
+      - twist / slice / wedge / piece → 「◯切れ」や「◯枚」など自然な日本語に
+      - 数値がない場合でも、文脈からおおよその量を推定して表現する（例: “splash of soda” → 「ソーダを少量」）
+      - 既に ml、g、個、枚 などの日本の単位の場合はそのまま残す
+
+      # 出力形式
+      - 変換後の分量のみを返す（説明不要、単位を含む短い文字列）
+      - 例)
+        - "1 oz" → "30ml"
+        - "1 tsp" → "5ml"
+        - "dash of bitters" → "1〜2滴"
+        - "fill with tonic" → "トニックを適量（グラスを満たす程度）"
 
       元の分量: #{measure}
-
-      変換後の分量のみを返してください（説明不要）。
     PROMPT
 
     translate(prompt)
@@ -84,9 +84,19 @@ class TranslationService
     return nil if glass.blank?
 
     prompt = <<~PROMPT
-      以下のグラス名を日本語に翻訳してください。
-      一般的なグラス名はカタカナで表記してください。
-      翻訳結果のみを返してください（説明は不要です）。
+      以下のカクテル用グラス名を日本語に翻訳してください。
+
+      # 翻訳ルール
+      - 日本の一般的なバーやカフェでも通じる表現に変換してください。
+      - 日本人に馴染みがない場合は、近い形・用途の一般的なグラス名に意訳してください。
+        - 例: "Old Fashioned Glass" → "ロックグラス"
+        - 例: "Cordial Glass" → "リキュールグラス"
+        - 例: "Coupe Glass" → "カクテルグラス"
+        - 例: "Highball Glass" → "ハイボールグラス"
+        - 例: "Collins Glass" → "タンブラー"
+      - カタカナ・ひらがなの自然な表記にし、「グラス」「カップ」などは必要に応じて補って構いません。
+      - 難しい専門用語（例: "Nick and Nora Glass"）は「カクテルグラス」など一般名詞に置き換えてください。
+      - 翻訳結果のみを返してください（説明や注釈は不要です）。
 
       グラス名: #{glass}
     PROMPT
@@ -101,13 +111,39 @@ class TranslationService
   def translate_instructions(instructions)
     return nil if instructions.blank?
 
-    prompt = <<~PROMPT
-      以下のカクテルの作り方を日本語に翻訳してください。
-      自然で分かりやすい日本語で、カクテル作りの手順として翻訳してください。
-      翻訳結果のみを返してください（説明は不要です）。
+    rules = <<~RULES
+      - 英語を直訳せず、自然な日本語の調理手順に言い換える
+      - 「ステア」「シェイク」「ストレイン」などの専門用語は使わず、以下のように言い換える
+        - shake → 「よくふる」
+        - stir → 「かき混ぜる」
+        - strain → 「注ぐ」または「こす」
+        - garnish → 「飾る」または「添える」
+        - build → 「グラスに直接入れる」
+      - 「〜します」「〜を加えます」「〜に注ぎます」の語尾で統一
+      - 手順番号がある場合は保持し、なければ2〜3文で自然にまとめる
+      - 測定単位や材料名は翻訳しない（別処理のため）
+      - 翻訳結果のみを返し、説明や注釈は不要
+    RULES
 
+    examples = <<~EXAMPLES
+      # 翻訳例
+      英文: Shake with ice and strain into a chilled glass.
+      出力: 氷を入れてよくふり、冷やしたグラスに注ぎます。
+
+      英文: Stir all ingredients with ice and strain into an old fashioned glass.
+      出力: 氷と材料をグラスでかき混ぜ、新しい氷を入れたグラスに注ぎます。
+
+      英文: Add all ingredients to a shaker with ice and shake well.
+      出力: シェーカーに氷と材料を入れ、よくふります。
+
+      英文: Build all ingredients in a highball glass and top with soda.
+      出力: ハイボールグラスに材料を入れ、ソーダを注いで満たします。
+
+      # 翻訳対象
       #{instructions}
-    PROMPT
+    EXAMPLES
+
+    prompt = build_prompt('日本人が読みやすい自然なレシピ文体に翻訳', examples, rules: rules)
 
     translate(prompt)
   rescue StandardError => e
@@ -120,20 +156,32 @@ class TranslationService
     return nil if cocktail_name.blank?
 
     prompt = <<~PROMPT
-      あなたはカクテルの専門家です。以下の情報を基に、このカクテルの魅力的な説明文を日本語で生成してください。
+      あなたはカクテル文化に詳しいプロのライターです。
+      以下の条件に従って、指定されたカクテルの紹介文を日本語で書いてください。
 
+      # 条件
+      - 文字数はおよそ100文字前後
+      - 歴史的背景、語源、見た目や味の特徴を1文程度で紹介する
+      - 飲むシーン（例：夜風を感じながらゆったり過ごす時間にぴったり）を1文で添える
+      - トーンは上品で少し文学的。説明ではなく情景が浮かぶように。
+      - 主語はなるべく省き、三人称・客観的な描写で。
+
+      # 出力フォーマット
+      カクテル名
+      本文（100文字前後）
+
+      # 入力例
+      カクテル名: ソルティドッグ
+
+      # 出力例
+      ソルティドッグ
+      「甲板員」をあらわすイギリスのスラングが名前となっており、潮風や海水を浴びて作業する彼らをイメージしてか、グラスのふちに塩をつけたスノースタイルが特徴。塩をなめながら飲むことで、グレープフルーツの酸味をやわらげ、甘みが増す。夕暮れ時に一息つきたいときに。
+
+      # 実行対象
       カクテル名: #{cocktail_name}
-      ベース: #{base}
-      強度: #{strength}
-      材料: #{ingredients_list.join(', ')}
-
-      以下の要素を含めた、2-3文程度の説明文を作成してください:
-      - このカクテルの特徴や味わい
-      - どんな場面やシーンに合うか
-      - 初心者向けのアドバイス（あれば）
-
-      フレンドリーで親しみやすい文体で、カクテル初心者でも楽しめる内容にしてください。
-      説明文のみを返してください（見出しや「説明:」などは不要です）。
+      ベース: #{base.presence || '不明'}
+      強度: #{strength.presence || '不明'}
+      材料: #{ingredients_list.any? ? ingredients_list.join(', ') : '情報なし'}
     PROMPT
 
     translate(prompt)
@@ -189,22 +237,18 @@ class TranslationService
     return 'light' if ingredients_list.blank?
 
     prompt = <<~PROMPT
-      You are a cocktail expert. Based on the following ingredients, determine the alcohol strength of this cocktail.
+      あなたはプロのバーテンダーです。
+      以下のカクテル情報（一般的なレシピを想定）からアルコールの強さを体感・度数・印象の観点で分類してください。
 
-      Ingredients: #{ingredients_list.join(', ')}
+      材料: #{ingredients_list.join(', ')}
       Alcoholic: #{alcoholic_type}
 
-      Return ONLY ONE of these exact words (nothing else):
-      light
-      medium
-      strong
+      # 分類基準
+      - light: 低アルコールまたはジュース・ソーダなどで割られており飲みやすい（例: カシスオレンジ、スプリッツァー、ピーチフィズ）
+      - medium: 標準的なカクテル。スピリッツ主体だが果汁やリキュールでバランス（例: モスコミュール、マルガリータ、ジントニック）
+      - strong: スピリッツが主成分で度数が高く、刺激的・重厚な印象（例: マティーニ、ネグローニ、マンハッタン）
 
-      Rules:
-      - light: Beer-based, wine-based, or heavily diluted cocktails (e.g., Mimosa, Aperol Spritz)
-      - medium: Standard cocktails with moderate alcohol (e.g., Mojito, Margarita, most highballs)
-      - strong: Short drinks, spirit-forward cocktails, multiple spirits (e.g., Martini, Manhattan, Old Fashioned, Long Island Iced Tea)
-
-      Your response (one word only):
+      light / medium / strong のいずれか1語のみを返してください。
     PROMPT
 
     result = translate(prompt)&.strip&.downcase
@@ -239,74 +283,30 @@ class TranslationService
 
   private
 
+  def build_prompt(task_name, content, rules: nil)
+    sections = []
+    sections << "以下の内容を#{task_name}してください。"
+    sections << "# 翻訳ルール\n#{rules.rstrip}" if rules.present?
+    sections << content.rstrip if content.present?
+    sections.join("\n\n")
+  end
+
   def translate(prompt)
     response = @client.chat(
       parameters: {
-        model: 'gpt-4o-mini', # コスト効率の良いモデル
+        model: 'gpt-5',
         messages: [
-          { role: 'system', content: 'あなたは正確で自然な日本語翻訳を行う翻訳アシスタントです。' },
+          { role: 'system', content: 'あなたはカクテル分野に精通した、正確で自然な日本語翻訳を行う翻訳アシスタントです。' },
           { role: 'user', content: prompt }
         ],
-        temperature: 0.3, # 一貫性のある翻訳のため低めに設定
+        temperature: 0.15,
         max_tokens: 500
       }
     )
 
     response.dig('choices', 0, 'message', 'content')&.strip
   rescue StandardError => e
-    # レート制限エラー（429）の場合、DeepLにフォールバック
-    if e.message.include?('429') && @use_deepl_fallback
-      Rails.logger.warn("OpenAI rate limit reached, falling back to DeepL")
-      translate_with_deepl(extract_text_from_prompt(prompt))
-    else
-      Rails.logger.error("OpenAI API error: #{e.message}")
-      raise TranslationError, "Translation API failed: #{e.message}"
-    end
-  end
-
-  # プロンプトから翻訳対象のテキストを抽出
-  def extract_text_from_prompt(prompt)
-    # "カクテル名: Mojito" のような形式からテキストを抽出
-    if prompt =~ /カクテル名:\s*(.+)$/
-      $1.strip
-    elsif prompt =~ /材料名:\s*(.+)$/
-      $1.strip
-    elsif prompt =~ /分量:\s*(.+)$/
-      $1.strip
-    elsif prompt =~ /グラス名:\s*(.+)$/
-      $1.strip
-    elsif prompt =~ /作り方:\s*(.+)$/m
-      $1.strip
-    elsif prompt =~ /材料リスト:\s*(.+)$/m
-      $1.strip
-    else
-      prompt # フォールバック
-    end
-  end
-
-  # DeepL APIで翻訳
-  def translate_with_deepl(text)
-    return nil if text.blank?
-
-    uri = URI('https://api-free.deepl.com/v2/translate')
-    params = {
-      'auth_key' => @deepl_api_key,
-      'text' => text,
-      'target_lang' => 'JA',
-      'source_lang' => 'EN'
-    }
-
-    response = Net::HTTP.post_form(uri, params)
-
-    if response.is_a?(Net::HTTPSuccess)
-      result = JSON.parse(response.body)
-      result['translations']&.first&.dig('text')&.strip
-    else
-      Rails.logger.error("DeepL API error: #{response.code}")
-      nil
-    end
-  rescue StandardError => e
-    Rails.logger.error("DeepL translation failed: #{e.message}")
-    nil
+    Rails.logger.error("OpenAI API error: #{e.message}")
+    raise TranslationError, "Translation API failed: #{e.message}"
   end
 end

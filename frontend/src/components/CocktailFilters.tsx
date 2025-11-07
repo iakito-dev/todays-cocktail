@@ -43,6 +43,7 @@ export function CocktailFilters({
 
   const handleSearchChange = (value: string) => {
     setTempSearchQuery(value);
+    onSearchChange(value);
   };
 
   const handleSearchSubmit = () => {

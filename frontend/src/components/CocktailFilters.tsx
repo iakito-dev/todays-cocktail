@@ -73,7 +73,7 @@ export function CocktailFilters({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
               type="text"
-              placeholder="モヒート、Mojito、ライム..."
+              placeholder="ジン、ライム..."
               value={tempSearchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -93,11 +93,10 @@ export function CocktailFilters({
           <Button
             type="button"
             onClick={handleSearchSubmit}
-            className="h-11 min-w-[3rem] px-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm flex items-center justify-center gap-2"
+            className="h-11 w-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm flex items-center justify-center"
             aria-label="検索"
           >
             <Search className="w-4 h-4" />
-            <span className="hidden sm:inline">検索</span>
           </Button>
         </div>
       </div>

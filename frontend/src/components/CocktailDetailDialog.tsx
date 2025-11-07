@@ -9,7 +9,7 @@ import {
 import { Badge } from './ui/badge';
 import { Skeleton } from './ui/skeleton';
 import { Separator } from './ui/separator';
-import { Wine, GlassWater, Hammer, Heart, Edit, Sparkles, X } from 'lucide-react';
+import { Wine, GlassWater, Hammer, Heart, Edit, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { ImageWithFallback } from './ImageWithFallback';
 import { EditCocktailDialog } from './EditCocktailDialog';
@@ -125,48 +125,36 @@ export function CocktailDetailDialog({
     ? currentCocktail.name
     : null;
 
-  const renderNoteSection = (extraClasses = '') => {
+  const noteText = (() => {
     if (!currentCocktail) return null;
 
-    const baseClass = `bg-blue-50 p-4 sm:p-5 md:p-7 rounded-xl sm:rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm ${extraClasses}`.trim();
-
-    if (currentCocktail.description) {
-      return (
-        <div className={baseClass}>
-          <div className="flex items-start gap-3 sm:gap-4">
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">カクテルノート</h4>
-              <p className="text-blue-800 leading-relaxed text-sm sm:text-base whitespace-pre-wrap">
-                {currentCocktail.description}
-              </p>
-            </div>
-          </div>
-        </div>
-      );
+    if (currentCocktail.description?.trim()) {
+      return currentCocktail.description;
     }
 
     if (!currentCocktail.instructions_ja) {
-      return (
-        <div className={baseClass}>
-          <div className="flex items-start gap-3 sm:gap-4">
-            <div className="text-xl sm:text-2xl">💡</div>
-            <div>
-              <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">カクテルノート</h4>
-              <p className="text-blue-800 leading-relaxed text-sm sm:text-base">
-                このカクテルは{currentCocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : currentCocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
-                {currentCocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
-                {currentCocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
-                {currentCocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
-              </p>
-            </div>
-          </div>
-        </div>
-      );
+      const strengthHints: Record<string, string> = {
+        light: '飲みやすく、初心者の方にもおすすめです',
+        medium: '程よいアルコール度数で、カクテルの味わいを楽しめます',
+        strong: 'アルコール度数が高めです。ゆっくり味わってお楽しみください'
+      };
+      const techniqueHints: Record<string, string> = {
+        build: 'グラスで直接作れるので、家でも簡単に作れます。',
+        shake: 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。',
+        stir: 'ミキシンググラスでステアして、滑らかな口当たりに。'
+      };
+
+      const hints = [`このカクテルは${strengthHints[currentCocktail.strength] ?? 'バランスの取れた味わいです'}。`];
+
+      if (techniqueHints[currentCocktail.technique]) {
+        hints.push(techniqueHints[currentCocktail.technique]);
+      }
+
+      return hints.join('');
     }
 
     return null;
-  };
+  })();
 
   return (
     <>
@@ -220,16 +208,14 @@ export function CocktailDetailDialog({
 
           {/* Fixed Header (mobile / tablet) */}
           <DialogHeader className="text-left bg-white z-10 p-4 sm:p-6 md:p-8 pb-3 sm:pb-4 md:pb-6 border-b border-gray-100 shrink-0 lg:hidden">
-            <div className="flex items-start justify-between gap-3 sm:gap-4">
-              <div className="flex-1 min-w-0">
-                <div className="space-y-1.5 sm:space-y-2 md:space-y-3 mb-2.5 sm:mb-3 md:mb-4">
-                  <DialogTitle className="text-xl sm:text-2xl md:text-4xl font-bold text-gray-900 leading-tight">
-                    {primaryName}
-                  </DialogTitle>
-                  {secondaryName && (
-                    <p className="text-xs sm:text-sm md:text-lg text-gray-500 font-medium tracking-wide uppercase">{secondaryName}</p>
-                  )}
-                </div>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 sm:gap-4">
+              <div className="space-y-1.5 sm:space-y-2 md:space-y-3">
+                <DialogTitle className="text-xl sm:text-2xl md:text-4xl font-bold text-gray-900 leading-tight">
+                  {primaryName}
+                </DialogTitle>
+                {secondaryName && (
+                  <p className="text-xs sm:text-sm md:text-lg text-gray-500 font-medium tracking-wide uppercase">{secondaryName}</p>
+                )}
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                   <Badge className={`${strengthColors[currentCocktail.strength as keyof typeof strengthColors] ?? ''} px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1.5 border text-xs`}>
                     {STRENGTH_LABELS[currentCocktail.strength]}
@@ -240,7 +226,7 @@ export function CocktailDetailDialog({
                   </Badge>
                 </div>
               </div>
-              <div className="flex gap-1.5 sm:gap-2 shrink-0">
+              <div className="flex justify-end gap-1.5 sm:gap-2">
                 {isAdmin && (
                   <Button
                     variant="outline"
@@ -265,7 +251,6 @@ export function CocktailDetailDialog({
                     />
                   </Button>
                 )}
-                {/* 閉じるボタン */}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -275,20 +260,27 @@ export function CocktailDetailDialog({
                   <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
                 </Button>
               </div>
+              {noteText && (
+                <p className="col-span-2 text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
+                  {noteText}
+                </p>
+              )}
             </div>
           </DialogHeader>
 
           {/* Desktop Header */}
-          <div className="hidden lg:flex items-start justify-between gap-8 px-6 md:px-8 py-6 border-b border-gray-100 bg-white shrink-0">
-            <div className="space-y-3">
-              <DialogTitle className="text-4xl font-bold text-gray-900 leading-tight">
-                {primaryName}
-              </DialogTitle>
-              {secondaryName && (
-                <p className="text-base text-gray-400 tracking-[0.2em] uppercase">
-                  {secondaryName}
-                </p>
-              )}
+          <div className="hidden lg:grid grid-cols-[minmax(0,1fr)_auto] items-start gap-8 px-6 md:px-8 py-6 border-b border-gray-100 bg-white shrink-0">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <DialogTitle className="text-4xl font-bold text-gray-900 leading-tight">
+                  {primaryName}
+                </DialogTitle>
+                {secondaryName && (
+                  <p className="text-base text-gray-400 tracking-[0.2em] uppercase">
+                    {secondaryName}
+                  </p>
+                )}
+              </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className={`${strengthColors[currentCocktail.strength as keyof typeof strengthColors] ?? ''} px-3 py-1 text-xs border`}>
                   {STRENGTH_LABELS[currentCocktail.strength]}
@@ -337,6 +329,11 @@ export function CocktailDetailDialog({
                 <X className="w-6 h-6 text-gray-600" />
               </Button>
             </div>
+            {noteText && (
+              <p className="col-span-2 text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
+                {noteText}
+              </p>
+            )}
           </div>
 
         {/* Scrollable Content */}
@@ -385,9 +382,6 @@ export function CocktailDetailDialog({
                     </p>
                   </div>
                 </div>
-
-                {/* Description - AI生成の説明文、または初心者向けtips */}
-                {renderNoteSection('lg:hidden')}
               </div>
 
               {/* ビジュアルエリア（左カラム） */}
@@ -428,7 +422,6 @@ export function CocktailDetailDialog({
                     </div>
                   </div>
                 </div>
-                {renderNoteSection('hidden lg:block')}
               </div>
             </div>
           </div>

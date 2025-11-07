@@ -125,6 +125,49 @@ export function CocktailDetailDialog({
     ? currentCocktail.name
     : null;
 
+  const renderNoteSection = (extraClasses = '') => {
+    if (!currentCocktail) return null;
+
+    const baseClass = `bg-blue-50 p-4 sm:p-5 md:p-7 rounded-xl sm:rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm ${extraClasses}`.trim();
+
+    if (currentCocktail.description) {
+      return (
+        <div className={baseClass}>
+          <div className="flex items-start gap-3 sm:gap-4">
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">カクテルノート</h4>
+              <p className="text-blue-800 leading-relaxed text-sm sm:text-base whitespace-pre-wrap">
+                {currentCocktail.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (!currentCocktail.instructions_ja) {
+      return (
+        <div className={baseClass}>
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="text-xl sm:text-2xl">💡</div>
+            <div>
+              <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">カクテルノート</h4>
+              <p className="text-blue-800 leading-relaxed text-sm sm:text-base">
+                このカクテルは{currentCocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : currentCocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
+                {currentCocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
+                {currentCocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
+                {currentCocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -133,7 +176,7 @@ export function CocktailDetailDialog({
           className="w-[95vw] sm:w-[90vw] max-w-2xl lg:max-w-4xl xl:max-w-5xl h-[90vh] sm:h-auto max-h-[90vh] flex flex-col p-0 gap-0 border-gray-200 [&>button]:hidden"
           style={{
             transform: touchStart !== null && translateY > 0
-              ? `translate(-50%, calc(-50% + ${translateY}px))`
+              ? `translateY(${translateY}px)`
               : undefined,
             transition: touchStart === null ? 'transform 0.3s ease-out' : 'none'
           }}
@@ -171,12 +214,12 @@ export function CocktailDetailDialog({
             // コンテンツ表示
             <>
           {/* スワイプインジケーター（モバイルのみ） */}
-          <div className="sm:hidden flex justify-center pt-2 pb-1">
+          <div className="sm:hidden flex justify-center pt-2 pb-1 shrink-0">
             <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
           </div>
 
           {/* Fixed Header (mobile / tablet) */}
-          <DialogHeader className="text-left sticky top-0 bg-white z-10 p-4 sm:p-6 md:p-8 pb-3 sm:pb-4 md:pb-6 border-b border-gray-100 shrink-0 lg:hidden">
+          <DialogHeader className="text-left bg-white z-10 p-4 sm:p-6 md:p-8 pb-3 sm:pb-4 md:pb-6 border-b border-gray-100 shrink-0 lg:hidden">
             <div className="flex items-start justify-between gap-3 sm:gap-4">
               <div className="flex-1 min-w-0">
                 <div className="space-y-1.5 sm:space-y-2 md:space-y-3 mb-2.5 sm:mb-3 md:mb-4">
@@ -235,6 +278,67 @@ export function CocktailDetailDialog({
             </div>
           </DialogHeader>
 
+          {/* Desktop Header */}
+          <div className="hidden lg:flex items-start justify-between gap-8 px-6 md:px-8 py-6 border-b border-gray-100 bg-white shrink-0">
+            <div className="space-y-3">
+              <DialogTitle className="text-4xl font-bold text-gray-900 leading-tight">
+                {primaryName}
+              </DialogTitle>
+              {secondaryName && (
+                <p className="text-base text-gray-400 tracking-[0.2em] uppercase">
+                  {secondaryName}
+                </p>
+              )}
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge className={`${strengthColors[currentCocktail.strength as keyof typeof strengthColors] ?? ''} px-3 py-1 text-xs border`}>
+                  {STRENGTH_LABELS[currentCocktail.strength]}
+                </Badge>
+                <Badge variant="outline" className="flex items-center gap-1 px-3 py-1 text-xs">
+                  <Wine className="w-3.5 h-3.5" />
+                  {BASE_LABELS[currentCocktail.base]}
+                </Badge>
+                <Badge variant="outline" className="flex items-center gap-1 px-3 py-1 text-xs">
+                  <Hammer className="w-3.5 h-3.5" />
+                  {TECHNIQUE_LABELS[currentCocktail.technique]}
+                </Badge>
+              </div>
+            </div>
+            <div className="flex gap-3 shrink-0">
+              {isAdmin && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setIsEditOpen(true)}
+                  className="h-11 w-11 rounded-full"
+                >
+                  <Edit className="w-5 h-5 text-gray-600" />
+                </Button>
+              )}
+              {onToggleFavorite && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onToggleFavorite(currentCocktail.id)}
+                  className="h-11 w-11 rounded-full shadow-sm border border-gray-100"
+                >
+                  <Heart
+                    className={`w-6 h-6 transition-colors ${
+                      isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-300 hover:text-red-500'
+                    }`}
+                  />
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="h-11 w-11 rounded-full"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </Button>
+            </div>
+          </div>
+
         {/* Scrollable Content */}
         <div
           ref={scrollRef}
@@ -244,71 +348,9 @@ export function CocktailDetailDialog({
           onTouchEnd={handleTouchEnd}
         >
           <div className="p-4 sm:p-6 md:p-8">
-            <div className="flex flex-col gap-6 sm:gap-8 lg:grid lg:grid-cols-[minmax(360px,1.1fr)_minmax(280px,0.9fr)] lg:gap-10">
-              {/* 情報エリア（左カラム） */}
-              <div className="order-2 lg:order-1 space-y-6 sm:space-y-8">
-                {/* Desktop Header */}
-                <div className="hidden lg:flex flex-col gap-5 pb-4 border-b border-gray-100">
-                  <div className="flex items-start justify-between gap-6">
-                    <div className="flex-1 min-w-0 space-y-3">
-                      <DialogTitle className="text-4xl font-bold text-gray-900 leading-snug">
-                        {primaryName}
-                      </DialogTitle>
-                      {secondaryName && (
-                        <p className="text-sm text-gray-500 font-medium tracking-[0.2em] uppercase">
-                          {secondaryName}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Badge className={`${strengthColors[currentCocktail.strength as keyof typeof strengthColors] ?? ''} px-3 py-1 text-xs border`}>
-                          {STRENGTH_LABELS[currentCocktail.strength]}
-                        </Badge>
-                        <Badge variant="outline" className="flex items-center gap-1 px-3 py-1 text-xs">
-                          <Wine className="w-3.5 h-3.5" />
-                          {BASE_LABELS[currentCocktail.base]}
-                        </Badge>
-                        <Badge variant="outline" className="flex items-center gap-1 px-3 py-1 text-xs">
-                          <Hammer className="w-3.5 h-3.5" />
-                          {TECHNIQUE_LABELS[currentCocktail.technique]}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 shrink-0">
-                      {isAdmin && (
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setIsEditOpen(true)}
-                          className="h-10 w-10 rounded-full"
-                        >
-                          <Edit className="w-5 h-5 text-gray-600" />
-                        </Button>
-                      )}
-                      {onToggleFavorite && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onToggleFavorite(currentCocktail.id)}
-                          className="h-10 w-10 rounded-full"
-                        >
-                          <Heart
-                            className={`w-6 h-6 transition-colors ${
-                              isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-500'
-                            }`}
-                          />
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onClose}
-                        className="h-10 w-10 rounded-full"
-                      >
-                        <X className="w-6 h-6 text-gray-600" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+            <div className="flex flex-col gap-6 sm:gap-8 lg:grid lg:grid-cols-[minmax(360px,1.1fr)_minmax(320px,0.9fr)] lg:gap-10">
+              {/* 情報エリア（右カラム） */}
+              <div className="order-2 lg:order-2 space-y-6 sm:space-y-8">
 
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex items-center gap-2 mb-3 sm:mb-4 md:mb-5">
@@ -345,39 +387,12 @@ export function CocktailDetailDialog({
                 </div>
 
                 {/* Description - AI生成の説明文、または初心者向けtips */}
-                {currentCocktail.description ? (
-                  <div className="bg-blue-50 p-4 sm:p-5 md:p-7 rounded-xl sm:rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">カクテルノート</h4>
-                        <p className="text-blue-800 leading-relaxed text-sm sm:text-base whitespace-pre-wrap">
-                          {currentCocktail.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ) : !currentCocktail.instructions_ja && (
-                  <div className="bg-blue-50 p-4 sm:p-5 md:p-7 rounded-xl sm:rounded-2xl border border-blue-100 hover:border-blue-200 transition-all hover:shadow-sm">
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="text-xl sm:text-2xl">💡</div>
-                      <div>
-                        <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">カクテルノート</h4>
-                        <p className="text-blue-800 leading-relaxed text-sm sm:text-base">
-                          このカクテルは{currentCocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : currentCocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
-                          {currentCocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}
-                          {currentCocktail.technique === 'shake' && 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
-                          {currentCocktail.technique === 'stir' && 'ミキシンググラスでステアして、滑らかな口当たりに。'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {renderNoteSection('lg:hidden')}
               </div>
 
-              {/* ビジュアルエリア（右カラム） */}
-              <div className="order-1 lg:order-2 space-y-5 sm:space-y-6 lg:sticky lg:top-6">
-                <div className="relative w-full aspect-square rounded-xl sm:rounded-2xl lg:rounded-3xl overflow-hidden bg-gray-100 shadow-sm lg:shadow-lg">
+              {/* ビジュアルエリア（左カラム） */}
+              <div className="order-1 lg:order-1 space-y-5 sm:space-y-6 lg:sticky lg:top-6">
+                <div className="relative w-full aspect-[4/3] md:aspect-[5/4] rounded-2xl lg:rounded-3xl overflow-hidden bg-gray-100 shadow-sm lg:shadow-lg">
                   <ImageWithFallback
                     src={currentCocktail.image_url || ''}
                     alt={currentCocktail.name}
@@ -385,7 +400,7 @@ export function CocktailDetailDialog({
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/80 border border-gray-100 shadow-sm">
                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                       <Wine className="w-4 h-4 text-blue-600" />
                     </div>
@@ -394,7 +409,16 @@ export function CocktailDetailDialog({
                       <p className="text-sm font-medium text-gray-900">{BASE_LABELS[currentCocktail.base]}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/80 border border-gray-100 shadow-sm">
+                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                      <Hammer className="w-4 h-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">技法</p>
+                      <p className="text-sm font-medium text-gray-900">{TECHNIQUE_LABELS[currentCocktail.technique]}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/80 border border-gray-100 shadow-sm sm:col-span-2">
                     <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
                       <GlassWater className="w-4 h-4 text-indigo-600" />
                     </div>
@@ -403,19 +427,8 @@ export function CocktailDetailDialog({
                       <p className="text-sm font-medium text-gray-900">{currentCocktail.glass_ja || currentCocktail.glass}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100 sm:col-span-2">
-                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                      <Hammer className="w-4 h-4 text-orange-600" />
-                    </div>
-                    <div className="flex items-center flex-wrap gap-2">
-                      <div>
-                        <p className="text-xs text-gray-500">技法</p>
-                        <p className="text-sm font-medium text-gray-900">{TECHNIQUE_LABELS[currentCocktail.technique]}</p>
-                      </div>
-                      <Badge className={`${strengthColors[currentCocktail.strength as keyof typeof strengthColors] ?? ''} text-xs px-2 py-0.5 border`}>{STRENGTH_LABELS[currentCocktail.strength]}</Badge>
-                    </div>
-                  </div>
                 </div>
+                {renderNoteSection('hidden lg:block')}
               </div>
             </div>
           </div>

@@ -223,9 +223,34 @@ class TranslationService
         max_output_tokens: 500
       }
     )
-    response.output_text.strip
+    extract_output_text(response)
   rescue StandardError => e
     Rails.logger.error("OpenAI API error: #{e.message}")
     raise TranslationError, "Translation API failed: #{e.message}"
+  end
+
+  def extract_output_text(response)
+    return response unless response.is_a?(Hash)
+
+    if response['output_text'].present?
+      return Array(response['output_text']).join("\n").strip
+    end
+
+    if response['output'].is_a?(Array)
+      combined = response['output'].filter_map do |item|
+        next unless item['content'].is_a?(Array)
+
+        texts = item['content'].filter_map do |content|
+          content['text'] if content['type'] == 'output_text'
+        end
+        texts.join
+      end
+
+      combined_text = combined.reject(&:blank?).join("\n").strip
+      return combined_text if combined_text.present?
+    end
+
+    # Fallback for backwards compatibility (e.g., Chat Completions API shape)
+    response.dig('choices', 0, 'message', 'content')&.strip
   end
 end

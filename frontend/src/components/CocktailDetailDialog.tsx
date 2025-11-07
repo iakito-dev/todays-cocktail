@@ -120,6 +120,11 @@ export function CocktailDetailDialog({
     setTouchEnd(null);
   };
 
+  const primaryName = currentCocktail?.name_ja || currentCocktail?.name;
+  const secondaryName = currentCocktail?.name && currentCocktail?.name !== primaryName
+    ? currentCocktail.name
+    : null;
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -176,10 +181,10 @@ export function CocktailDetailDialog({
               <div className="flex-1 min-w-0">
                 <div className="space-y-1.5 sm:space-y-2 md:space-y-3 mb-2.5 sm:mb-3 md:mb-4">
                   <DialogTitle className="text-xl sm:text-2xl md:text-4xl font-bold text-gray-900 leading-tight">
-                    {currentCocktail.name_ja || currentCocktail.name}
+                    {primaryName}
                   </DialogTitle>
-                  {currentCocktail.name_ja && (
-                    <p className="text-xs sm:text-sm md:text-lg text-gray-500 font-medium tracking-wide uppercase">{currentCocktail.name}</p>
+                  {secondaryName && (
+                    <p className="text-xs sm:text-sm md:text-lg text-gray-500 font-medium tracking-wide uppercase">{secondaryName}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
@@ -247,11 +252,11 @@ export function CocktailDetailDialog({
                   <div className="flex items-start justify-between gap-6">
                     <div className="flex-1 min-w-0 space-y-3">
                       <DialogTitle className="text-4xl font-bold text-gray-900 leading-snug">
-                        {currentCocktail.name_ja || currentCocktail.name}
+                        {primaryName}
                       </DialogTitle>
-                      {currentCocktail.name_ja && (
+                      {secondaryName && (
                         <p className="text-sm text-gray-500 font-medium tracking-[0.2em] uppercase">
-                          {currentCocktail.name}
+                          {secondaryName}
                         </p>
                       )}
                       <div className="flex items-center gap-2 flex-wrap">
@@ -357,7 +362,7 @@ export function CocktailDetailDialog({
                     <div className="flex items-start gap-3 sm:gap-4">
                       <div className="text-xl sm:text-2xl">💡</div>
                       <div>
-                        <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">Note</h4>
+                        <h4 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-blue-900">カクテルノート</h4>
                         <p className="text-blue-800 leading-relaxed text-sm sm:text-base">
                           このカクテルは{currentCocktail.strength === 'light' ? '飲みやすく、初心者の方にもおすすめです' : currentCocktail.strength === 'medium' ? '程よいアルコール度数で、カクテルの味わいを楽しめます' : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}。
                           {currentCocktail.technique === 'build' && 'グラスで直接作れるので、家でも簡単に作れます。'}

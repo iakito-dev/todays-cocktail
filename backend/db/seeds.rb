@@ -33,6 +33,69 @@ TECHNIQUE_MAP = {
   'シェイク' => :shake
 }
 
+ENGLISH_NAME_MAP = {
+  'マティーニ' => 'Martini',
+  'ジントニック' => 'Gin and Tonic',
+  'モスコミュール' => 'Moscow Mule',
+  'マルガリータ' => 'Margarita',
+  'モヒート' => 'Mojito',
+  'ウイスキーサワー' => 'Whiskey Sour',
+  'マンハッタン' => 'Manhattan',
+  'コスモポリタン' => 'Cosmopolitan',
+  'ネグローニ' => 'Negroni',
+  'ダイキリ' => 'Daiquiri',
+  'テキーラサンライズ' => 'Tequila Sunrise',
+  'オールドファッション' => 'Old Fashioned',
+  'エスプレッソマティーニ' => 'Espresso Martini',
+  'ピニャコラーダ' => 'Piña Colada',
+  'ブラッディメアリー' => 'Bloody Mary',
+  'カイピリーニャ' => 'Caipirinha',
+  'アマレットサワー' => 'Amaretto Sour',
+  'ロングアイランドアイスティー' => 'Long Island Iced Tea',
+  'ギムレット' => 'Gimlet',
+  'サイドカー' => 'Sidecar',
+  'アペロールスピリッツ' => 'Aperol Spritz',
+  'フレンチ75' => 'French 75',
+  'パロマ' => 'Paloma',
+  'ウイスキーハイボール' => 'Whisky Highball',
+  'ケープコッダー' => 'Cape Codder',
+  'ミントジュレップ' => 'Mint Julep',
+  'ブルーハワイ' => 'Blue Hawaii',
+  'アヴィエーション' => 'Aviation',
+  'ソルティドッグ' => 'Salty Dog',
+  'メキシカンミュール' => 'Mexican Mule'
+}.freeze
+
+BASE_CHARACTER_MAP = {
+  'ジン' => 'ハーバルでクリアなジン',
+  'ラム' => 'トロピカルなラム',
+  'ウイスキー' => '芳醇なウイスキー',
+  'ウォッカ' => 'クリアなウォッカ',
+  'テキーラ' => '爽やかなテキーラ',
+  'ビール' => '麦の旨みを感じるビール',
+  'ワイン' => '芳醇なワイン'
+}.freeze
+
+STRENGTH_STYLE_MAP = {
+  'ライト' => '軽やかで飲みやすい一杯',
+  'ミディアム' => '程よいコクとバランスの取れた一杯',
+  'ストロング' => 'しっかりとした飲みごたえのある一杯'
+}.freeze
+
+TECHNIQUE_STYLE_MAP = {
+  'ビルド' => 'グラスの中で手早く仕上げられるので、自宅でも気軽に楽しめます。',
+  'ステア' => 'ステアで丁寧に冷やすことで、素材の輪郭が美しく際立ちます。',
+  'シェイク' => 'シェイクすることで香りと口当たりが一体になり、華やかな余韻が広がります。'
+}.freeze
+
+def build_description(data)
+  base_text = BASE_CHARACTER_MAP[data[:base]] || data[:base]
+  strength_text = STRENGTH_STYLE_MAP[data[:strength]] || ''
+  technique_text = TECHNIQUE_STYLE_MAP[data[:technique]] || ''
+
+  "#{data[:name]}は#{base_text}をベースにした#{strength_text}です。#{technique_text}".strip
+end
+
 cocktails_data = [
   {
     name: 'マティーニ',
@@ -483,7 +546,8 @@ cocktails_data = [
 ]
 
 cocktails_data.each do |data|
-  puts "Creating cocktail: #{data[:name]}"
+  english_name = ENGLISH_NAME_MAP[data[:name]] || data[:name]
+  puts "Creating cocktail: #{data[:name]} (#{english_name})"
 
   base = BASE_MAP[data[:base]]
   strength = STRENGTH_MAP[data[:strength]]
@@ -493,15 +557,23 @@ cocktails_data.each do |data|
     raise ArgumentError, "Invalid enum mapping for #{data[:name]}"
   end
 
-  cocktail = Cocktail.create!(
-    name: data[:name],
+  cocktail = Cocktail.find_by(name: english_name) || Cocktail.find_by(name: data[:name]) || Cocktail.new
+  cocktail.name = english_name
+  cocktail.assign_attributes(
+    name_ja: data[:name],
     base: base,
     strength: strength,
     technique: technique,
     image_url_override: data[:image_url_override],
-    instructions: data[:instructions],
-    glass: data[:glass]
+    instructions: data[:instructions_en],
+    instructions_ja: data[:instructions],
+    glass: data[:glass_en] || data[:glass],
+    glass_ja: data[:glass],
+    description: data[:description] || build_description(data)
   )
+  cocktail.save!
+
+  cocktail.cocktail_ingredients.destroy_all
 
   data[:ingredients].each_with_index do |ing, i|
     ingredient = Ingredient.find_or_create_by!(name: ing[:name])

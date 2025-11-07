@@ -1,3 +1,4 @@
+import { useEffect, useState, type KeyboardEvent } from 'react';
 import { Input } from './ui/input';
 import { Search, X } from 'lucide-react';
 import { Button } from './ui/button';
@@ -7,8 +8,6 @@ interface CocktailFiltersProps {
   onSearchChange: (query: string) => void;
   selectedBases: string[];
   onBasesChange: (bases: string[]) => void;
-  ingredientSearch: string;
-  onIngredientSearchChange: (query: string) => void;
 }
 
 const bases: { value: string; label: string; icon: string }[] = [
@@ -25,10 +24,13 @@ export function CocktailFilters({
   searchQuery,
   onSearchChange,
   selectedBases,
-  onBasesChange,
-  ingredientSearch,
-  onIngredientSearchChange
+  onBasesChange
 }: CocktailFiltersProps) {
+  const [tempSearchQuery, setTempSearchQuery] = useState(searchQuery);
+  useEffect(() => {
+    setTempSearchQuery(searchQuery);
+  }, [searchQuery]);
+
   const handleBaseToggle = (baseValue: string) => {
     if (selectedBases.includes(baseValue)) {
       // すでに選択されている場合は解除
@@ -39,30 +41,64 @@ export function CocktailFilters({
     }
   };
 
+  const handleSearchChange = (value: string) => {
+    setTempSearchQuery(value);
+  };
+
+  const handleSearchSubmit = () => {
+    onSearchChange(tempSearchQuery.trim());
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSearchSubmit();
+    }
+  };
+
+  const handleClear = () => {
+    setTempSearchQuery('');
+    onSearchChange('');
+  };
+
   return (
     <div className="space-y-8">
-      {/* Name Search */}
+      {/* Keyword Search */}
       <div>
-        <label className="block mb-3 text-sm font-medium text-gray-700">カクテル名で検索</label>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="モヒート、Mojito、マティーニ..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9 pr-9 h-11 bg-white border-gray-200 rounded-xl"
-          />
-          {searchQuery && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onSearchChange('')}
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-gray-400 hover:text-gray-900"
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          )}
+        <label className="block mb-3 text-sm font-medium text-gray-700">
+          カクテル名・材料名で検索
+        </label>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="モヒート、Mojito、ライム..."
+              value={tempSearchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="pl-9 pr-10 h-11 bg-white border-gray-200 rounded-xl"
+            />
+            {tempSearchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClear}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-gray-400 hover:text-gray-900"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+          <Button
+            type="button"
+            onClick={handleSearchSubmit}
+            className="h-11 min-w-[3rem] px-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm flex items-center justify-center gap-2"
+            aria-label="検索"
+          >
+            <Search className="w-4 h-4" />
+            <span className="hidden sm:inline">検索</span>
+          </Button>
         </div>
       </div>
 
@@ -105,30 +141,6 @@ export function CocktailFilters({
         )}
       </div>
 
-      {/* Ingredient Search */}
-      <div>
-        <label className="block mb-3 text-sm font-medium text-gray-700">手持ちの材料から探す</label>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="ライム、ジン... (カンマで区切り)"
-            value={ingredientSearch}
-            onChange={(e) => onIngredientSearchChange(e.target.value)}
-            className="pl-9 pr-9 h-11 bg-white border-gray-200 rounded-xl"
-          />
-          {ingredientSearch && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onIngredientSearchChange('')}
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-gray-400 hover:text-gray-900"
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          )}
-        </div>
-      </div>
     </div>
   );
 }

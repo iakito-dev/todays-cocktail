@@ -58,19 +58,16 @@ export function CocktailList() {
   // Filters
   const [q, setQ] = useState('');
   const [selectedBases, setSelectedBases] = useState<string[]>([]);
-  const [ingredients, setIngredients] = useState('');
   const [sort, setSort] = useState<'id' | 'popular'>('id');
   const sortMenuRef = useRef<HTMLDivElement>(null);
   // simple debounce
   const debouncedQ = useDebounce(q, 300);
-  const debouncedIngredients = useDebounce(ingredients, 300);
 
   useEffect(() => {
     // セッションストレージのキャッシュキーを生成
     const cacheKey = `cocktails_${JSON.stringify({
       q: debouncedQ,
       base: selectedBases,
-      ingredients: debouncedIngredients,
       page: currentPage,
       per_page: itemsPerPage,
       sort
@@ -96,7 +93,6 @@ export function CocktailList() {
     };
     if (debouncedQ) params.q = debouncedQ;
     if (selectedBases.length) params.base = selectedBases;
-    if (debouncedIngredients) params.ingredients = debouncedIngredients;
     if (sort === 'popular') params.sort = 'popular';
 
     fetchCocktails(params)
@@ -108,12 +104,12 @@ export function CocktailList() {
         sessionStorage.setItem(cacheKey, JSON.stringify(response));
       })
       .catch((e) => setCocktailsError(e.message));
-  }, [debouncedQ, selectedBases, debouncedIngredients, currentPage, itemsPerPage, sort]);
+  }, [debouncedQ, selectedBases, currentPage, itemsPerPage, sort]);
 
   // フィルター変更時はページを1にリセット
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedQ, selectedBases, debouncedIngredients, sort]);
+  }, [debouncedQ, selectedBases, sort]);
 
   useEffect(() => {
     if (!isSortMenuOpen) {
@@ -229,8 +225,6 @@ export function CocktailList() {
                   onSearchChange={setQ}
                   selectedBases={selectedBases}
                   onBasesChange={setSelectedBases}
-                  ingredientSearch={ingredients}
-                  onIngredientSearchChange={setIngredients}
                 />
               </CardContent>
             </Card>
@@ -447,8 +441,6 @@ export function CocktailList() {
               onSearchChange={setQ}
               selectedBases={selectedBases}
               onBasesChange={setSelectedBases}
-              ingredientSearch={ingredients}
-              onIngredientSearchChange={setIngredients}
             />
           </div>
         </SheetContent>

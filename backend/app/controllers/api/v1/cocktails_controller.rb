@@ -7,11 +7,11 @@ class Api::V1::CocktailsController < ApplicationController
     result = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
       cocktails = Cocktail.all
 
-      # 名前で部分一致検索（日本語名または英語名）
-      if params[:q].present?
-        keyword = params[:q].to_s.strip
-        like = "%#{ActiveRecord::Base.sanitize_sql_like(keyword)}%"
-        cocktails = cocktails.where('name ILIKE ? OR name_ja ILIKE ?', like, like)
+      # 名前/材料/手順をまとめてキーワード検索
+      keyword_tokens = tokenize_keywords(params[:q])
+      keyword_tokens += tokenize_keywords(params[:ingredients]) if params[:ingredients].present?
+      if keyword_tokens.any?
+        cocktails = apply_keyword_filter(cocktails, keyword_tokens.uniq)
       end
 
       # ベースで絞り込み（単数 or 複数）。例: base=gin,rum または base[]=gin&base[]=rum
@@ -21,15 +21,6 @@ class Api::V1::CocktailsController < ApplicationController
           # enumのキーのみ許可
           valid = bases & Cocktail.bases.keys
           cocktails = cocktails.where(base: valid.map { |k| Cocktail.bases[k] }) if valid.any?
-        end
-      end
-
-      # 材料で絞り込み（カンマ/空白区切り）。現状は instructions にキーワードが全て含まれるもの
-      if params[:ingredients].present?
-        tokens = params[:ingredients].to_s.split(/[\s,、]+/).map(&:strip).reject(&:blank?)
-        tokens.each do |tok|
-          like = "%#{ActiveRecord::Base.sanitize_sql_like(tok)}%"
-          cocktails = cocktails.where('instructions ILIKE ?', like)
         end
       end
 
@@ -160,5 +151,29 @@ class Api::V1::CocktailsController < ApplicationController
       per_page: params[:per_page],
       sort: params[:sort].presence || 'id'
     }.to_json
+  end
+
+  def tokenize_keywords(raw)
+    return [] unless raw.present?
+    raw.to_s.split(/[\s,、]+/).map(&:strip).reject(&:blank?)
+  end
+
+  def apply_keyword_filter(scope, tokens)
+    scope = scope.left_outer_joins(:ingredients)
+    tokens.each do |tok|
+      like = "%#{ActiveRecord::Base.sanitize_sql_like(tok)}%"
+      scope = scope.where(
+        <<~SQL.squish,
+          cocktails.name ILIKE :like
+            OR cocktails.name_ja ILIKE :like
+            OR ingredients.name ILIKE :like
+            OR ingredients.name_ja ILIKE :like
+            OR cocktails.instructions ILIKE :like
+            OR cocktails.instructions_ja ILIKE :like
+        SQL
+        like: like
+      )
+    end
+    scope.distinct
   end
 end

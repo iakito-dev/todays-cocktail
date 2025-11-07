@@ -49,17 +49,28 @@ class TranslationService
     return nil if measure.blank?
 
     prompt = <<~PROMPT
-      以下のカクテル分量表現を日本人に馴染みやすい単位に変換してください。
+      以下のカクテルレシピに含まれる分量表現を、日本人に馴染みやすい単位に変換してください。
 
-      - oz → ml（1 oz = 約30ml）
-      - tsp → 5ml
-      - tbsp → 15ml
-      - dash → 「1〜2滴」
-      - splash → 「10〜20ml程度」
-      - top / fill → 「グラスを満たす程度」
-      - twist / slice / wedge → 「◯切れ」など自然な日本語
-      - 既にmlや個などの単位がある場合はそのまま
-      - 出力は変換後の短い文字列のみ
+      # 変換ルール
+      - **oz（オンス）** → ml に変換（1 oz = 約30ml）
+      - **tsp（ティースプーン）** → ml に変換（1 tsp = 約5ml）
+      - **tbsp（テーブルスプーン）** → ml に変換（1 tbsp = 約15ml）
+      - **dash** → 「1〜2滴」または「少々」
+      - **splash** → 「10〜20ml程度」または「少量」
+      - **top / fill / to top** → 「グラスを満たす程度」や「適量」
+      - **twist / slice / wedge / piece** → 「◯切れ」や「◯枚」など自然な日本語に
+      - **数値がない場合でも、文脈からおおよその量を推定して表現する**
+        - 例: “splash of soda” → 「ソーダを少量」
+        - 例: “fill with tonic” → 「トニックを適量（グラスを満たす程度）」
+      - 既にml、g、個、枚などの日本の単位の場合はそのまま残す。
+
+      # 出力形式
+      - 変換後の分量のみを返す（説明不要、単位を含む短い文字列）
+      - 例:
+        - "1 oz" → "30ml"
+        - "1 tsp" → "5ml"
+        - "dash of bitters" → "1〜2滴"
+        - "fill with tonic" → "トニックを適量（グラスを満たす程度）"
 
       元の分量: #{measure}
     PROMPT
@@ -76,8 +87,18 @@ class TranslationService
 
     prompt = <<~PROMPT
       以下のカクテル用グラス名を日本語に翻訳してください。
-      日本のバーやカフェで一般的に使われる名称に変換し、自然なカタカナ表記にしてください。
-      翻訳結果のみを返してください。
+
+      # 翻訳ルール
+      - 日本の一般的なバーやカフェでも通じる表現に変換してください。
+      - 日本人に馴染みがない場合は、近い形・用途の一般的なグラス名に意訳してください。
+        - 例: "Old Fashioned Glass" → "ロックグラス"
+        - 例: "Cordial Glass" → "リキュールグラス"
+        - 例: "Coupe Glass" → "カクテルグラス"
+        - 例: "Highball Glass" → "ハイボールグラス"
+        - 例: "Collins Glass" → "タンブラー"
+      - カタカナ・ひらがなで自然な表記にし、「グラス」「カップ」などは必要に応じて補って構いません。
+      - 難しい専門用語（例: “Nick and Nora Glass”）は「カクテルグラス」など一般名詞に置き換えてください。
+      - 翻訳結果のみを返してください（説明や注釈は不要です）。
 
       グラス名: #{glass}
     PROMPT
@@ -126,14 +147,48 @@ class TranslationService
     return nil if cocktail_name.blank?
 
     prompt = <<~PROMPT
-      あなたはカクテル文化に詳しいライターです。
-      以下の条件に従って、指定されたカクテルの紹介文を日本語で100文字前後で書いてください。
+      あなたはカクテル文化に詳しいプロのライターです。
+      以下の条件に従って、指定されたカクテルの紹介文を日本語で書いてください。
 
-      - 歴史や由来、味や香りの特徴を簡潔に述べる
-      - 飲むシーンを1文で添える
-      - 上品で情景が浮かぶ文体にする
-      - 出力は「カクテル名」「本文」の2行のみ
+      # 条件
+      - 文字数はおよそ120文字前後
+      - カクテルの由来や語源、または発祥地を1文で触れる
+      - 味わいや香り、見た目の特徴を1文で伝える
+      - 飲むシーンを1文で添える（例：「穏やかな夕暮れに」「休日の昼下がりに」など）
+      - 専門誌やバーのメニューに載るような、わかりやすく洗練された文章に
+      - 味や香り、印象を中心に描写する（例：「爽やか」「香り高い」「心地よい余韻」など）
+      - 比喩は控えめに1つまでとし、情景をさりげなく添える程度にする
+      - 主語は省き、客観的・説明調すぎない自然な語り口にする
+      - **出力にはカクテル名は含めず、説明文のみを返す。** 冒頭に改行や見出しを入れない。
 
+      # 出力フォーマット
+      本文（120文字前後）
+
+      # 入力例
+      カクテル名: ソルティドッグ
+
+      # 出力例1
+      海辺で愛される爽快なカクテル。グレープフルーツジュースのほろ苦さと塩のアクセントが絶妙に調和し、すっきりとした味わいが特徴。夏の暑い日にリフレッシュしたいときに。
+
+      # 出力例2
+      「塩まみれの犬」という名を持つユニークなカクテル。グレープフルーツのほろ苦さと塩のコントラストが絶妙で、すっきりとした後味が魅力。海辺のバーでゆったり飲みたい一杯。
+
+      # 出力例3
+      名の由来は海の男を指すスラング。グレープフルーツの酸味に塩のアクセントが重なり、爽やかでキリッとした味わい。仕事終わりに気分をリセットしたいときに。
+
+  # 入力例
+  カクテル名: モヒート
+
+      # 出力例1
+      キューバ・ハバナ発祥の伝統的なカクテル。名前はスペイン語の「mojo（香味）」に由来し、ライムとミントの爽やかな香りが広がる。暑い午後にすっきりと気分を整えたいときに。
+
+      # 出力例2
+      キューバ生まれのクラシックなカクテル。ミントとライムの清涼感が際立ち、砂糖のやわらかな甘みが心地よく調和する。夏の夜にリゾート気分を味わいたいときに。
+
+      # 出力例3
+      名の由来は「魔法の薬」を意味するスペイン語「mojo」。ミントの香りとライムの酸味が織りなす爽快な味わいが魅力。日差しの強い昼下がりにぴったりの一杯。
+
+      # 実行対象
       カクテル名: #{cocktail_name}
       ベース: #{base.presence || '不明'}
       強度: #{strength.presence || '不明'}
@@ -165,22 +220,48 @@ class TranslationService
   end
 
   # カクテルの強度判定
-  def determine_strength(ingredients_list, alcoholic_type)
+  def determine_strength(cocktail_name, ingredients_list = [], alcoholic_type = nil)
     return 'light' if alcoholic_type == 'Non alcoholic'
-    return 'light' if ingredients_list.blank?
 
     prompt = <<~PROMPT
-      あなたはバーテンダーです。
-      以下の材料から、カクテルのアルコール強度を light / medium / strong のいずれかで判定してください。
+      あなたはプロのバーテンダーです。
+      以下のカクテル名から、一般的なレシピに基づいてアルコールの強さ（体感・度数・印象）を分類してください。
 
-      材料: #{ingredients_list.join(', ')}
-      Alcoholic: #{alcoholic_type}
+      # 出力仕様
+      次のJSON形式で出力してください。
+
+      {
+        "name": "カクテル名",
+        "intensity": "ライト | ミディアム | ストロング",
+        "reason": "判定理由（どのような特徴からそう判断したかを1文で説明）"
+      }
+
+      # 分類基準
+      - **ライト**：低アルコールまたはジュース・ソーダなどで割られており、飲みやすい。
+      - **ミディアム**：標準的なカクテル。スピリッツ主体だが果汁やリキュールでバランスが取れている。
+      - **ストロング**：スピリッツが主成分で度数が高く、刺激的または重厚な印象。
+
+      # 実行対象
+      カクテル名: #{cocktail_name}
+      参考材料: #{ingredients_list.any? ? ingredients_list.join(', ') : '情報なし'}
     PROMPT
 
-    result = translate(prompt)&.strip&.downcase
-    %w[light medium strong].include?(result) ? result : 'medium'
+    raw = translate(prompt)
+    return nil if raw.blank?
+
+    data = JSON.parse(raw) rescue nil
+    return nil unless data.is_a?(Hash)
+
+    intensity = data['intensity']&.strip
+    mapped = case intensity
+             when 'ライト', 'light' then 'light'
+             when 'ミディアム', 'medium' then 'medium'
+             when 'ストロング', 'strong' then 'strong'
+             end
+
+    mapped || 'medium'
   rescue StandardError => e
-    Rails.logger.error("Strength determination failed: #{e.message}")
+    Rails.logger.error("Strength determination failed for '#{cocktail_name}': #{e.message}")
     'medium'
   end
 
@@ -218,9 +299,9 @@ class TranslationService
       parameters: {
         model: 'gpt-5',
         input: prompt,
-        reasoning: { effort: 'medium' },
+        reasoning: { effort: 'minimal' },
         text: { verbosity: 'low' },
-        max_output_tokens: 500
+        max_output_tokens: 800
       }
     )
     extract_output_text(response)

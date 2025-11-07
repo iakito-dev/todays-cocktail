@@ -316,14 +316,30 @@ class CocktailTranslator
   def translate_cocktails
     puts "\n1. Translating cocktail names and glasses..."
 
-    Cocktail.where(name_ja: nil).find_each.with_index do |cocktail, index|
+    scope = Cocktail.where(name_ja: [nil, ''])
+                    .or(Cocktail.where(glass_ja: [nil, '']))
+
+    scope.find_each.with_index do |cocktail, index|
       begin
-        name_ja = @translation_service.translate_cocktail_name(cocktail.name)
-        glass_ja = @translation_service.translate_glass(cocktail.glass) if cocktail.glass.present?
+        updates = {}
 
-        cocktail.update!(name_ja: name_ja, glass_ja: glass_ja)
+        if cocktail.name_ja.blank?
+          updates[:name_ja] = @translation_service.translate_cocktail_name(cocktail.name)
+        end
 
-        puts "   [#{index + 1}] #{cocktail.name} → #{name_ja}"
+        if cocktail.glass_ja.blank? && cocktail.glass.present?
+          updates[:glass_ja] = @translation_service.translate_glass(cocktail.glass)
+        end
+
+        next if updates.empty?
+
+        cocktail.update!(updates)
+
+        log_parts = []
+        log_parts << "name_ja → #{updates[:name_ja]}" if updates[:name_ja].present?
+        log_parts << "glass_ja → #{updates[:glass_ja]}" if updates[:glass_ja].present?
+
+        puts "   [#{index + 1}] #{cocktail.name} (#{log_parts.join(', ')})"
         @translated_count += 1
 
         sleep 1 # API負荷軽減
@@ -338,7 +354,7 @@ class CocktailTranslator
     puts "\n2. Translating ingredient names..."
 
     # 重複を避けるため、ユニークな材料名のみを翻訳
-    unique_ingredient_names = Ingredient.where(name_ja: nil).distinct.pluck(:name)
+    unique_ingredient_names = Ingredient.where(name_ja: [nil, '']).distinct.pluck(:name)
 
     unique_ingredient_names.each.with_index do |ingredient_name, index|
       begin
@@ -360,7 +376,9 @@ class CocktailTranslator
   def translate_amounts
     puts "\n3. Translating amounts..."
 
-    CocktailIngredient.where(amount_ja: nil).or(CocktailIngredient.where(amount_ja: '')).find_each.with_index do |ci, index|
+    amount_scope = CocktailIngredient.where(amount_ja: [nil, ''])
+
+    amount_scope.find_each.with_index do |ci, index|
       next if ci.amount_text.blank?
 
       begin
@@ -382,7 +400,10 @@ class CocktailTranslator
   def translate_instructions
     puts "\n4. Translating instructions..."
 
-    Cocktail.where(instructions_ja: nil).where.not(instructions: nil).find_each.with_index do |cocktail, index|
+    instruction_scope = Cocktail.where(instructions_ja: [nil, ''])
+                                .where.not(instructions: [nil, ''])
+
+    instruction_scope.find_each.with_index do |cocktail, index|
       begin
         instructions_ja = @translation_service.translate_instructions(cocktail.instructions)
 

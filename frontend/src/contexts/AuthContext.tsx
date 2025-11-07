@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { login as apiLogin, signup as apiSignup, logout as apiLogout, getCurrentUser, clearAuthToken } from '../lib/api';
+import { toast } from '../components/ui/sonner';
 
 interface User {
   id: number;
@@ -49,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await apiLogin(email, password);
       setUser(response.data.user);
+      toast.success('ログインしました');
     } finally {
       setIsLoading(false);
     }
@@ -70,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await apiLogout();
       setUser(null);
+      toast.success('ログアウトしました');
     } finally {
       setIsLoading(false);
     }

@@ -269,7 +269,7 @@ export function CocktailDetailDialog({
           </DialogHeader>
 
           {/* Desktop Header */}
-          <div className="hidden lg:grid grid-cols-[minmax(0,1fr)_auto] items-start gap-8 px-6 md:px-8 py-6 border-b border-gray-100 bg-white shrink-0">
+          <div className="hidden lg:flex items-start justify-between gap-8 px-6 md:px-8 py-6 border-b border-gray-100 bg-white shrink-0">
             <div className="space-y-4">
               <div className="space-y-2">
                 <DialogTitle className="text-4xl font-bold text-gray-900 leading-tight">
@@ -281,6 +281,11 @@ export function CocktailDetailDialog({
                   </p>
                 )}
               </div>
+              {noteText && (
+                <p className="text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
+                  {noteText}
+                </p>
+              )}
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className={`${strengthColors[currentCocktail.strength as keyof typeof strengthColors] ?? ''} px-3 py-1 text-xs border`}>
                   {STRENGTH_LABELS[currentCocktail.strength]}
@@ -329,11 +334,6 @@ export function CocktailDetailDialog({
                 <X className="w-6 h-6 text-gray-600" />
               </Button>
             </div>
-            {noteText && (
-              <p className="col-span-2 text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
-                {noteText}
-              </p>
-            )}
           </div>
 
         {/* Scrollable Content */}

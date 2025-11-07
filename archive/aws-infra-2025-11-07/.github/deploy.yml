@@ -1,0 +1,84 @@
+name: deploy
+
+# main ブランチへの push をトリガーに、Docker イメージの ECR push と Terraform apply を実行する
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/terraform/**"
+      - "backend/**"
+      - "frontend/**"
+      - ".github/workflows/deploy.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-1
+  TF_WORKING_DIR: infra/terraform
+  FRONTEND_IMAGE: todays-cocktail-frontend
+  BACKEND_IMAGE: todays-cocktail-backend
+  PROJECT_NAME: todays-cocktail
+  ENVIRONMENT: prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::767397658523:role/todays-cocktail-terraform
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Frontend Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.FRONTEND_IMAGE }}:latest
+
+      - name: Build and Push Backend Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.BACKEND_IMAGE }}:latest
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init -backend-config="key=envs/prod/terraform.tfstate"
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform apply -auto-approve -input=false
+
+      - name: Force New Deployment
+        run: |
+          aws ecs update-service \
+            --cluster "${CLUSTER_NAME}" \
+            --service "${SERVICE}" \
+            --force-new-deployment
+        env:
+          CLUSTER_NAME: ${{ format('{0}-{1}-cluster', env.PROJECT_NAME, env.ENVIRONMENT) }}
+          SERVICE: ${{ format('{0}-{1}-backend', env.PROJECT_NAME, env.ENVIRONMENT) }}

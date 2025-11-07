@@ -1,0 +1,81 @@
+name: terraform-plan
+
+# PR 時に Terraform のフォーマット検証と Plan をコメントするワークフロー
+
+on:
+  pull_request:
+    paths:
+      - "infra/terraform/**"
+      - ".github/workflows/terraform-*.yml"
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  TF_WORKING_DIR: infra/terraform
+  AWS_REGION: ap-northeast-1
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::767397658523:role/todays-cocktail-terraform
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init -backend-config="key=envs/prod/terraform.tfstate"
+
+      - name: Terraform Fmt
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform plan -input=false -out=tfplan.binary
+
+      - name: Show Plan
+        if: always()
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform show -no-color tfplan.binary > tfplan.txt
+
+      - name: Comment Plan
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync(process.env.PLAN_FILE, 'utf8');
+            const body = [
+              '### Terraform Plan',
+              '```',
+              plan,
+              '```'
+            ].join('\n');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
+        env:
+          PLAN_FILE: ${{ format('{0}/tfplan.txt', env.TF_WORKING_DIR) }}

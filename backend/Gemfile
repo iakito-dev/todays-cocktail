@@ -1,34 +1,52 @@
+# ============================================
+# Gemfile (GPT-5対応 / Docker対応 修正版)
+# ============================================
+
+# 公式のRubyGemsソースを明示
 source "https://rubygems.org"
 
+# ===============================
+# Core
+# ===============================
 gem "rails", "~> 8.0.3"
 gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
 
-# 認証（Devise）
+# ===============================
+# Authentication
+# ===============================
 gem "devise"
 gem "devise-jwt" # JWT認証用
 
-# CORS対応（フロントエンドとの通信用）
-gem "rack-cors"
-
-# 外部API連携
-gem "openai", ">= 1.0.0" # OpenAI API（翻訳用）
-gem "httparty"    # HTTPリクエスト
-gem "dotenv-rails" # 環境変数管理
-gem "resend"      # Resend API（メール送信）
+# ===============================
+# API & Integration
+# ===============================
+gem "rack-cors"        # CORS対応
+gem "openai", ">= 1.0.0" # GPT-5 / Responses API対応
+gem "httparty"         # HTTPリクエスト
+gem "dotenv-rails"     # 環境変数管理
+gem "resend"           # Resend API（メール送信）
 gem "premailer-rails"  # メールのインラインCSS変換
-gem "nokogiri"    # HTMLパーサー（premailer依存）
+gem "nokogiri"         # HTMLパーサー（premailer依存）
 
-# タスク管理・ジョブ・キャッシュ
+# ===============================
+# Job / Cache / Realtime
+# ===============================
 gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
+# ===============================
+# Utilities
+# ===============================
 gem "bootsnap", require: false
 gem "kamal", require: false
 gem "thruster", require: false
 gem "tzinfo-data", platforms: %i[windows jruby]
 
+# ===============================
+# Development & Test
+# ===============================
 group :development, :test do
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
   gem "brakeman", require: false
@@ -42,6 +60,9 @@ group :development, :test do
   gem "database_cleaner-active_record"
 end
 
+# ===============================
+# Development only
+# ===============================
 group :development do
   gem "letter_opener" # 開発環境でメールをブラウザで確認
 end

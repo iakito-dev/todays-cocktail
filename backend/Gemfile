@@ -22,7 +22,7 @@ gem "devise-jwt" # JWT認証用
 # API & Integration
 # ===============================
 gem "rack-cors"        # CORS対応
-gem "openai", ">= 1.0.0" # GPT-5 / Responses API対応
+gem "ruby-openai", "~> 8.3" # GPT-5 / Responses API対応
 gem "httparty"         # HTTPリクエスト
 gem "dotenv-rails"     # 環境変数管理
 gem "resend"           # Resend API（メール送信）

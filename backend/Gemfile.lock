@@ -465,7 +465,7 @@ DEPENDENCIES
   resend
   rspec-rails
   rubocop-rails-omakase
-  ruby-openai
+  ruby-openai (~> 8.3)
   shoulda-matchers
   solid_cable
   solid_cache

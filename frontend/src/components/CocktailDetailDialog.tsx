@@ -261,7 +261,7 @@ export function CocktailDetailDialog({
                 </Button>
               </div>
               {noteText && (
-                <p className="col-span-2 text-xs sm:text-sm md:text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mt-1 sm:mt-1.5">
+                <p className="col-span-2 text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed whitespace-pre-wrap mt-1 sm:mt-1.5">
                   {noteText}
                 </p>
               )}
@@ -282,7 +282,7 @@ export function CocktailDetailDialog({
                 )}
               </div>
               {noteText && (
-                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                <p className="text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
                   {noteText}
                 </p>
               )}
@@ -360,8 +360,8 @@ export function CocktailDetailDialog({
                         key={index}
                         className="flex justify-between items-center p-3 sm:p-4 md:p-5 rounded-lg sm:rounded-xl bg-gray-100 hover:bg-gray-200 transition-all hover:scale-[1.02] hover:shadow-sm"
                       >
-                        <span className="text-xs sm:text-[13px] text-gray-900">{ingredient.name}</span>
-                        <span className="text-gray-600 px-2.5 py-1 sm:px-3 sm:py-1.5 md:px-4 bg-white rounded-full text-xs sm:text-[13px] font-medium">
+                        <span className="text-sm sm:text-base text-gray-900">{ingredient.name}</span>
+                        <span className="text-gray-600 px-2.5 py-1 sm:px-3 sm:py-1.5 md:px-4 bg-white rounded-full text-sm sm:text-base font-medium">
                           {ingredient.amount}
                         </span>
                       </div>
@@ -377,7 +377,7 @@ export function CocktailDetailDialog({
                     <h3 className="font-semibold text-base sm:text-lg text-gray-900">作り方</h3>
                   </div>
                   <div className="bg-gray-50 p-4 sm:p-5 md:p-7 rounded-xl sm:rounded-2xl hover:bg-gray-100 transition-colors">
-                    <p className="leading-relaxed text-xs sm:text-[13px] text-gray-700 whitespace-pre-wrap">
+                    <p className="leading-relaxed text-sm sm:text-base text-gray-700 whitespace-pre-wrap">
                       {currentCocktail.instructions_ja || currentCocktail.instructions}
                     </p>
                   </div>
@@ -400,7 +400,7 @@ export function CocktailDetailDialog({
                     </div>
                     <div>
                       <p className="text-[11px] text-gray-500">ベース</p>
-                      <p className="text-xs font-medium text-gray-900 sm:text-[13px]">{BASE_LABELS[currentCocktail.base]}</p>
+                      <p className="text-sm font-medium text-gray-900 sm:text-base">{BASE_LABELS[currentCocktail.base]}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2.5 p-3.5 rounded-2xl bg-white/80 border border-gray-100 shadow-sm">
@@ -409,7 +409,7 @@ export function CocktailDetailDialog({
                     </div>
                     <div>
                       <p className="text-[11px] text-gray-500">技法</p>
-                      <p className="text-xs font-medium text-gray-900 sm:text-[13px]">{TECHNIQUE_LABELS[currentCocktail.technique]}</p>
+                      <p className="text-sm font-medium text-gray-900 sm:text-base">{TECHNIQUE_LABELS[currentCocktail.technique]}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/80 border border-gray-100 shadow-sm col-span-2">
@@ -418,7 +418,7 @@ export function CocktailDetailDialog({
                     </div>
                     <div>
                       <p className="text-[11px] text-gray-500">グラス</p>
-                      <p className="text-xs font-medium text-gray-900 leading-tight sm:text-[13px]">{currentCocktail.glass_ja || currentCocktail.glass}</p>
+                      <p className="text-sm font-medium text-gray-900 leading-tight sm:text-base">{currentCocktail.glass_ja || currentCocktail.glass}</p>
                     </div>
                   </div>
                 </div>

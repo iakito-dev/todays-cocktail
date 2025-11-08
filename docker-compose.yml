@@ -46,7 +46,6 @@ services:
         limits:
           cpus: "1.5"
           memory: 1G
-    profiles: ["dev"]
 
   # ---------------------------------------------------------
   # React / Vite フロントエンド
@@ -77,4 +76,3 @@ services:
         limits:
           cpus: "1.5"
           memory: 1G
-    profiles: ["dev"]

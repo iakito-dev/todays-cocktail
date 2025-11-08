@@ -30,6 +30,7 @@ lerna-debug.log*
 .byebug_history
 .bundle
 /vendor/bundle
+backend/vendor/bundle/
 .rspec
 
 **/log/*

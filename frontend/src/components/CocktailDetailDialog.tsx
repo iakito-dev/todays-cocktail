@@ -207,10 +207,10 @@ export function CocktailDetailDialog({
           </div>
 
           {/* Fixed Header (mobile / tablet) */}
-          <DialogHeader className="text-left bg-white z-10 p-4 sm:p-6 md:p-8 pb-3 sm:pb-4 md:pb-6 border-b border-gray-100 shrink-0 lg:hidden">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 sm:gap-4">
-              <div className="space-y-1.5 sm:space-y-2 md:space-y-3">
-                <DialogTitle className="text-xl sm:text-2xl md:text-4xl font-bold text-gray-900 leading-tight">
+          <DialogHeader className="text-left bg-white z-10 p-2 sm:p-4 md:p-4 pb-2 sm:pb-3 md:pb-4 border-b border-gray-100 shrink-0 lg:hidden">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 sm:gap-3.5">
+              <div className="space-y-1.5 sm:space-y-1.5 md:space-y-2.5">
+                <DialogTitle className="text-md sm:text-xl md:text-2xl font-bold text-gray-900 leading-tight">
                   {primaryName}
                 </DialogTitle>
                 {secondaryName && (
@@ -269,10 +269,10 @@ export function CocktailDetailDialog({
           </DialogHeader>
 
           {/* Desktop Header */}
-          <div className="hidden lg:flex items-start justify-between gap-8 px-6 md:px-8 py-6 border-b border-gray-100 bg-white shrink-0">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <DialogTitle className="text-4xl font-bold text-gray-900 leading-tight">
+          <div className="hidden lg:flex items-start justify-between gap-7 px-5 md:px-6 py-5 border-b border-gray-100 bg-white shrink-0">
+            <div className="space-y-3.5">
+              <div className="space-y-1.5">
+                <DialogTitle className="text-3xl font-bold text-gray-900 leading-tight">
                   {primaryName}
                 </DialogTitle>
                 {secondaryName && (
@@ -286,7 +286,7 @@ export function CocktailDetailDialog({
                   {noteText}
                 </p>
               )}
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <Badge className={`${strengthColors[currentCocktail.strength as keyof typeof strengthColors] ?? ''} px-3 py-1 text-xs border`}>
                   {STRENGTH_LABELS[currentCocktail.strength]}
                 </Badge>

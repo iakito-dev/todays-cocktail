@@ -161,7 +161,7 @@ export function CocktailDetailDialog({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
           ref={dialogRef}
-          className="w-[90vw] min-[380px]:w-[84vw] sm:w-[78vw] lg:w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl h-[88vh] sm:h-auto max-h-[90vh] flex flex-col p-0 gap-0 border border-gray-100 rounded-[28px] sm:rounded-[32px] shadow-[0_20px_60px_rgba(15,23,42,0.12)] [&>button]:hidden"
+          className="w-[90vw] min-[380px]:w-[84vw] sm:w-[78vw] lg:w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl h-[88vh] sm:h-auto max-h-[90vh] flex flex-col p-0 gap-0 border border-gray-100 rounded-xl sm:rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] [&>button]:hidden"
           style={{
             transform: touchStart !== null && translateY > 0
               ? `translateY(${translateY}px)`
@@ -339,7 +339,7 @@ export function CocktailDetailDialog({
         {/* Scrollable Content */}
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto overscroll-contain bg-gray-50/70 rounded-b-[28px] sm:rounded-b-[32px]"
+          className="flex-1 overflow-y-auto overscroll-contain bg-gray-50/70 rounded-b-xl sm:rounded-b-2xl"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}

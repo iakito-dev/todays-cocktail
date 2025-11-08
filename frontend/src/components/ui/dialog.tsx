@@ -47,7 +47,7 @@ function DialogOverlay({
 }
 
 type DialogContentProps = React.ComponentProps<typeof DialogPrimitive.Content> & {
-  size?: "default" | "compact";
+  size?: "default" | "compact" | "auth";
   placement?: "center" | "raised";
 };
 
@@ -58,10 +58,16 @@ function DialogContent({
   placement = "center",
   ...props
 }: DialogContentProps) {
-  const sizeClasses =
-    size === "compact"
-      ? "max-w-sm sm:max-w-md px-4 sm:px-5 pt-5 sm:pt-6 pb-4 sm:pb-5"
-      : "max-w-[calc(100%-2rem)] sm:max-w-lg px-5 sm:px-6 pt-6 sm:pt-7 pb-5 sm:pb-6";
+  const sizeClasses = (() => {
+    switch (size) {
+      case "compact":
+        return "max-w-sm sm:max-w-md px-4 sm:px-5 pt-5 sm:pt-6 pb-4 sm:pb-5";
+      case "auth":
+        return "max-w-[min(640px,calc(100%-2rem))] w-[94vw] sm:w-[520px] px-5 sm:px-8 pt-6 sm:pt-8 pb-5 sm:pb-7";
+      default:
+        return "max-w-[calc(100%-2rem)] sm:max-w-lg px-5 sm:px-6 pt-6 sm:pt-7 pb-5 sm:pb-6";
+    }
+  })();
   const placementClasses =
     placement === "raised"
       ? "-translate-y-[55%]"

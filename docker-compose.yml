@@ -1,45 +1,80 @@
-# ================================
-# 🐳 Docker Compose 設定（Supabaseローカル接続用）
-# ================================
-# Supabase CLI（supabase start）で起動したDBを利用し、
-# Docker上ではフロントエンド（React）とバックエンド（Rails）のみを起動する構成。
+# =========================================================
+# 🐳 Docker Compose 設定（Colima使用）
+# =========================================================
+# Supabase CLIで起動中のローカルDBを使用。
+# Colima上でRails APIとReact(Vite)を軽量・高速に実行する構成。
+#
+# コマンド一覧：
+# 初回（またはDockerfile変更時）
+#   docker compose --profile dev up --build
+#
+# 通常起動（ビルド済み）
+#   docker compose up -d
+#
+# 停止
+#   docker compose down
+#
+# ログ確認
+#   docker compose logs -f
+# =========================================================
 
 version: "3.9"
 
 services:
-  # -------------------------------
+  # ---------------------------------------------------------
   # Rails API バックエンド
-  # -------------------------------
+  # ---------------------------------------------------------
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"  # Rails APIサーバー (localhost:3000)
+      - "3000:3000"  # http://localhost:3000
     volumes:
-      - ./backend:/app  # ローカルのコードをマウントしてホットリロード
+      # コードをホストと共有。:cachedでI/Oを最適化
+      - ./backend:/app:cached
+      # 一時・ログディレクトリはホストと同期しない
+      - /app/tmp
+      - /app/log
     env_file:
-      - ./backend/.env  # バックエンド専用の.envファイル
-    # Rails初期化処理（PIDファイル削除・依存インストール・サーバ起動など）は
-    # /app/bin/docker-startup スクリプトで実行します。詳細はスクリプト内コメント参照。
+      - ./backend/.env
+    # Rails初期化スクリプト（PID削除・依存インストール・サーバ起動）
     command: bash /app/bin/docker-startup
+    # Colima上でのCPU・メモリ制限（軽量化）
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1G
+    profiles: ["dev"]
 
-  # -------------------------------
+  # ---------------------------------------------------------
   # React / Vite フロントエンド
-  # -------------------------------
+  # ---------------------------------------------------------
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "5173:5173"  # Vite開発サーバー (localhost:5173)
+      - "5173:5173"  # http://localhost:5173
     environment:
-      # バックエンドAPIとの通信先
+      # APIとSupabaseの接続設定（開発用）
       VITE_API_BASE_URL: http://localhost:3000
-      # Supabase設定
       VITE_SUPABASE_URL: http://localhost:54321
       VITE_SUPABASE_ANON_KEY: dummy
     volumes:
-      - ./frontend:/app
+      # コード同期。:cachedでファイル更新を高速化
+      - ./frontend:/app:cached
+      # node_modulesはコンテナ内で完結させる（同期しない）
       - /app/node_modules
     env_file:
-      - ./frontend/.env  # フロントエンド専用の.envファイル
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
-
-# DBサービスは削除（SupabaseローカルPostgreSQLを使用）
+      - ./frontend/.env
+    # npm ciで依存関係をクリーンインストール → Vite開発サーバー起動
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    # Colima上でのCPU・メモリ制限
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1G
+    profiles: ["dev"]

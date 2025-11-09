@@ -109,17 +109,14 @@ CREATE SCHEMA vault;
 
 
 --
--- Name: pg_graphql; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS pg_graphql WITH SCHEMA graphql;
-
-
---
--- Name: EXTENSION pg_graphql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pg_graphql IS 'pg_graphql: GraphQL support';
+DO $$
+BEGIN
+  EXECUTE 'CREATE EXTENSION IF NOT EXISTS pg_graphql WITH SCHEMA graphql';
+  EXECUTE $$COMMENT ON EXTENSION pg_graphql IS 'pg_graphql: GraphQL support';$$;
+EXCEPTION WHEN undefined_file THEN
+  RAISE NOTICE 'pg_graphql extension is not available on this server. Skipping.';
+END
+$$;
 
 
 --
@@ -151,17 +148,14 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
--- Name: supabase_vault; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS supabase_vault WITH SCHEMA vault;
-
-
---
--- Name: EXTENSION supabase_vault; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION supabase_vault IS 'Supabase Vault Extension';
+DO $$
+BEGIN
+  EXECUTE 'CREATE EXTENSION IF NOT EXISTS supabase_vault WITH SCHEMA vault';
+  EXECUTE $$COMMENT ON EXTENSION supabase_vault IS 'Supabase Vault Extension';$$;
+EXCEPTION WHEN undefined_file THEN
+  RAISE NOTICE 'supabase_vault extension is not available on this server. Skipping.';
+END
+$$;
 
 
 --

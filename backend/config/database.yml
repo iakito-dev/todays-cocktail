@@ -12,12 +12,12 @@ default: &default
 development:
   primary:
     <<: *default
-    url: <%= ENV.fetch("DATABASE_URL") { "postgres://postgres:postgres@host.docker.internal:54322/app_development" } %>
+    url: <%= ENV.fetch("DATABASE_URL") { "postgres://postgres:postgres@localhost:5432/app_development" } %>
 
 # テスト環境設定（シンプル構成）
 test:
   <<: *default
-  url: <%= ENV.fetch("DATABASE_URL_TEST") { "postgres://postgres:postgres@host.docker.internal:54322/postgres" } %>
+  url: <%= ENV.fetch("DATABASE_URL") { "postgres://postgres:postgres@localhost:5432/todays_cocktail_test" } %>
 
 # 本番環境設定（シンプルに単一データベース）
 production:

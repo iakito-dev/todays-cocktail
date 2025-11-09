@@ -15,7 +15,7 @@ module Api
         if user.nil? || !user.valid_password?(params[:user][:password])
           render json: {
             status: { code: 401, message: "メールアドレスまたはパスワードが正しくありません。" },
-            errors: ["認証に失敗しました"]
+            errors: [ "認証に失敗しました" ]
           }, status: :unauthorized
           return
         end
@@ -24,7 +24,7 @@ module Api
         unless user.confirmed?
           render json: {
             status: { code: 401, message: "メールアドレスの確認が完了していません。確認メールをご確認ください。" },
-            errors: ["メールアドレスが未確認です"]
+            errors: [ "メールアドレスが未確認です" ]
           }, status: :unauthorized
           return
         end
@@ -38,25 +38,25 @@ module Api
         Rails.logger.error e.backtrace.join("\n")
         render json: {
           status: { code: 500, message: "ログイン処理中にエラーが発生しました。" },
-          errors: [e.message]
+          errors: [ e.message ]
         }, status: :internal_server_error
       end
 
       # DELETE /api/v1/logout
       def destroy
-        token = request.headers['Authorization']&.split(' ')&.last
+        token = request.headers["Authorization"]&.split(" ")&.last
 
         if token
           begin
             decoded_token = JWT.decode(
               token,
-              Rails.application.credentials.devise_jwt_secret_key || ENV['DEVISE_JWT_SECRET_KEY'],
+              Rails.application.credentials.devise_jwt_secret_key || ENV["DEVISE_JWT_SECRET_KEY"],
               true,
-              { algorithm: 'HS256' }
+              { algorithm: "HS256" }
             )
 
-            jti = decoded_token[0]['jti']
-            exp = decoded_token[0]['exp']
+            jti = decoded_token[0]["jti"]
+            exp = decoded_token[0]["exp"]
 
             # トークンをdenylistに追加
             JwtDenylist.create!(jti: jti, exp: Time.at(exp))

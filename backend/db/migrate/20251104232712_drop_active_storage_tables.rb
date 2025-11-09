@@ -16,7 +16,7 @@ class DropActiveStorageTables < ActiveRecord::Migration[8.0]
       t.string :checksum
       t.datetime :created_at, null: false
 
-      t.index [:key], unique: true
+      t.index [ :key ], unique: true
     end
 
     create_table :active_storage_attachments do |t|
@@ -26,7 +26,7 @@ class DropActiveStorageTables < ActiveRecord::Migration[8.0]
       t.bigint :blob_id, null: false
       t.datetime :created_at, null: false
 
-      t.index [:blob_id]
+      t.index [ :blob_id ]
       t.index %i[record_type record_id name blob_id], unique: true, name: "index_active_storage_attachments_uniqueness"
     end
 

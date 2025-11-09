@@ -28,7 +28,7 @@ RSpec.describe CocktailIngredient, type: :model do
       ci1 = create(:cocktail_ingredient, cocktail: cocktail, ingredient: ingredient1, position: 1)
 
       ordered_results = CocktailIngredient.where(cocktail: cocktail).ordered
-      expect(ordered_results.to_a).to eq([ci1, ci2])
+      expect(ordered_results.to_a).to eq([ ci1, ci2 ])
     end
   end
 end

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'net/http'
-require 'json'
+require "net/http"
+require "json"
 
 namespace :cocktails do
-  desc 'Import cocktails from TheCocktailDB API'
+  desc "Import cocktails from TheCocktailDB API"
   task import: :environment do
     puts "Starting cocktail import from TheCocktailDB..."
 
@@ -16,9 +16,9 @@ namespace :cocktails do
     puts "Total ingredients: #{Ingredient.count}"
   end
 
-  desc 'Import cocktails by letter (usage: rake cocktails:import_by_letter[a])'
-  task :import_by_letter, [:letter] => :environment do |t, args|
-    letter = args[:letter] || 'a'
+  desc "Import cocktails by letter (usage: rake cocktails:import_by_letter[a])"
+  task :import_by_letter, [ :letter ] => :environment do |t, args|
+    letter = args[:letter] || "a"
     puts "Importing cocktails starting with '#{letter}'..."
 
     importer = CocktailImporter.new
@@ -28,7 +28,7 @@ namespace :cocktails do
   end
 
   desc 'Import a specific cocktail by name (usage: rake cocktails:import_by_name["Margarita"])'
-  task :import_by_name, [:name] => :environment do |t, args|
+  task :import_by_name, [ :name ] => :environment do |t, args|
     name = args[:name]
     puts "Searching for cocktail: #{name}..."
 
@@ -40,7 +40,7 @@ namespace :cocktails do
 end
 
 class CocktailImporter
-  BASE_URL = 'https://www.thecocktaildb.com/api/json/v1/1'
+  BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1"
 
   def initialize
     @imported_count = 0
@@ -51,7 +51,7 @@ class CocktailImporter
 
   # すべてのアルファベットでカクテルをインポート
   def import_all
-    ('a'..'z').each do |letter|
+    ("a".."z").each do |letter|
       import_by_letter(letter)
       sleep 0.5 # API負荷軽減のため
     end
@@ -64,9 +64,9 @@ class CocktailImporter
     url = URI("#{BASE_URL}/search.php?f=#{letter}")
     response = fetch_data(url)
 
-    return unless response && response['drinks']
+    return unless response && response["drinks"]
 
-    response['drinks'].each do |drink_data|
+    response["drinks"].each do |drink_data|
       import_cocktail(drink_data)
     end
   end
@@ -76,9 +76,9 @@ class CocktailImporter
     url = URI("#{BASE_URL}/search.php?s=#{URI.encode_www_form_component(name)}")
     response = fetch_data(url)
 
-    return unless response && response['drinks']
+    return unless response && response["drinks"]
 
-    response['drinks'].each do |drink_data|
+    response["drinks"].each do |drink_data|
       import_cocktail(drink_data)
     end
 
@@ -98,7 +98,7 @@ class CocktailImporter
   end
 
   def import_cocktail(drink_data)
-    cocktail_name = drink_data['strDrink']
+    cocktail_name = drink_data["strDrink"]
 
     # find_or_initialize_byを使用してより安全に
     cocktail = Cocktail.find_or_initialize_by(name: cocktail_name)
@@ -113,7 +113,7 @@ class CocktailImporter
       ActiveRecord::Base.transaction do
         # カクテル名を翻訳
         cocktail_name_ja = @translation_service.translate_cocktail_name(cocktail_name)
-        glass_ja = @translation_service.translate_glass(drink_data['strGlass'])
+        glass_ja = @translation_service.translate_glass(drink_data["strGlass"])
 
         # カクテルの属性を設定して保存
         cocktail.assign_attributes(
@@ -121,10 +121,10 @@ class CocktailImporter
           base: map_base(drink_data),
           strength: map_strength(drink_data),
           technique: map_technique(drink_data),
-          glass: drink_data['strGlass'],
+          glass: drink_data["strGlass"],
           glass_ja: glass_ja,
-          image_url_override: drink_data['strDrinkThumb'],
-          instructions: drink_data['strInstructions']
+          image_url_override: drink_data["strDrinkThumb"],
+          instructions: drink_data["strInstructions"]
         )
         cocktail.save!
 
@@ -133,8 +133,8 @@ class CocktailImporter
       end
 
       # トランザクション成功後に画像をダウンロード（失敗してもロールバックしない）
-      if cocktail && drink_data['strDrinkThumb'].present?
-        ImageDownloadService.download_and_attach(cocktail, drink_data['strDrinkThumb'])
+      if cocktail && drink_data["strDrinkThumb"].present?
+        ImageDownloadService.download_and_attach(cocktail, drink_data["strDrinkThumb"])
       end
 
       puts " Imported: #{cocktail_name} (#{cocktail&.name_ja})"
@@ -164,13 +164,13 @@ class CocktailImporter
       break if ingredient_name.blank?
 
       ingredients_to_translate << ingredient_name.strip
-      measures_to_translate << (measure&.strip.presence || '適量')
+      measures_to_translate << (measure&.strip.presence || "\u9069\u91CF")
     end
 
     # バッチ翻訳（1回のAPIコールで全材料を翻訳）
     translated_ingredients = @translation_service.translate_ingredients_batch(ingredients_to_translate)
     translated_measures = measures_to_translate.map do |measure|
-      measure == '適量' ? '適量' : @translation_service.translate_measure(measure)
+      measure == "\u9069\u91CF" ? "\u9069\u91CF" : @translation_service.translate_measure(measure)
     end
 
     # 材料を作成
@@ -205,41 +205,41 @@ class CocktailImporter
 
   # ベーススピリットを判定
   def map_base(drink_data)
-    ingredients_text = (1..15).map { |i| drink_data["strIngredient#{i}"] }.compact.join(' ').downcase
+    ingredients_text = (1..15).map { |i| drink_data["strIngredient#{i}"] }.compact.join(" ").downcase
 
-    return :gin if ingredients_text.include?('gin')
-    return :rum if ingredients_text.include?('rum')
-    return :whisky if ingredients_text.include?('whisky') || ingredients_text.include?('whiskey') || ingredients_text.include?('bourbon')
-    return :vodka if ingredients_text.include?('vodka')
-    return :tequila if ingredients_text.include?('tequila')
-    return :beer if ingredients_text.include?('beer')
-    return :wine if ingredients_text.include?('wine') || ingredients_text.include?('champagne')
+    return :gin if ingredients_text.include?("gin")
+    return :rum if ingredients_text.include?("rum")
+    return :whisky if ingredients_text.include?("whisky") || ingredients_text.include?("whiskey") || ingredients_text.include?("bourbon")
+    return :vodka if ingredients_text.include?("vodka")
+    return :tequila if ingredients_text.include?("tequila")
+    return :beer if ingredients_text.include?("beer")
+    return :wine if ingredients_text.include?("wine") || ingredients_text.include?("champagne")
 
     :vodka # デフォルト
   end
 
   # アルコール度数を推定
   def map_strength(drink_data)
-    alcoholic = drink_data['strAlcoholic']
+    alcoholic = drink_data["strAlcoholic"]
 
-    return :light if alcoholic == 'Non alcoholic'
-    return :light if alcoholic == 'Optional alcohol'
+    return :light if alcoholic == "Non alcoholic"
+    return :light if alcoholic == "Optional alcohol"
 
     # カテゴリーから推定
-    category = drink_data['strCategory']&.downcase || ''
-    return :light if category.include?('beer') || category.include?('punch')
-    return :strong if category.include?('shot')
+    category = drink_data["strCategory"]&.downcase || ""
+    return :light if category.include?("beer") || category.include?("punch")
+    return :strong if category.include?("shot")
 
     :medium # デフォルト
   end
 
   # 技法を推定
   def map_technique(drink_data)
-    instructions = drink_data['strInstructions']&.downcase || ''
+    instructions = drink_data["strInstructions"]&.downcase || ""
 
-    return :shake if instructions.include?('shake')
-    return :stir if instructions.include?('stir')
-    return :build if instructions.include?('build') || instructions.include?('pour')
+    return :shake if instructions.include?("shake")
+    return :stir if instructions.include?("stir")
+    return :build if instructions.include?("build") || instructions.include?("pour")
 
     :build # デフォルト
   end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :cocktails do
-  desc 'Fetch cocktail images from Unsplash'
+  desc "Fetch cocktail images from Unsplash"
   task fetch_unsplash_images: :environment do
     puts "Fetching cocktail images from Unsplash..."
     puts "=" * 50
@@ -9,7 +9,7 @@ namespace :cocktails do
     service = UnsplashImageService.new
 
     # 画像URLが設定されていないカクテルを取得
-    cocktails_without_images = Cocktail.where(image_url_override: [nil, ''])
+    cocktails_without_images = Cocktail.where(image_url_override: [ nil, "" ])
                                        .order(:name)
 
     if cocktails_without_images.empty?
@@ -30,7 +30,7 @@ namespace :cocktails do
     puts "=" * 50
   end
 
-  desc 'Refresh all cocktail images from Unsplash'
+  desc "Refresh all cocktail images from Unsplash"
   task refresh_unsplash_images: :environment do
     puts "Refreshing ALL cocktail images from Unsplash..."
     puts "⚠️  This will replace existing images!"
@@ -52,8 +52,8 @@ namespace :cocktails do
     puts "=" * 50
   end
 
-  desc 'Fetch image for a specific cocktail'
-  task :fetch_cocktail_image, [:name] => :environment do |t, args|
+  desc "Fetch image for a specific cocktail"
+  task :fetch_cocktail_image, [ :name ] => :environment do |t, args|
     cocktail_name = args[:name]
 
     unless cocktail_name

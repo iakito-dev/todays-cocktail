@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :cocktails do
-  desc 'Generate cocktail descriptions using OpenAI'
+  desc "Generate cocktail descriptions using OpenAI"
   task generate_descriptions: :environment do
     puts "Generating cocktail descriptions..."
     puts "=" * 50

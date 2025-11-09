@@ -16,7 +16,7 @@ class Api::V1::CocktailsController < ApplicationController
 
       # ベースで絞り込み（単数 or 複数）。例: base=gin,rum または base[]=gin&base[]=rum
       if params[:base].present?
-        bases = Array(params[:base]).flat_map { |v| v.to_s.split(',') }.map(&:strip).reject(&:blank?)
+        bases = Array(params[:base]).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
         if bases.any?
           # enumのキーのみ許可
           valid = bases & Cocktail.bases.keys
@@ -25,12 +25,12 @@ class Api::V1::CocktailsController < ApplicationController
       end
 
       # ページネーション
-      page = [params[:page].to_i, 1].max
+      page = [ params[:page].to_i, 1 ].max
       per_page = params[:per_page].to_i
       per_page = 9 if per_page <= 0  # デフォルト9件
-      per_page = [per_page, 100].min # 最大100件
+      per_page = [ per_page, 100 ].min # 最大100件
 
-      sort = params[:sort].presence || 'id'
+      sort = params[:sort].presence || "id"
       filtered_cocktails = cocktails
 
       total_count = filtered_cocktails.count
@@ -38,11 +38,11 @@ class Api::V1::CocktailsController < ApplicationController
 
       cocktails =
         case sort
-        when 'popular'
+        when "popular"
           filtered_cocktails
             .left_joins(:favorites)
-            .group('cocktails.id')
-            .order(Arel.sql('COUNT(favorites.id) DESC'), 'cocktails.id ASC')
+            .group("cocktails.id")
+            .order(Arel.sql("COUNT(favorites.id) DESC"), "cocktails.id ASC")
         else
           filtered_cocktails.order(:id)
         end
@@ -108,7 +108,7 @@ class Api::V1::CocktailsController < ApplicationController
 
     cocktail_data = Rails.cache.fetch(cache_key, expires_in: 1.day) do
       # ランダムに1件のカクテルを取得
-      cocktail = Cocktail.includes(cocktail_ingredients: :ingredient).order(Arel.sql('RANDOM()')).first
+      cocktail = Cocktail.includes(cocktail_ingredients: :ingredient).order(Arel.sql("RANDOM()")).first
 
       if cocktail
         # フロントエンド用のフォーマットに変換
@@ -136,7 +136,7 @@ class Api::V1::CocktailsController < ApplicationController
     if cocktail_data
       render json: cocktail_data
     else
-      render json: { error: 'No cocktails available' }, status: :not_found
+      render json: { error: "No cocktails available" }, status: :not_found
     end
   end
 
@@ -149,7 +149,7 @@ class Api::V1::CocktailsController < ApplicationController
       ingredients: params[:ingredients],
       page: params[:page],
       per_page: params[:per_page],
-      sort: params[:sort].presence || 'id'
+      sort: params[:sort].presence || "id"
     }.to_json
   end
 

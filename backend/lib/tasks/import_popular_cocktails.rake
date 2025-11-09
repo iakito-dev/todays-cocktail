@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :cocktails do
-  desc 'Import popular cocktails that Japanese people love'
+  desc "Import popular cocktails that Japanese people love"
   task import_popular: :environment do
     puts "\n" + "=" * 80
     puts "🍸 IMPORTING POPULAR COCKTAILS"
@@ -18,7 +18,7 @@ namespace :cocktails do
     puts "=" * 80 + "\n"
   end
 
-  desc 'Translate existing cocktails to Japanese'
+  desc "Translate existing cocktails to Japanese"
   task translate_all: :environment do
     puts "Translating cocktails to Japanese..."
     puts "=" * 50
@@ -35,66 +35,66 @@ class PopularCocktailImporter
   # 日本で人気の有名カクテルリスト
   POPULAR_COCKTAILS = [
     # クラシック・定番
-    'Mojito',
-    'Margarita',
-    'Cosmopolitan',
-    'Martini',
-    'Manhattan',
-    'Old Fashioned',
-    'Negroni',
-    'Daiquiri',
-    'Whiskey Sour',
-    'Moscow Mule',
+    "Mojito",
+    "Margarita",
+    "Cosmopolitan",
+    "Martini",
+    "Manhattan",
+    "Old Fashioned",
+    "Negroni",
+    "Daiquiri",
+    "Whiskey Sour",
+    "Moscow Mule",
 
     # トロピカル・フルーティー
-    'Pina Colada',
-    'Mai Tai',
-    'Blue Hawaiian',
-    'Sex on the Beach',
-    'Tequila Sunrise',
-    'Sangria',
+    "Pina Colada",
+    "Mai Tai",
+    "Blue Hawaiian",
+    "Sex on the Beach",
+    "Tequila Sunrise",
+    "Sangria",
 
     # モダン・人気
-    'Espresso Martini',
-    'Aperol Spritz',
-    'French 75',
-    'Aviation',
-    'Pornstar Martini',
-    'Passion Fruit Martini',
+    "Espresso Martini",
+    "Aperol Spritz",
+    "French 75",
+    "Aviation",
+    "Pornstar Martini",
+    "Passion Fruit Martini",
 
     # シンプル・定番
-    'Gin and Tonic',
-    'Cuba Libre',
-    'Screwdriver',
-    'Bloody Mary',
-    'Tom Collins',
-    'Gimlet',
-    'Caipirinha',
+    "Gin and Tonic",
+    "Cuba Libre",
+    "Screwdriver",
+    "Bloody Mary",
+    "Tom Collins",
+    "Gimlet",
+    "Caipirinha",
 
     # ウイスキーベース
-    'Mint Julep',
-    'Irish Coffee',
-    'Sazerac',
-    'Boulevardier',
+    "Mint Julep",
+    "Irish Coffee",
+    "Sazerac",
+    "Boulevardier",
 
     # ラムベース
-    'Dark and Stormy',
-    'Zombie',
-    'Hemingway Special',
+    "Dark and Stormy",
+    "Zombie",
+    "Hemingway Special",
 
     # シャンパン・ワインベース
-    'Mimosa',
-    'Bellini',
-    'Kir',
-    'Kir Royale',
+    "Mimosa",
+    "Bellini",
+    "Kir",
+    "Kir Royale",
 
     # その他人気
-    'White Russian',
-    'Long Island Iced Tea',
-    'Amaretto Sour',
-    'Paloma',
-    'Vesper',
-    'Sidecar'
+    "White Russian",
+    "Long Island Iced Tea",
+    "Amaretto Sour",
+    "Paloma",
+    "Vesper",
+    "Sidecar"
   ].freeze
 
   def initialize
@@ -136,8 +136,8 @@ class PopularCocktailImporter
     end
 
     # APIから検索
-    require 'net/http'
-    require 'json'
+    require "net/http"
+    require "json"
 
     url = URI("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=#{URI.encode_www_form_component(cocktail_name)}")
     response = Net::HTTP.get_response(url)
@@ -149,7 +149,7 @@ class PopularCocktailImporter
     end
 
     data = JSON.parse(response.body)
-    drinks = data['drinks']
+    drinks = data["drinks"]
 
     unless drinks && drinks.any?
       puts "  ⚠️  Not found in API"
@@ -158,34 +158,34 @@ class PopularCocktailImporter
     end
 
     # 完全一致するものを探す
-    drink_data = drinks.find { |d| d['strDrink'].downcase == cocktail_name.downcase }
+    drink_data = drinks.find { |d| d["strDrink"].downcase == cocktail_name.downcase }
     drink_data ||= drinks.first # なければ最初のものを使用
 
     cocktail = nil
 
     ActiveRecord::Base.transaction do
       # find_or_initialize_byでより安全に
-      cocktail = Cocktail.find_or_initialize_by(name: drink_data['strDrink'])
+      cocktail = Cocktail.find_or_initialize_by(name: drink_data["strDrink"])
 
       if cocktail.persisted?
         # 既存のカクテルの画像URLを更新
-        cocktail.update!(image_url_override: drink_data['strDrinkThumb'])
+        cocktail.update!(image_url_override: drink_data["strDrinkThumb"])
         puts "  🔄 Updated image: #{drink_data['strDrink']}"
       else
         # 新規カクテル作成（翻訳付き）
-        name_ja = @translation_service.translate_cocktail_name(drink_data['strDrink'])
-        glass_ja = @translation_service.translate_glass(drink_data['strGlass'])
-        instructions_ja = @translation_service.translate_instructions(drink_data['strInstructions'])
+        name_ja = @translation_service.translate_cocktail_name(drink_data["strDrink"])
+        glass_ja = @translation_service.translate_glass(drink_data["strGlass"])
+        instructions_ja = @translation_service.translate_instructions(drink_data["strInstructions"])
 
         cocktail.assign_attributes(
           name_ja: name_ja,
           base: map_base(drink_data),
           strength: map_strength(drink_data),
           technique: map_technique(drink_data),
-          glass: drink_data['strGlass'],
+          glass: drink_data["strGlass"],
           glass_ja: glass_ja,
-          image_url_override: drink_data['strDrinkThumb'],
-          instructions: drink_data['strInstructions'],
+          image_url_override: drink_data["strDrinkThumb"],
+          instructions: drink_data["strInstructions"],
           instructions_ja: instructions_ja
         )
         cocktail.save!
@@ -214,7 +214,7 @@ class PopularCocktailImporter
 
       ingredients_list << {
         name: ingredient_name.strip,
-        amount: measure&.strip.presence || '適量'
+        amount: measure&.strip.presence || "\u9069\u91CF"
       }
     end
 
@@ -247,38 +247,38 @@ class PopularCocktailImporter
   end
 
   def map_base(drink_data)
-    ingredients_text = (1..15).map { |i| drink_data["strIngredient#{i}"] }.compact.join(' ').downcase
+    ingredients_text = (1..15).map { |i| drink_data["strIngredient#{i}"] }.compact.join(" ").downcase
 
-    return :gin if ingredients_text.include?('gin')
-    return :rum if ingredients_text.include?('rum')
-    return :whisky if ingredients_text.include?('whisky') || ingredients_text.include?('whiskey') || ingredients_text.include?('bourbon')
-    return :vodka if ingredients_text.include?('vodka')
-    return :tequila if ingredients_text.include?('tequila')
-    return :beer if ingredients_text.include?('beer')
-    return :wine if ingredients_text.include?('wine') || ingredients_text.include?('champagne')
+    return :gin if ingredients_text.include?("gin")
+    return :rum if ingredients_text.include?("rum")
+    return :whisky if ingredients_text.include?("whisky") || ingredients_text.include?("whiskey") || ingredients_text.include?("bourbon")
+    return :vodka if ingredients_text.include?("vodka")
+    return :tequila if ingredients_text.include?("tequila")
+    return :beer if ingredients_text.include?("beer")
+    return :wine if ingredients_text.include?("wine") || ingredients_text.include?("champagne")
 
     :vodka
   end
 
   def map_strength(drink_data)
-    alcoholic = drink_data['strAlcoholic']
+    alcoholic = drink_data["strAlcoholic"]
 
-    return :light if alcoholic == 'Non alcoholic'
-    return :light if alcoholic == 'Optional alcohol'
+    return :light if alcoholic == "Non alcoholic"
+    return :light if alcoholic == "Optional alcohol"
 
-    category = drink_data['strCategory']&.downcase || ''
-    return :light if category.include?('beer') || category.include?('punch')
-    return :strong if category.include?('shot')
+    category = drink_data["strCategory"]&.downcase || ""
+    return :light if category.include?("beer") || category.include?("punch")
+    return :strong if category.include?("shot")
 
     :medium
   end
 
   def map_technique(drink_data)
-    instructions = drink_data['strInstructions']&.downcase || ''
+    instructions = drink_data["strInstructions"]&.downcase || ""
 
-    return :shake if instructions.include?('shake')
-    return :stir if instructions.include?('stir')
-    return :build if instructions.include?('build') || instructions.include?('pour')
+    return :shake if instructions.include?("shake")
+    return :stir if instructions.include?("stir")
+    return :build if instructions.include?("build") || instructions.include?("pour")
 
     :build
   end
@@ -316,8 +316,8 @@ class CocktailTranslator
   def translate_cocktails
     puts "\n1. Translating cocktail names and glasses..."
 
-    scope = Cocktail.where(name_ja: [nil, ''])
-                    .or(Cocktail.where(glass_ja: [nil, '']))
+    scope = Cocktail.where(name_ja: [ nil, "" ])
+                    .or(Cocktail.where(glass_ja: [ nil, "" ]))
 
     scope.find_each.with_index do |cocktail, index|
       begin
@@ -354,7 +354,7 @@ class CocktailTranslator
     puts "\n2. Translating ingredient names..."
 
     # 重複を避けるため、ユニークな材料名のみを翻訳
-    unique_ingredient_names = Ingredient.where(name_ja: [nil, '']).distinct.pluck(:name)
+    unique_ingredient_names = Ingredient.where(name_ja: [ nil, "" ]).distinct.pluck(:name)
 
     unique_ingredient_names.each.with_index do |ingredient_name, index|
       begin
@@ -376,7 +376,7 @@ class CocktailTranslator
   def translate_amounts
     puts "\n3. Translating amounts..."
 
-    amount_scope = CocktailIngredient.where(amount_ja: [nil, ''])
+    amount_scope = CocktailIngredient.where(amount_ja: [ nil, "" ])
 
     amount_scope.find_each.with_index do |ci, index|
       next if ci.amount_text.blank?
@@ -400,8 +400,8 @@ class CocktailTranslator
   def translate_instructions
     puts "\n4. Translating instructions..."
 
-    instruction_scope = Cocktail.where(instructions_ja: [nil, ''])
-                                .where.not(instructions: [nil, ''])
+    instruction_scope = Cocktail.where(instructions_ja: [ nil, "" ])
+                                .where.not(instructions: [ nil, "" ])
 
     instruction_scope.find_each.with_index do |cocktail, index|
       begin

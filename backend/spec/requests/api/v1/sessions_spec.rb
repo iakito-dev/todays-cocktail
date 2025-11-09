@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Sessions', type: :request do
+  # Devise::SessionsController ベースの JSON API がロールごとに正しい応答を返すかを検証
   let(:confirmed_user) { create(:user, :confirmed) }
   let(:unconfirmed_user) { create(:user) }
   let(:admin_user) { create(:user, :admin) }

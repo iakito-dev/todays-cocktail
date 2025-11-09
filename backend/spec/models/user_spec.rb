@@ -3,11 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  # Section コメントで認証モデルの責務を一望できるようにする
+
+  # Section: Associations — お気に入り機能との紐付け
   describe 'associations' do
     it { should have_many(:favorites).dependent(:destroy) }
     it { should have_many(:favorite_cocktails).through(:favorites).source(:cocktail) }
   end
 
+  # Section: Validations — Devise 依存の基本ルール
   describe 'validations' do
     subject { build(:user) }
 
@@ -16,6 +20,7 @@ RSpec.describe User, type: :model do
     it { should validate_presence_of(:password) }
   end
 
+  # Section: Devise modules — 必要なモジュールが有効かをリストアップ
   describe 'devise modules' do
     it 'includes database_authenticatable module' do
       expect(User.devise_modules).to include(:database_authenticatable)
@@ -38,6 +43,7 @@ RSpec.describe User, type: :model do
     end
   end
 
+  # Section: Confirmable — メール認証フローを担保
   describe 'confirmable機能' do
     let(:user) { create(:user) }
 
@@ -61,6 +67,7 @@ RSpec.describe User, type: :model do
     end
   end
 
+  # Section: Admin flag — 権限管理が初期値 false かつトグル可能か
   describe 'admin機能' do
     it 'デフォルトでadminはfalse' do
       user = create(:user)
@@ -73,6 +80,7 @@ RSpec.describe User, type: :model do
     end
   end
 
+  # Section: Favorites — user 側から見た多対多
   describe 'お気に入り機能' do
     let(:user) { create(:user) }
     let(:cocktail) { create(:cocktail) }

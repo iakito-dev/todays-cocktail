@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Cocktail, type: :model do
+  # カクテルモデルは多くの関連・enum・ヘルパーを持つため、各セクションの目的をコメントで揃える
+
+  # Section: Associations — 関連が崩れると全 API が破綻するため網羅的に確認
   describe 'associations' do
     it { should have_many(:cocktail_ingredients).dependent(:destroy) }
     it { should have_many(:ingredients).through(:cocktail_ingredients) }
@@ -8,16 +11,19 @@ RSpec.describe Cocktail, type: :model do
     it { should have_many(:favorited_by_users).through(:favorites).source(:user) }
   end
 
+  # Section: Validations — 名前必須ルールは importer/管理画面で最も頼りにする
   describe 'validations' do
     it { should validate_presence_of(:name) }
   end
 
+  # Section: Enums — base/strength/technique の値変更はフィルタや翻訳に直結
   describe 'enums' do
     it { should define_enum_for(:base).with_values(%i[gin rum whisky vodka tequila beer wine]) }
     it { should define_enum_for(:strength).with_values(%i[light medium strong]) }
     it { should define_enum_for(:technique).with_values(%i[build stir shake]).with_prefix }
   end
 
+  # Section: ordered_ingredients — 表示順序・分量をまとめて返すヘルパーの整合性を担保
   describe '#ordered_ingredients' do
     let(:cocktail) { create(:cocktail) }
     let!(:ingredient1) { create(:ingredient, name: 'テスト材料A') }
@@ -41,8 +47,10 @@ RSpec.describe Cocktail, type: :model do
     end
   end
 
+  # Section: Creating cocktail with ingredients — 手作業で関連を組んでも破綻しないか
   describe 'creating a complete cocktail with ingredients' do
     it 'can create a cocktail with multiple ingredients' do
+      # FactoryBot のトレイトを使わず完全に自前で組み立て、依存する関連が正しく保存されるかを確認
       cocktail = create(:cocktail, name: 'ジントニック', base: :gin, strength: :light, technique: :build)
       gin = create(:ingredient, name: 'テストジン')
       tonic = create(:ingredient, name: 'テストトニック')
@@ -59,6 +67,20 @@ RSpec.describe Cocktail, type: :model do
     end
   end
 
+  # Section: display_image_url — 手動上書きの画像 URL をそのまま返すだけのヘルパー
+  describe '#display_image_url' do
+    it 'returns the override URL when present' do
+      cocktail = create(:cocktail, image_url_override: 'https://example.com/custom.jpg')
+      expect(cocktail.display_image_url).to eq('https://example.com/custom.jpg')
+    end
+
+    it 'returns nil when no override is set' do
+      cocktail = create(:cocktail, image_url_override: nil)
+      expect(cocktail.display_image_url).to be_nil
+    end
+  end
+
+  # Section: Favorites — 多対多の関連とヘルパーが期待どおり動くか
   describe 'お気に入り機能' do
     let(:cocktail) { create(:cocktail) }
     let(:user) { create(:user) }

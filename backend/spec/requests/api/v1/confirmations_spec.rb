@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Confirmations', type: :request do
+  # Devise confirmable の GET/POST API が想定どおり success/422/404 を返すかを網羅する
   describe 'GET /api/v1/confirmation' do
     context '有効な確認トークンの場合' do
       let(:user) { create(:user) }
 
       it 'ユーザーが確認済みになる' do
+        # トークンが正しければ confirmed_at がセットされることが最重要
         get "/api/v1/confirmation", params: { confirmation_token: user.confirmation_token }
 
         expect(response).to have_http_status(:ok)
@@ -13,6 +15,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
       end
 
       it '成功メッセージを返す' do
+        # フロントでこのメッセージを表示するので JSON の位置まで固定化しておく
         get "/api/v1/confirmation", params: { confirmation_token: user.confirmation_token }
 
         json = JSON.parse(response.body)
@@ -23,9 +26,10 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
 
     context '無効な確認トークンの場合' do
       it 'エラーメッセージを返す' do
+        # 422 応答＋エラーコードが揃っているとクライアントが状況判別しやすい
         get "/api/v1/confirmation", params: { confirmation_token: 'invalid_token' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['status']['code']).to eq(422)
       end
@@ -35,7 +39,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
       it 'エラーメッセージを返す' do
         get "/api/v1/confirmation"
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['status']['code']).to eq(422)
       end
@@ -49,7 +53,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
         original_token = confirmed_user.confirmation_token
         get "/api/v1/confirmation", params: { confirmation_token: original_token }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['status']['code']).to eq(422)
       end
@@ -78,6 +82,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
       end
 
       it '成功メッセージを返す' do
+        # 成功レスポンスは UI 上のフィードバックとして利用されるため、必ず含まれているか確認
         post "/api/v1/confirmation", params: { user: { email: user.email } }, as: :json
 
         expect(response).to have_http_status(:ok)
@@ -93,7 +98,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
         post "/api/v1/confirmation", params: { user: { email: confirmed_user.email } }
 
         # Deviseは既に確認済みの場合、send_confirmation_instructionsがnilを返すため404または422を返す可能性
-        expect(response).to have_http_status(:not_found).or have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:not_found).or have_http_status(:unprocessable_content)
       end
     end
 
@@ -102,7 +107,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
         post "/api/v1/confirmation", params: { user: { email: 'nonexistent@example.com' } }
 
         # 存在しないメールの場合もDeviseは特別な処理をするため404または422
-        expect(response).to have_http_status(:not_found).or have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:not_found).or have_http_status(:unprocessable_content)
       end
     end
   end

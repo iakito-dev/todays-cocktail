@@ -39,5 +39,8 @@ module Backend
 
     # デフォルトのエンコーディングをUTF-8に設定
     config.encoding = "utf-8"
+
+    # Supabaseのカスタムスキーマを含めるため、スキーマ形式をSQLに固定
+    config.active_record.schema_format = :sql
   end
 end

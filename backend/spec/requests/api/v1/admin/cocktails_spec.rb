@@ -4,6 +4,8 @@ require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe 'Api::V1::Admin::Cocktails', type: :request do
+  # Admin API は JWT 認証 + 権限チェック + キャッシュ削除という複合動作なので
+  # ここでは「誰が / どうリクエストしたか」でレスポンスがどう変化するかを丸ごと検証する
   # 管理者がカクテル情報を更新する際の振る舞いを網羅的に検証する
   # 認証フローまで含めた E2E に近いテストなので、FactoryBot でユーザーやカクテルを都度用意する
   let!(:cocktail) do
@@ -86,6 +88,7 @@ RSpec.describe 'Api::V1::Admin::Cocktails', type: :request do
       # 権限不足の場合に 403 となることを確認
       # 通常ユーザーでログイン → 同じ更新エンドポイントにアクセス → 403: Forbidden を期待する
       it 'returns forbidden' do
+        # admin? が false のユーザーには 403 を返して UI のガードも簡単にする
         put "/api/v1/admin/cocktails/#{cocktail.id}", params: params, headers: user_headers, as: :json
 
         expect(response).to have_http_status(:forbidden)
@@ -98,6 +101,7 @@ RSpec.describe 'Api::V1::Admin::Cocktails', type: :request do
       # トークンなしアクセスは 401
       # Rails の `authenticate_user!` が正しく弾いているかを確認する
       it 'returns unauthorized' do
+        # 認証そのものが無い場合は 401。ここが 403 になると UX 上の区別が付かなくなる
         put "/api/v1/admin/cocktails/#{cocktail.id}", params: params, as: :json
 
         expect(response).to have_http_status(:unauthorized)
@@ -118,7 +122,7 @@ RSpec.describe 'Api::V1::Admin::Cocktails', type: :request do
 
         put "/api/v1/admin/cocktails/#{cocktail.id}", params: invalid_params, headers: admin_headers, as: :json
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['errors']).to include('Name を入力してください')
       end

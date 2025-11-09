@@ -1,0 +1,131 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend_lint:
+    name: Backend Lint (RuboCop)
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: backend/Gemfile
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
+
+  backend:
+    name: Backend (RSpec)
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      LANG: ja_JP.UTF-8
+      DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+      DATABASE_URL_TEST: ${{ secrets.TEST_DATABASE_URL }}
+      BUNDLE_GEMFILE: backend/Gemfile
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Prepare database (schema load)
+        run: |
+          bundle exec rails db:drop db:create
+          bundle exec rails db:schema:load
+
+      - name: Run RSpec
+        run: bundle exec rspec --jobs 4
+
+  frontend:
+    name: Frontend (Vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Vitest
+        run: npm run test -- --run
+
+  frontend_lint:
+    name: Frontend Lint (ESLint)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+  deploy:
+    name: Deploy Hooks
+    runs-on: ubuntu-latest
+    needs:
+      - backend_lint
+      - backend
+      - frontend_lint
+      - frontend
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Render deploy
+        if: ${{ secrets.RENDER_DEPLOY_HOOK != '' }}
+        run: curl -sf -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
+      - name: Trigger Vercel deploy
+        if: ${{ secrets.VERCEL_DEPLOY_HOOK != '' }}
+        run: curl -sf -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"

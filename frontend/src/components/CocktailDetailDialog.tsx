@@ -52,6 +52,72 @@ const strengthColors = {
   strong: 'bg-red-100 text-red-800 border-red-200',
 };
 
+const MIN_DESCRIPTION_LENGTH = 120;
+const MIN_INSTRUCTION_LENGTH = 150;
+
+const BASE_STORIES: Record<string, string> = {
+  gin: 'ハーバルなジンの香りが澄んだ余韻を生み、シトラスの清涼感が心地よく続きます。',
+  rum: 'トロピカルなラムの甘みとスパイスが重なり、やわらかな南国の空気を感じさせます。',
+  whisky: '熟成したウイスキーの厚みがしっとり広がり、樽香が穏やかな余裕を与えます。',
+  vodka: 'ピュアなウォッカの透明感が素材の味を引き立て、すっきりとした後味に仕上がります。',
+  tequila: 'アガベ由来の力強い香りにライムの爽快さが重なり、陽気で鮮烈な印象を残します。',
+  beer: '麦芽の旨味と軽やかな泡が同時に広がり、食事とも合わせやすい柔らかさがあります。',
+  wine: '果実味豊かなワインのアロマがふくらみ、酸味と渋みのバランスが上品に整います。',
+};
+
+const STRENGTH_STORIES: Record<string, string> = {
+  light: '軽やかな飲み口で最初の一杯にも選びやすく、リフレッシュしたい時にぴったりです。',
+  medium: '甘味とアルコールの輪郭がちょうど良く、ゆっくり味がほどけていきます。',
+  strong: 'しっかりとしたアルコールの厚みがあり、落ち着いた夜に寄り添う存在感があります。',
+};
+
+const TECHNIQUE_STORIES: Record<string, string> = {
+  build: 'グラスの中で材料を重ねることで、香りが穏やかに立ち上がり素材の輪郭を感じられます。',
+  stir: '氷でしっかりステアすることで、透明感のある口当たりと澄んだ味わいに仕上がります。',
+  shake: 'シェイカーに空気を含ませながら振ることで、ふくよかで冷たい一体感が生まれます。',
+};
+
+const pickMeaningfulText = (
+  value: string | null | undefined,
+  minLength: number
+) => {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  return trimmed.length >= minLength ? trimmed : null;
+};
+
+const buildDefaultDescription = (cocktail: Cocktail | null) => {
+  if (!cocktail) return null;
+  const baseStory = BASE_STORIES[cocktail.base] ?? '素材の持つ香りを素直に引き出し、口いっぱいに優雅な余韻が広がります。';
+  const strengthStory = STRENGTH_STORIES[cocktail.strength] ?? '飲み進めるほどに調和が増し、余白のある味わいになります。';
+  const techniqueStory = TECHNIQUE_STORIES[cocktail.technique] ?? '丁寧な仕上げによって、香りと温度が最適なバランスに整います。';
+  return [
+    baseStory,
+    strengthStory,
+    techniqueStory,
+    '静かな時間にも、特別なひとときを演出したい時にも寄り添ってくれる一杯です。',
+  ].join(' ');
+};
+
+const buildDefaultInstructions = (cocktail: Cocktail | null) => {
+  if (!cocktail) return '';
+  const glassLabel = cocktail.glass_ja || cocktail.glass || 'グラス';
+  const baseLabel = BASE_LABELS[cocktail.base] || 'スピリッツ';
+
+  const techniqueStep = (() => {
+    switch (cocktail.technique) {
+      case 'stir':
+        return `ミキシンググラスに氷を入れ、${baseLabel}と甘味、ビターズを加えて静かにステアし香りと温度を整えます。`;
+      case 'shake':
+        return `シェイカーに${baseLabel}と果汁、シロップを入れてしっかり冷えるまで振り、空気を含ませて滑らかに仕上げます。`;
+      default:
+        return `${glassLabel}に氷を満たし、${baseLabel}と副材料を順に注いで軽くステアしながら全体を馴染ませます。`;
+    }
+  })();
+
+  return `${techniqueStep} 香りがまとまったら${glassLabel}に注ぎ、お好みで柑橘のピールやハーブを飾って完成です。`;
+};
+
 export function CocktailDetailDialog({
   cocktail,
   isOpen,
@@ -118,31 +184,23 @@ export function CocktailDetailDialog({
 
   const noteText = (() => {
     if (!currentCocktail) return null;
-    if (currentCocktail.description?.trim()) return currentCocktail.description;
-
-    if (!currentCocktail.instructions_ja) {
-      const strengthHints: Record<string, string> = {
-        light: '飲みやすく、初心者の方にもおすすめです',
-        medium: '程よいアルコール度数で、カクテルの味わいを楽しめます',
-        strong: 'アルコール度数が高めです。ゆっくり味わってお楽しみください',
-      };
-      const techniqueHints: Record<string, string> = {
-        build: 'グラスで直接作れるので、家でも簡単に作れます。',
-        shake: 'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。',
-        stir: 'ミキシンググラスでステアして、滑らかな口当たりに。',
-      };
-      const hints = [
-        `このカクテルは${
-          strengthHints[currentCocktail.strength] ?? 'バランスの取れた味わいです'
-        }。`,
-      ];
-      if (techniqueHints[currentCocktail.technique]) {
-        hints.push(techniqueHints[currentCocktail.technique]);
-      }
-      return hints.join('');
-    }
-    return null;
+    const meaningful = pickMeaningfulText(
+      currentCocktail.description,
+      MIN_DESCRIPTION_LENGTH
+    );
+    return meaningful ?? buildDefaultDescription(currentCocktail);
   })();
+
+  const instructionsText =
+    pickMeaningfulText(
+      currentCocktail?.instructions_ja,
+      MIN_INSTRUCTION_LENGTH
+    ) ||
+    pickMeaningfulText(
+      currentCocktail?.instructions,
+      MIN_INSTRUCTION_LENGTH
+    ) ||
+    buildDefaultInstructions(currentCocktail);
 
   return (
     <>
@@ -354,8 +412,7 @@ export function CocktailDetailDialog({
                         </h3>
                       </div>
                       <p className="mt-3 text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
-                        {currentCocktail.instructions_ja ||
-                          currentCocktail.instructions}
+                        {instructionsText}
                       </p>
                     </div>
                   </div>

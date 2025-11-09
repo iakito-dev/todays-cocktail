@@ -191,6 +191,9 @@ docker compose down -v
 supabase db reset
 docker compose exec backend rails db:seed
 
+# キャッシュ
+docker compose exec backend bin/rails runner 'Rails.cache.clear'
+
 # テスト・品質
 docker compose exec backend bundle exec rspec
 docker compose exec backend bundle exec rubocop

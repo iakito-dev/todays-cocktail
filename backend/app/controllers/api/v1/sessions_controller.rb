@@ -50,7 +50,7 @@ module Api
           begin
             decoded_token = JWT.decode(
               token,
-              Rails.application.credentials.devise_jwt_secret_key || ENV["DEVISE_JWT_SECRET_KEY"],
+              Rails.application.config.x.jwt_secret_key,
               true,
               { algorithm: "HS256" }
             )

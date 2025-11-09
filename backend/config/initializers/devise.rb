@@ -314,7 +314,7 @@ Devise.setup do |config|
   # ==> Configuration for devise-jwt
   config.jwt do |jwt|
     # JWT署名用のシークレットキー（環境変数から読み込むことを推奨）
-    jwt.secret = Rails.application.credentials.devise_jwt_secret_key || ENV["DEVISE_JWT_SECRET_KEY"]
+    jwt.secret = Rails.application.config.x.jwt_secret_key
 
     # JWT発行・検証のエンドポイント設定
     jwt.dispatch_requests = [

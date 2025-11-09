@@ -11,6 +11,25 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Supabase managed schemas may already exist when connecting to a shared
+-- cloud instance. Drop them before re-creating via structure.sql so that
+-- `rails db:schema:load` succeeds even if previous runs left data behind.
+--
+DO $$
+DECLARE
+  schema_name text;
+  schemas text[] := ARRAY[
+    '_realtime', 'auth', 'extensions', 'graphql', 'graphql_public',
+    'pgbouncer', 'realtime', 'storage', 'supabase_functions', 'vault'
+  ];
+BEGIN
+  FOREACH schema_name IN ARRAY schemas LOOP
+    EXECUTE format('DROP SCHEMA IF EXISTS %I CASCADE', schema_name);
+  END LOOP;
+END
+$$;
+
+--
 -- Name: _realtime; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -670,4 +689,3 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20251027134300'),
 ('20251025084644'),
 ('20251023214635');
-

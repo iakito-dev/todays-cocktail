@@ -52,8 +52,10 @@ const strengthColors = {
   strong: 'bg-red-100 text-red-800 border-red-200',
 };
 
-const MIN_DESCRIPTION_LENGTH = 120;
-const MIN_INSTRUCTION_LENGTH = 150;
+const getProvidedText = (value?: string | null) => {
+  const trimmed = value?.trim();
+  return trimmed?.length ? trimmed : null;
+};
 
 const BASE_STORIES: Record<string, string> = {
   gin: 'ハーバルなジンの香りが澄んだ余韻を生み、シトラスの清涼感が心地よく続きます。',
@@ -75,15 +77,6 @@ const TECHNIQUE_STORIES: Record<string, string> = {
   build: 'グラスの中で材料を重ねることで、香りが穏やかに立ち上がり素材の輪郭を感じられます。',
   stir: '氷でしっかりステアすることで、透明感のある口当たりと澄んだ味わいに仕上がります。',
   shake: 'シェイカーに空気を含ませながら振ることで、ふくよかで冷たい一体感が生まれます。',
-};
-
-const pickMeaningfulText = (
-  value: string | null | undefined,
-  minLength: number
-) => {
-  const trimmed = value?.trim();
-  if (!trimmed) return null;
-  return trimmed.length >= minLength ? trimmed : null;
 };
 
 const buildDefaultDescription = (cocktail: Cocktail | null) => {
@@ -182,24 +175,13 @@ export function CocktailDetailDialog({
       ? currentCocktail.name
       : null;
 
-  const noteText = (() => {
-    if (!currentCocktail) return null;
-    const meaningful = pickMeaningfulText(
-      currentCocktail.description,
-      MIN_DESCRIPTION_LENGTH
-    );
-    return meaningful ?? buildDefaultDescription(currentCocktail);
-  })();
+  const noteText =
+    getProvidedText(currentCocktail?.description) ??
+    buildDefaultDescription(currentCocktail);
 
   const instructionsText =
-    pickMeaningfulText(
-      currentCocktail?.instructions_ja,
-      MIN_INSTRUCTION_LENGTH
-    ) ||
-    pickMeaningfulText(
-      currentCocktail?.instructions,
-      MIN_INSTRUCTION_LENGTH
-    ) ||
+    getProvidedText(currentCocktail?.instructions_ja) ??
+    getProvidedText(currentCocktail?.instructions) ??
     buildDefaultInstructions(currentCocktail);
 
   return (

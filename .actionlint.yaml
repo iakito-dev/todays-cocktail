@@ -1,7 +1,7 @@
 # actionlint の設定ファイル
 # GitHub Secrets として登録済みの名前を列挙し、
 # "Context access might be invalid" 警告を抑制する
-secret:
+secrets:
   - TEST_DATABASE_URL
   - RENDER_DEPLOY_HOOK
   - VERCEL_DEPLOY_HOOK

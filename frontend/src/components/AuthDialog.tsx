@@ -168,7 +168,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
                   <Input
                     id="signup-name"
                     type="text"
-                    placeholder="例: カクテル太郎"
+                    placeholder="カクテル太郎"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required

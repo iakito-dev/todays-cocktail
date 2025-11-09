@@ -38,7 +38,7 @@ module Api
             )
             render json: cocktail_data
           else
-            render json: { errors: @cocktail.errors.full_messages }, status: :unprocessable_entity
+            render json: { errors: @cocktail.errors.full_messages }, status: :unprocessable_content
           end
         end
 

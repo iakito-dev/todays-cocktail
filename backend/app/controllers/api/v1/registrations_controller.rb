@@ -47,7 +47,7 @@ module Api
           render json: {
             status: { code: 422, message: message || "アカウントの作成に失敗しました。" },
             errors: resource.errors.full_messages
-          }, status: :unprocessable_entity
+          }, status: :unprocessable_content
         end
       end
     end

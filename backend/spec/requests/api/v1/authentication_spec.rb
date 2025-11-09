@@ -59,7 +59,7 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
         invalid_params[:user][:password_confirmation] = 'different_password'
 
         post '/api/v1/signup', params: invalid_params, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'エラーメッセージを含むJSONレスポンスを返す' do

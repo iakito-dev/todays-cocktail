@@ -30,7 +30,7 @@ module Api
           render json: {
             status: { code: 422, message: "確認トークンが無効です。" },
             errors: user.errors.full_messages
-          }, status: :unprocessable_entity
+          }, status: :unprocessable_content
         end
       end
 
@@ -46,7 +46,7 @@ module Api
           render json: {
             status: { code: 422, message: "確認メールの送信に失敗しました。" },
             errors: user.errors.full_messages
-          }, status: :unprocessable_entity
+          }, status: :unprocessable_content
         end
       end
 

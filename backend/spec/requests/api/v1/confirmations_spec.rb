@@ -25,7 +25,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
       it 'エラーメッセージを返す' do
         get "/api/v1/confirmation", params: { confirmation_token: 'invalid_token' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['status']['code']).to eq(422)
       end
@@ -35,7 +35,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
       it 'エラーメッセージを返す' do
         get "/api/v1/confirmation"
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['status']['code']).to eq(422)
       end
@@ -49,7 +49,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
         original_token = confirmed_user.confirmation_token
         get "/api/v1/confirmation", params: { confirmation_token: original_token }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['status']['code']).to eq(422)
       end
@@ -93,7 +93,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
         post "/api/v1/confirmation", params: { user: { email: confirmed_user.email } }
 
         # Deviseは既に確認済みの場合、send_confirmation_instructionsがnilを返すため404または422を返す可能性
-        expect(response).to have_http_status(:not_found).or have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:not_found).or have_http_status(:unprocessable_content)
       end
     end
 
@@ -102,7 +102,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
         post "/api/v1/confirmation", params: { user: { email: 'nonexistent@example.com' } }
 
         # 存在しないメールの場合もDeviseは特別な処理をするため404または422
-        expect(response).to have_http_status(:not_found).or have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:not_found).or have_http_status(:unprocessable_content)
       end
     end
   end

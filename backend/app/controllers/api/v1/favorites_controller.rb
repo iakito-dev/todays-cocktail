@@ -40,7 +40,7 @@ module Api
           render json: {
             status: { code: 422, message: "お気に入りの追加に失敗しました。" },
             errors: favorite.errors.full_messages
-          }, status: :unprocessable_entity
+          }, status: :unprocessable_content
         end
       rescue ActiveRecord::RecordNotFound
         render json: {

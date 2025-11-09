@@ -99,7 +99,7 @@ RSpec.describe 'Api::V1::Favorites', type: :request do
 
         it '422ステータスを返す' do
           post '/api/v1/favorites', params: valid_params, headers: auth_headers, as: :json
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it '重複エラーメッセージを返す' do

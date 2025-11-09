@@ -118,7 +118,7 @@ RSpec.describe 'Api::V1::Admin::Cocktails', type: :request do
 
         put "/api/v1/admin/cocktails/#{cocktail.id}", params: invalid_params, headers: admin_headers, as: :json
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['errors']).to include('Name を入力してください')
       end

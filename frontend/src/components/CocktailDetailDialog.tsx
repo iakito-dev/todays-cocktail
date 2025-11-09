@@ -361,7 +361,7 @@ export function CocktailDetailDialog({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <div className="w-1 h-5 sm:h-6 bg-blue-500 rounded-full" />
-                          <h3 className="text-sm font-semibold text-gray-900">
+                          <h3 className="text-base font-semibold text-gray-900">
                             材料
                           </h3>
                         </div>
@@ -389,11 +389,11 @@ export function CocktailDetailDialog({
                     <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-4 sm:px-5 sm:py-5">
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-5 sm:h-6 bg-blue-500 rounded-full" />
-                        <h3 className="text-sm font-semibold text-gray-900">
+                        <h3 className="text-base font-semibold text-gray-900">
                           作り方
                         </h3>
                       </div>
-                      <p className="mt-3 text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      <p className="mt-3 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                         {instructionsText}
                       </p>
                     </div>

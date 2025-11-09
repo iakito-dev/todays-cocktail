@@ -9,6 +9,8 @@ import { Separator } from './ui/separator';
 import { Wine, GlassWater, Hammer, ArrowLeft } from 'lucide-react';
 import { ImageWithFallback } from './ImageWithFallback';
 import type { Cocktail } from '../lib/types';
+import { Seo } from './Seo';
+import { absoluteUrl, getShareImageUrl, siteMetadata } from '../lib/seo';
 
 // 日本語ラベルのマッピング
 const BASE_LABELS: Record<string, string> = {
@@ -45,6 +47,7 @@ export function CocktailDetail() {
   const [cocktail, setCocktail] = useState<Cocktail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const canonicalPath = id ? `/cocktails/${id}` : '/cocktails';
 
   useEffect(() => {
     if (!id) {
@@ -59,92 +62,162 @@ export function CocktailDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  const shareImage = cocktail?.image_url_override ?? cocktail?.image_url ?? null;
+  const fallbackDescription = cocktail
+    ? `${BASE_LABELS[cocktail.base]}ベース・${STRENGTH_LABELS[cocktail.strength]}の${cocktail.name_ja || cocktail.name}の作り方と材料。`
+    : 'カクテルのレシピ詳細や材料、作り方を確認できます。';
+  const seoTitle = cocktail
+    ? `${cocktail.name_ja || cocktail.name}のカクテルレシピ`
+    : 'カクテル詳細';
+  const structuredData = cocktail
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Recipe',
+        name: cocktail.name_ja || cocktail.name,
+        alternateName: cocktail.name,
+        description: cocktail.description || fallbackDescription,
+        image: [getShareImageUrl(shareImage)],
+        datePublished: cocktail.created_at,
+        dateModified: cocktail.updated_at,
+        recipeCategory: 'Beverage',
+        recipeCuisine: 'International',
+        recipeYield: '1 serving',
+        keywords: [
+          cocktail.name,
+          cocktail.name_ja,
+          BASE_LABELS[cocktail.base],
+          STRENGTH_LABELS[cocktail.strength],
+          TECHNIQUE_LABELS[cocktail.technique],
+        ]
+          .filter(Boolean)
+          .join(', '),
+        recipeIngredient: cocktail.ingredients?.map((ingredient) => {
+          const amount = ingredient.amount ? ` ${ingredient.amount}` : '';
+          return `${ingredient.name}${amount}`;
+        }),
+        recipeInstructions: (cocktail.instructions_ja || cocktail.instructions)
+          ? [
+              {
+                '@type': 'HowToStep',
+                text: cocktail.instructions_ja || cocktail.instructions,
+              },
+            ]
+          : undefined,
+        mainEntityOfPage: absoluteUrl(canonicalPath),
+        author: {
+          '@type': 'Organization',
+          name: siteMetadata.siteName,
+        },
+      }
+    : undefined;
+
+  const seoElement = (
+    <Seo
+      title={seoTitle}
+      description={cocktail?.description || fallbackDescription}
+      path={canonicalPath}
+      image={shareImage}
+      type="article"
+      publishedTime={cocktail?.created_at}
+      updatedTime={cocktail?.updated_at}
+      structuredData={structuredData}
+    />
+  );
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 text-foreground p-6">
-        <div className="max-w-3xl mx-auto">
-          <Skeleton className="h-10 w-24 mb-6" />
-          <div className="space-y-6">
-            {/* カード全体 */}
-            <Card>
-              <CardContent className="p-0">
-                {/* 画像スケルトン */}
-                <div className="relative w-full aspect-[16/9]">
-                  <Skeleton className="absolute inset-0" />
-                </div>
-                {/* コンテンツ */}
-                <div className="p-6 space-y-6">
-                  {/* タイトル */}
-                  <div className="space-y-3">
-                    <Skeleton className="h-10 w-3/4" />
-                    <Skeleton className="h-6 w-1/2" />
+      <>
+        {seoElement}
+        <div className="min-h-screen bg-gray-50 text-foreground p-6">
+          <div className="max-w-3xl mx-auto">
+            <Skeleton className="h-10 w-24 mb-6" />
+            <div className="space-y-6">
+              {/* カード全体 */}
+              <Card>
+                <CardContent className="p-0">
+                  {/* 画像スケルトン */}
+                  <div className="relative w-full aspect-[16/9]">
+                    <Skeleton className="absolute inset-0" />
                   </div>
-                  {/* バッジ群 */}
-                  <div className="flex flex-wrap gap-2">
-                    <Skeleton className="h-8 w-24" />
-                    <Skeleton className="h-8 w-24" />
-                    <Skeleton className="h-8 w-24" />
-                    <Skeleton className="h-8 w-24" />
-                  </div>
-                  {/* 説明文 */}
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-2/3" />
-                  </div>
-                  {/* セパレーター */}
-                  <Skeleton className="h-px w-full" />
-                  {/* 作り方 */}
-                  <div className="space-y-3">
-                    <Skeleton className="h-6 w-32" />
+                  {/* コンテンツ */}
+                  <div className="p-6 space-y-6">
+                    {/* タイトル */}
+                    <div className="space-y-3">
+                      <Skeleton className="h-10 w-3/4" />
+                      <Skeleton className="h-6 w-1/2" />
+                    </div>
+                    {/* バッジ群 */}
+                    <div className="flex flex-wrap gap-2">
+                      <Skeleton className="h-8 w-24" />
+                      <Skeleton className="h-8 w-24" />
+                      <Skeleton className="h-8 w-24" />
+                      <Skeleton className="h-8 w-24" />
+                    </div>
+                    {/* 説明文 */}
                     <div className="space-y-2">
                       <Skeleton className="h-4 w-full" />
                       <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-2/3" />
+                    </div>
+                    {/* セパレーター */}
+                    <Skeleton className="h-px w-full" />
+                    {/* 作り方 */}
+                    <div className="space-y-3">
+                      <Skeleton className="h-6 w-32" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-3/4" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-            {/* 材料カード */}
-            <Card>
-              <CardContent className="p-6">
-                <Skeleton className="h-6 w-24 mb-4" />
-                <div className="space-y-3">
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-4/5" />
-                  <Skeleton className="h-5 w-full" />
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+              {/* 材料カード */}
+              <Card>
+                <CardContent className="p-6">
+                  <Skeleton className="h-6 w-24 mb-4" />
+                  <div className="space-y-3">
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-4/5" />
+                    <Skeleton className="h-5 w-full" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (error || !cocktail) {
     return (
-      <div className="min-h-screen bg-background text-foreground p-6">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <Button variant="ghost" onClick={() => navigate('/')} className="mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            戻る
-          </Button>
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-red-500">エラーが発生しました: {error || 'カクテルが見つかりませんでした'}</p>
-            </CardContent>
-          </Card>
+      <>
+        {seoElement}
+        <div className="min-h-screen bg-background text-foreground p-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            <Button variant="ghost" onClick={() => navigate('/')} className="mb-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              戻る
+            </Button>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-red-500">エラーが発生しました: {error || 'カクテルが見つかりませんでした'}</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-foreground p-6">
-      <div className="max-w-3xl mx-auto space-y-6">
+    <>
+      {seoElement}
+      <div className="min-h-screen bg-gray-50 text-foreground p-6">
+        <div className="max-w-3xl mx-auto space-y-6">
         <Button variant="ghost" onClick={() => navigate('/')} className="mb-4 hover:bg-white">
           <ArrowLeft className="w-4 h-4 mr-2" />
           戻る
@@ -263,7 +336,8 @@ export function CocktailDetail() {
             </div>
           )}
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

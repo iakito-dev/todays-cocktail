@@ -4,7 +4,7 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { useFavorites } from './useFavorites';
 
 // Toast の呼び出し内容を検証するため UI 層を単純なモックに差し替える
-vi.mock('../components/ui/sonner', () => ({
+vi.mock('../lib/toast', () => ({
   toast: {
     success: vi.fn(),
     error: vi.fn(),
@@ -12,7 +12,7 @@ vi.mock('../components/ui/sonner', () => ({
   },
 }));
 
-import { toast } from '../components/ui/sonner';
+import { toast } from '../lib/toast';
 const mockedToast = toast as unknown as {
   success: Mock;
   error: Mock;

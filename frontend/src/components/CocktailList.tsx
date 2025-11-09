@@ -12,9 +12,11 @@ import { CocktailFilters } from './CocktailFilters';
 import { CocktailDetailDialog } from './CocktailDetailDialog';
 import { AuthDialog } from './AuthDialog';
 import { Pagination } from './Pagination';
+import { Seo } from './Seo';
 import { useFavorites } from '../hooks/useFavorites';
 import { useAuth } from '../hooks/useAuth';
 import type { Cocktail } from '../lib/types';
+import { absoluteUrl, siteMetadata } from '../lib/seo';
 
 // 画面サイズに応じた表示件数を取得
 const useItemsPerPage = () => {
@@ -32,6 +34,18 @@ const useItemsPerPage = () => {
   }, []);
 
   return itemsPerPage;
+};
+
+const HOME_WEBSITE_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: siteMetadata.siteName,
+  url: siteMetadata.siteUrl,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${siteMetadata.siteUrl}/?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
 };
 
 export function CocktailList() {
@@ -212,8 +226,34 @@ export function CocktailList() {
     setIsSortMenuOpen(false);
   };
 
+  const itemListStructuredData = cocktails && cocktails.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: cocktails
+          .slice(0, Math.min(10, cocktails.length))
+          .map((cocktail, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: absoluteUrl(`/cocktails/${cocktail.id}`),
+            name: cocktail.name_ja || cocktail.name,
+          })),
+      }
+    : undefined;
+
+  const homeStructuredData = itemListStructuredData
+    ? [HOME_WEBSITE_JSON_LD, itemListStructuredData]
+    : HOME_WEBSITE_JSON_LD;
+
   return (
-    <div className="min-h-screen bg-gray-50 text-foreground">
+    <>
+      <Seo
+        title="カクテル検索と今日のおすすめ"
+        description="ベース酒や味わい、人気順で400種類以上のカクテルを検索。今日のおすすめやお気に入り機能で、自分だけの一杯を見つけましょう。"
+        path="/"
+        structuredData={homeStructuredData}
+      />
+      <div className="min-h-screen bg-gray-50 text-foreground">
       <div className="max-w-7xl mx-auto p-6">
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
           {/* Sidebar - Filters (Desktop Only) */}
@@ -454,6 +494,7 @@ export function CocktailList() {
         onSignup={signup}
       />
     </div>
+    </>
   );
 }
 

@@ -1,59 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { ComponentType, ReactNode } from 'react';
+import type { ComponentType } from 'react';
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
+import { subscribeToToast } from '../../lib/toast';
+import type { ToastListener, ToastPayload, ToastType } from '../../lib/toast';
 import { cn } from '../../lib/utils';
-
-type ToastType = 'success' | 'error' | 'info';
-
-interface ToastOptions {
-  description?: ReactNode;
-  duration?: number;
-  type?: ToastType;
-}
-
-interface ToastPayload extends ToastOptions {
-  id: number;
-  title: ReactNode;
-}
-
-type ToastListener = (toast: ToastPayload) => void;
-
-const listeners = new Set<ToastListener>();
-let toastId = 0;
 
 const DEFAULT_DURATION = 3000;
 const EXIT_ANIMATION_DURATION = 200;
-
-const emitToast = (payload: Omit<ToastPayload, 'id'>) => {
-  toastId += 1;
-  const toast: ToastPayload = { id: toastId, ...payload };
-  listeners.forEach((listener) => listener(toast));
-};
 
 interface InternalToast extends ToastPayload {
   duration: number;
   visible: boolean;
 }
 
-const createEmitter = (type: ToastType) => {
-  return (title: ReactNode, options?: ToastOptions) => {
-    emitToast({
-      title,
-      type,
-      description: options?.description,
-      duration: options?.duration,
-    });
-  };
-};
-
-export const toast = {
-  success: createEmitter('success'),
-  error: createEmitter('error'),
-  info: createEmitter('info'),
-};
-
-export interface ToasterProps {
+interface ToasterProps {
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center';
 }
 
@@ -142,13 +103,13 @@ export function Toaster({ position = 'top-center' }: ToasterProps) {
       }
     };
 
-    listeners.add(listener);
+    const unsubscribe = subscribeToToast(listener);
 
     const timersMap = timers.current;
     const exitTimersMap = exitTimers.current;
 
     return () => {
-      listeners.delete(listener);
+      unsubscribe();
       timersMap.forEach((timer) => window.clearTimeout(timer));
       timersMap.clear();
       exitTimersMap.forEach((timer) => window.clearTimeout(timer));

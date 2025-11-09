@@ -1,5 +1,5 @@
 import type { Cocktail } from '../lib/types';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -51,6 +51,9 @@ const strengthColors = {
   medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
   strong: 'bg-red-100 text-red-800 border-red-200',
 };
+
+const MAX_DRAG_DISTANCE = 360;
+const CLOSE_THRESHOLD = 150;
 
 const getProvidedText = (value?: string | null) => {
   const trimmed = value?.trim();
@@ -126,9 +129,40 @@ export function CocktailDetailDialog({
   // スワイプダウンで閉じる機能
   const scrollRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const touchStartRef = useRef<number | null>(null);
+  const lastTouchRef = useRef<number | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const translateYRef = useRef(0);
   const [translateY, setTranslateY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const scheduleTranslate = (value: number) => {
+    translateYRef.current = value;
+    if (typeof window === 'undefined') {
+      setTranslateY(value);
+      return;
+    }
+    if (animationFrameRef.current) return;
+    animationFrameRef.current = window.requestAnimationFrame(() => {
+      setTranslateY(translateYRef.current);
+      animationFrameRef.current = null;
+    });
+  };
+
+  const getEasedDistance = (distance: number) => {
+    if (distance <= 0) return 0;
+    const clamped = Math.min(distance, MAX_DRAG_DISTANCE);
+    const progress = clamped / MAX_DRAG_DISTANCE;
+    return (1 - Math.pow(1 - progress, 2.2)) * MAX_DRAG_DISTANCE;
+  };
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current && typeof window !== 'undefined') {
+        window.cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
 
   // cocktailが変更されたら更新
   if (cocktail && cocktail.id !== currentCocktail?.id) {
@@ -144,29 +178,42 @@ export function CocktailDetailDialog({
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!scrollRef.current) return;
     if (scrollRef.current.scrollTop === 0) {
-      setTouchEnd(null);
-      setTouchStart(e.targetTouches[0].clientY);
+      lastTouchRef.current = null;
+      touchStartRef.current = e.targetTouches[0].clientY;
+      setIsDragging(true);
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStart === null) return;
+    if (touchStartRef.current === null) return;
     const currentTouch = e.targetTouches[0].clientY;
-    setTouchEnd(currentTouch);
-    const distance = currentTouch - touchStart;
+    lastTouchRef.current = currentTouch;
+    const distance = currentTouch - touchStartRef.current;
     if (distance > 0) {
-      setTranslateY(Math.min(distance, 300));
+      if (distance > 6) {
+        e.preventDefault();
+      }
+      scheduleTranslate(getEasedDistance(distance));
+    } else {
+      scheduleTranslate(0);
     }
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchEnd - touchStart;
-    const isDownSwipe = distance > 150;
-    if (isDownSwipe) onClose();
-    setTranslateY(0);
-    setTouchStart(null);
-    setTouchEnd(null);
+    const start = touchStartRef.current;
+    const end = lastTouchRef.current;
+    setIsDragging(false);
+    touchStartRef.current = null;
+    lastTouchRef.current = null;
+    if (start !== null && end !== null) {
+      const distance = end - start;
+      if (distance > CLOSE_THRESHOLD) {
+        onClose();
+        scheduleTranslate(0);
+        return;
+      }
+    }
+    scheduleTranslate(0);
   };
 
   const primaryName = currentCocktail?.name_ja || currentCocktail?.name;
@@ -192,11 +239,9 @@ export function CocktailDetailDialog({
           size="full"
           className="!max-w-none w-[92vw] sm:w-[84vw] lg:w-[74vw] xl:w-[68vw] 2xl:w-[62vw]  max-w-[1400px] max-h-[calc(100dvh-6rem)] flex flex-col p-4. sm:p-2 border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
           style={{
-            transform:
-              touchStart !== null && translateY > 0
-                ? `translateY(${translateY}px)`
-                : undefined,
-            transition: touchStart === null ? 'transform 0.3s ease-out' : 'none',
+            transform: translateY > 0 ? `translateY(${translateY}px)` : undefined,
+            transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+            willChange: 'transform',
           }}
         >
           {!currentCocktail ? (
@@ -220,7 +265,7 @@ export function CocktailDetailDialog({
                   <div className="flex flex-col gap-4 lg:flex-row lg:justify-between pr-12">
                     <div className="space-y-2.5 sm:space-y-3">
                       {secondaryName && (
-                        <p className="pl-px text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gray-400 font-semibold">
+                        <p className="pl-px text-sm uppercase tracking-[0.3em] text-gray-400 font-semibold">
                           {secondaryName}
                         </p>
                       )}
@@ -302,6 +347,7 @@ export function CocktailDetailDialog({
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
+                onTouchCancel={handleTouchEnd}
               >
                 {/* 左カラム */}
                 <div className="lg:w-1/2 flex flex-col space-y-5 px-4 sm:px-6 md:px-8 py-5 bg-white lg:sticky lg:top-0 lg:max-h-[calc(100dvh-12rem)]">

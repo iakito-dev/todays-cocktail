@@ -99,7 +99,7 @@ jobs:
       RAILS_ENV: test
       LANG: ja_JP.UTF-8
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/todays_cocktail_test
-      JWT_SECRET_KEY: test_secret_key
+      DEVISE_JWT_SECRET_KEY: test_secret_key
       SECRET_KEY_BASE: dummy_key_for_ci
       BUNDLE_GEMFILE: ${{ github.workspace }}/backend/Gemfile
       DISABLE_DATABASE_ENVIRONMENT_CHECK: "1"  # ← 追加：db:drop保護回避

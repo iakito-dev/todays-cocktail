@@ -31,6 +31,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+
 # ============================================================
 # Backend Lint (RuboCop)
 # ============================================================
@@ -99,6 +100,7 @@ jobs:
       LANG: ja_JP.UTF-8
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/todays_cocktail_test
       BUNDLE_GEMFILE: ${{ github.workspace }}/backend/Gemfile
+      DISABLE_DATABASE_ENVIRONMENT_CHECK: "1"  # ← 追加：db:drop保護回避
     defaults:
       run:
         working-directory: backend

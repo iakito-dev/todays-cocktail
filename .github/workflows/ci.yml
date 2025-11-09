@@ -17,7 +17,7 @@ jobs:
     name: Backend Lint (RuboCop)
     runs-on: ubuntu-latest
     env:
-      BUNDLE_GEMFILE: backend/Gemfile
+      BUNDLE_GEMFILE: ${{ github.workspace }}/backend/Gemfile
     defaults:
       run:
         working-directory: backend
@@ -41,7 +41,7 @@ jobs:
       LANG: ja_JP.UTF-8
       DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
       DATABASE_URL_TEST: ${{ secrets.TEST_DATABASE_URL }}
-      BUNDLE_GEMFILE: backend/Gemfile
+      BUNDLE_GEMFILE: ${{ github.workspace }}/backend/Gemfile
     defaults:
       run:
         working-directory: backend

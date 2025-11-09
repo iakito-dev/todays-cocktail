@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { login as apiLogin, signup as apiSignup, logout as apiLogout, getCurrentUser, clearAuthToken } from '../lib/api';
-import { toast } from '../components/ui/sonner';
+import { toast } from '../lib/toast';
 
 interface User {
   id: number;

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { Favorite } from '../lib/types';
 import { apiDelete, apiGet, apiPost } from '../lib/api';
-import { toast } from '../components/ui/sonner';
+import { toast } from '../lib/toast';
 
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState<Favorite[]>([]);

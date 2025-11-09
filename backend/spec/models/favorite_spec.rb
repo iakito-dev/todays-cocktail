@@ -3,11 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Favorite, type: :model do
+  # Section commentsで多対多中間テーブルの責務を明示
+
+  # Section: Associations — user/cocktail への参照が確実に存在するか
   describe 'associations' do
     it { should belong_to(:user) }
     it { should belong_to(:cocktail) }
   end
 
+  # Section: Validations — user×cocktail の複合ユニーク
   describe 'validations' do
     let(:user) { create(:user) }
     let(:cocktail) { create(:cocktail) }
@@ -19,6 +23,7 @@ RSpec.describe Favorite, type: :model do
     end
   end
 
+  # Section: Duplication guard — 組み合わせのバリエーションを網羅
   describe '重複防止' do
     let(:user) { create(:user) }
     let(:cocktail) { create(:cocktail) }

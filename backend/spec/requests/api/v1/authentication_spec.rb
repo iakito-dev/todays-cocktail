@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Authentication', type: :request do
+  # サインアップ～JWT発行～ログアウトの一連のフローが外部契約どおりかを確認する
   let(:user) { create(:user, :confirmed) }
   let(:valid_credentials) { { user: { email: user.email, password: 'password123' } } }
   let(:invalid_credentials) { { user: { email: user.email, password: 'wrong_password' } } }
@@ -31,6 +32,7 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
       end
 
       it 'ユーザー情報を含むJSONレスポンスを返す' do
+        # API クライアントがレスポンス本文だけでなく status コードを見て処理するため
         post '/api/v1/signup', params: valid_attributes, as: :json
         json_response = JSON.parse(response.body)
         expect(json_response['status']['code']).to eq(200)
@@ -63,6 +65,7 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
       end
 
       it 'エラーメッセージを含むJSONレスポンスを返す' do
+        # バリデーションメッセージはフロント側でそのまま表示するため、日本語で返ってくるかも検証
         invalid_params = valid_attributes.deep_dup
         invalid_params[:user][:email] = ''
 
@@ -82,6 +85,7 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
       end
 
       it 'JWTトークンを含むレスポンスを返す' do
+        # Authorization ヘッダーが欠けていると以降の保護APIが呼べないので必須チェック
         post '/api/v1/login', params: valid_credentials, as: :json
         expect(response.headers['Authorization']).to be_present
         expect(response.headers['Authorization']).to match(/^Bearer .+/)
@@ -110,6 +114,7 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
       end
 
       it 'JWTトークンを含まない' do
+        # 誤ったパスワードでトークンが発行されるとセキュリティ事故になるため明示的に確認
         post '/api/v1/login', params: invalid_credentials, as: :json
         expect(response.headers['Authorization']).to be_nil
       end
@@ -151,6 +156,7 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
       end
 
       it 'ログアウト後、同じトークンではアクセスできない' do
+        # Denylist 登録が効いているかどうかは保護エンドポイントで 401 を確認するのが手っ取り早い
         delete '/api/v1/logout', headers: auth_headers
 
         # ログアウト後に保護されたエンドポイントにアクセス

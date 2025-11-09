@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Confirmations', type: :request do
+  # Devise confirmable の GET/POST API が想定どおり success/422/404 を返すかを網羅する
   describe 'GET /api/v1/confirmation' do
     context '有効な確認トークンの場合' do
       let(:user) { create(:user) }
 
       it 'ユーザーが確認済みになる' do
+        # トークンが正しければ confirmed_at がセットされることが最重要
         get "/api/v1/confirmation", params: { confirmation_token: user.confirmation_token }
 
         expect(response).to have_http_status(:ok)
@@ -13,6 +15,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
       end
 
       it '成功メッセージを返す' do
+        # フロントでこのメッセージを表示するので JSON の位置まで固定化しておく
         get "/api/v1/confirmation", params: { confirmation_token: user.confirmation_token }
 
         json = JSON.parse(response.body)
@@ -23,6 +26,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
 
     context '無効な確認トークンの場合' do
       it 'エラーメッセージを返す' do
+        # 422 応答＋エラーコードが揃っているとクライアントが状況判別しやすい
         get "/api/v1/confirmation", params: { confirmation_token: 'invalid_token' }
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -78,6 +82,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
       end
 
       it '成功メッセージを返す' do
+        # 成功レスポンスは UI 上のフィードバックとして利用されるため、必ず含まれているか確認
         post "/api/v1/confirmation", params: { user: { email: user.email } }, as: :json
 
         expect(response).to have_http_status(:ok)

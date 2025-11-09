@@ -343,7 +343,7 @@ export function CocktailDetailDialog({
 
               <div
                 ref={scrollRef}
-                className="flex-1 flex flex-col lg:flex-row bg-gray-50/80 overflow-y-auto lg:overflow-hidden"
+                className="flex-1 flex flex-col lg:flex-row bg-white overflow-y-auto lg:overflow-hidden"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
@@ -401,7 +401,7 @@ export function CocktailDetailDialog({
                 </div>
 
                 {/* 右カラム */}
-                <div className="flex-1 overflow-y-visible lg:overflow-y-auto px-4 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-6 sm:py-8. mb-5  lg:max-h-[calc(100dvh-12rem)]">
+                <div className="flex-1 overflow-y-visible lg:overflow-y-auto px-4 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-6 sm:py-8 mb-5  lg:max-h-[calc(100dvh-12rem)]">
                   <div className="space-y-6 sm:space-y-7">
                     <div className="rounded-2xl border border-gray-100 bg-white px-4 py-4 sm:px-5 sm:py-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
                       <div className="flex items-center justify-between">
@@ -432,7 +432,7 @@ export function CocktailDetailDialog({
                       </div>
                     </div>
 
-                    <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-4 sm:px-5 sm:py-5">
+                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-4 sm:px-5 sm:py-5">
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-5 sm:h-6 bg-blue-500 rounded-full" />
                         <h3 className="text-base font-semibold text-gray-900">

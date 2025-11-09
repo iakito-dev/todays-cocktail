@@ -60,7 +60,7 @@ function DialogContent({
       case "compact":
         return "max-w-sm sm:max-w-md px-4 sm:px-5 pt-5 sm:pt-6 pb-4 sm:pb-5";
       case "auth":
-        return "max-w-[min(640px,calc(100%-2rem))] w-[94vw] sm:w-[520px] px-5 sm:px-8 pt-6 sm:pt-8 pb-5 sm:pb-7";
+        return "max-w-[min(640px,calc(100%-2rem))] w-[92vw] sm:w-[520px] px-4 sm:px-8 py-6 sm:py-7";
       case "full":
         // カクテル詳細用（フルサイズダイアログ）
         return "w-[96vw] sm:w-[90vw] lg:w-[80vw] 2xl:w-[72vw] max-w-[1400px] h-[92vh] max-h-[92vh] p-0";

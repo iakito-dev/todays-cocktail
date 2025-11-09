@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CocktailFilters } from './CocktailFilters';
 
+// コンポーネント単体では状態を持たないため、最小限のステートラッパーを用意して双方向バインドを再現する。
 const FiltersHarness = ({
   onBasesChange = vi.fn(),
   onSearchChange = vi.fn(),
@@ -27,6 +28,7 @@ const FiltersHarness = ({
 
 describe('CocktailFilters', () => {
   it('toggles single base selection via the buttons', async () => {
+    // ボタンは単一選択（ON/OFF）として動作する想定
     const onBasesChange = vi.fn();
     const user = userEvent.setup();
     render(<FiltersHarness onBasesChange={onBasesChange} />);
@@ -41,6 +43,7 @@ describe('CocktailFilters', () => {
   });
 
   it('shows and uses the clear selection button', async () => {
+    // 選択中のみ表示される「選択を解除」ボタンの挙動を確認
     const onBasesChange = vi.fn();
     const user = userEvent.setup();
     render(<FiltersHarness onBasesChange={onBasesChange} />);
@@ -54,6 +57,7 @@ describe('CocktailFilters', () => {
   });
 
   it('submits trimmed search query when pressing Enter', async () => {
+    // Enterキーでトリムされた文字列が親コンポーネントに渡ることを保証
     const onSearchChange = vi.fn();
     const user = userEvent.setup();
 

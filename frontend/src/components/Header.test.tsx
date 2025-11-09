@@ -6,12 +6,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { Header } from './Header';
 import { useAuth } from '../hooks/useAuth';
 
+// HeaderはuseAuthに強く依存するため、フックごとモック化してシナリオを切り替える。
 vi.mock('../hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }));
 
 const mockUseAuth = useAuth as unknown as Mock;
 
+// ルーター配下で描画し、Link/Router要素の警告を避ける
 const renderHeader = () =>
   render(
     <MemoryRouter>
@@ -25,6 +27,7 @@ describe('Header', () => {
   });
 
   it('opens auth dialog and calls login via useAuth handler', async () => {
+    // 未ログイン時にダイアログを開き、フォーム送信でloginが呼ばれるか
     const loginMock = vi.fn().mockResolvedValue(undefined);
     mockUseAuth.mockReturnValue({
       user: null,
@@ -64,6 +67,7 @@ describe('Header', () => {
   });
 
   it('shows authenticated UI and triggers logout', async () => {
+    // ログイン済みユーザーには名前とログアウトボタンが出ること、クリックでlogoutが動くこと
     const logoutMock = vi.fn().mockResolvedValue(undefined);
     mockUseAuth.mockReturnValue({
       user: { id: 1, email: 'user@example.com', name: 'カクテル太郎', admin: false },

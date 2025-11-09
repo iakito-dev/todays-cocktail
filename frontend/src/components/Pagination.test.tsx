@@ -5,11 +5,13 @@ import { Pagination } from './Pagination';
 
 describe('Pagination', () => {
   it('returns null when only a single page exists', () => {
+    // 1ページしかない場合はレンダリング自体をスキップする仕様
     const { container } = render(<Pagination currentPage={1} totalPages={1} onPageChange={vi.fn()} />);
     expect(container.firstChild).toBeNull();
   });
 
   it('renders boundary pages and ellipsis for long ranges', () => {
+    // 総ページ数が多い場合に先頭/末尾と省略記号が出るか確認
     render(<Pagination currentPage={5} totalPages={10} onPageChange={vi.fn()} />);
 
     expect(screen.getByText('1')).toBeInTheDocument();
@@ -18,6 +20,7 @@ describe('Pagination', () => {
   });
 
   it('invokes onPageChange when users click links and controls', async () => {
+    // 個別ページリンク・前へ・次へをクリックしたときのコールバック順序を確認
     const onPageChange = vi.fn();
     const user = userEvent.setup();
 
@@ -33,6 +36,7 @@ describe('Pagination', () => {
   });
 
   it('disables previous and next controls on the edges', () => {
+    // 先頭/末尾では矢印が非活性になる（クリックできない）ことを担保
     const { rerender } = render(<Pagination currentPage={1} totalPages={5} onPageChange={vi.fn()} />);
 
     const prev = screen.getByLabelText('Go to previous page');

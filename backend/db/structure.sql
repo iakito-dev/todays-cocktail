@@ -64,17 +64,13 @@ CREATE SCHEMA graphql_public;
 
 
 --
--- Name: pg_net; Type: EXTENSION; Schema: -; Owner: -
 --
 
-CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
 
 
 --
--- Name: EXTENSION pg_net; Type: COMMENT; Schema: -; Owner: -
 --
 
-COMMENT ON EXTENSION pg_net IS 'Async HTTP';
 
 
 --

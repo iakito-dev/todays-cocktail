@@ -115,9 +115,12 @@ jobs:
           working-directory: backend
           cache-version: 2
 
-      # pg_isready の完了を待ったうえで DB を初期化
-      - name: Prepare database (db:prepare)
-        run: bundle exec rails db:prepare
+      # テストDBをクリーンに作り直し、マイグレーションで最新状態にする
+      # structure.sql の Supabase 拡張（pg_net 等）を回避するため、db:prepare は使用しない
+      - name: Prepare database (migrate)
+        run: |
+          bundle exec rails db:drop db:create
+          bundle exec rails db:migrate
 
       # RSpecを並列実行（GHランナーは2コアのため jobs=2）
       - name: Run RSpec

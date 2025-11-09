@@ -213,7 +213,7 @@ export function CocktailDetailDialog({
                         </Badge>
                       </div>
                       {noteText && (
-                        <p className="text-sm sm:text-base lg:text-lg text-gray-600 leading-relaxed whitespace-pre-wrap">
+                        <p className="text-sm sm:text-base lg:text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
                           {noteText}
                         </p>
                       )}

@@ -161,7 +161,7 @@ export function CocktailDetailDialog({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
           ref={dialogRef}
-          className="w-[90vw] min-[380px]:w-[84vw] sm:w-[78vw] lg:w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl h-[88vh] sm:h-auto max-h-[90vh] flex flex-col p-0 gap-0 border border-gray-100 rounded-xl sm:rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] [&>button]:hidden"
+          className="w-[90vw] min-[380px]:w-[84vw] sm:w-[78vw] lg:w-[72vw] xl:w-[68vw] max-w-[960px] xl:max-w-[1024px] h-[88vh] sm:h-auto max-h-[90vh] flex flex-col p-0 gap-0 border border-gray-100 rounded-xl sm:rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] [&>button]:hidden"
           style={{
             transform: touchStart !== null && translateY > 0
               ? `translateY(${translateY}px)`
@@ -339,15 +339,15 @@ export function CocktailDetailDialog({
         {/* Scrollable Content */}
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto overscroll-contain bg-gray-50/70 rounded-b-xl sm:rounded-b-2xl"
+          className="flex-1 overflow-y-auto lg:overflow-hidden overscroll-contain bg-gray-50/70 rounded-b-xl sm:rounded-b-2xl"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
           <div className="px-4 pt-5 pb-6 sm:px-6 sm:pt-7 sm:pb-8 md:px-6 md:pb-10">
-            <div className="flex flex-col gap-6 sm:gap-8 lg:grid lg:grid-cols-[minmax(360px,1.1fr)_minmax(320px,0.9fr)] lg:gap-10">
+            <div className="flex flex-col gap-6 sm:gap-8 lg:flex-row lg:gap-10">
               {/* 情報エリア（右カラム） */}
-              <div className="order-2 lg:order-2 space-y-6 sm:space-y-8">
+              <div className="order-2 lg:order-2 space-y-6 sm:space-y-8 lg:flex lg:flex-col lg:w-1/2 lg:max-h-[calc(88vh-16rem)] lg:overflow-y-auto lg:pr-2">
 
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex items-center gap-2 mb-3 sm:mb-4 md:mb-5">
@@ -385,7 +385,7 @@ export function CocktailDetailDialog({
               </div>
 
               {/* ビジュアルエリア（左カラム） */}
-              <div className="order-1 lg:order-1 space-y-4 sm:space-y-5 lg:sticky lg:top-6">
+              <div className="order-1 lg:order-1 space-y-4 sm:space-y-5 lg:flex lg:flex-col lg:w-1/2 lg:flex-shrink-0">
                 <div className="relative w-full aspect-[4/3] md:aspect-[5/4] lg:aspect-[3/2] max-h-[320px] lg:max-h-[280px] rounded-2xl lg:rounded-3xl overflow-hidden bg-gray-100 shadow-sm lg:shadow-lg">
                   <ImageWithFallback
                     src={currentCocktail.image_url || ''}

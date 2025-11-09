@@ -5,8 +5,14 @@
 # Colima上でRails APIとReact(Vite)を軽量・高速に実行する構成。
 #
 # コマンド一覧：
-# 初回（またはDockerfile変更時）
-#   docker compose --profile dev up --build
+#
+# Colima起動（macOSログイン後に一度実行）
+#   colima start
+#
+# Supabaseローカル環境起動
+#   supabase start
+# 停止
+#   supabase stop
 #
 # 通常起動（ビルド済み）
 #   docker compose up -d

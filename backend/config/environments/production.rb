@@ -22,8 +22,8 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Set the default URL options for Active Storage URLs
-  Rails.application.routes.default_url_options[:host] = ENV.fetch('BACKEND_URL', 'https://todays-cocktails.onrender.com').gsub(%r{https?://}, '')
-  Rails.application.routes.default_url_options[:protocol] = 'https'
+  Rails.application.routes.default_url_options[:host] = ENV.fetch("BACKEND_URL", "https://todays-cocktails.onrender.com").gsub(%r{https?://}, "")
+  Rails.application.routes.default_url_options[:protocol] = "https"
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
@@ -66,12 +66,12 @@ Rails.application.configure do
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = {
-    host: ENV.fetch('FRONTEND_URL', 'https://yourdomain.com').gsub(%r{https?://}, '')
+    host: ENV.fetch("FRONTEND_URL", "https://yourdomain.com").gsub(%r{https?://}, "")
   }
 
   # Default mail sender
   config.action_mailer.default_options = {
-    from: ENV.fetch('MAIL_FROM_ADDRESS', 'noreply@example.com')
+    from: ENV.fetch("MAIL_FROM_ADDRESS", "noreply@example.com")
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to

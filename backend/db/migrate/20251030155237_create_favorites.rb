@@ -8,6 +8,6 @@ class CreateFavorites < ActiveRecord::Migration[8.0]
     end
 
     # 同じユーザーが同じカクテルを重複してお気に入りできないようにする
-    add_index :favorites, [:user_id, :cocktail_id], unique: true
+    add_index :favorites, [ :user_id, :cocktail_id ], unique: true
   end
 end

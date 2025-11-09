@@ -1,6 +1,6 @@
 namespace :dev do
   desc "開発環境用: ユーザーのメールアドレスを確認済みにする"
-  task :confirm_user, [:email] => :environment do |_t, args|
+  task :confirm_user, [ :email ] => :environment do |_t, args|
     email = args[:email]
 
     unless email

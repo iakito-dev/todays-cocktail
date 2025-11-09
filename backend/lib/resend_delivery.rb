@@ -8,25 +8,25 @@ class ResendDelivery
   end
 
   def deliver!(mail)
-    require 'net/http'
-    require 'json'
+    require "net/http"
+    require "json"
 
-    uri = URI('https://api.resend.com/emails')
+    uri = URI("https://api.resend.com/emails")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
 
     request = Net::HTTP::Post.new(uri.path)
-    request['Authorization'] = "Bearer #{ENV['RESEND_API_KEY']}"
-    request['Content-Type'] = 'application/json'
+    request["Authorization"] = "Bearer #{ENV['RESEND_API_KEY']}"
+    request["Content-Type"] = "application/json"
 
     # メール本文（HTMLまたはテキスト）
     body_content = if mail.html_part
                      { html: mail.html_part.body.decoded }
-                   elsif mail.text_part
+    elsif mail.text_part
                      { text: mail.text_part.body.decoded }
-                   else
+    else
                      { text: mail.body.decoded }
-                   end
+    end
 
     # Resend API用のペイロード
     payload = {

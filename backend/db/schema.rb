@@ -11,18 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2025_11_06_100000) do
-  create_schema "_realtime"
-  create_schema "auth"
-  create_schema "extensions"
-  create_schema "graphql"
-  create_schema "graphql_public"
-  create_schema "net"
-  create_schema "pgbouncer"
-  create_schema "realtime"
-  create_schema "storage"
-  create_schema "supabase_functions"
-  create_schema "vault"
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "extensions.pg_net"
   enable_extension "extensions.pg_stat_statements"

@@ -18,13 +18,13 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
     it 'filters by name q' do
       get '/api/v1/cocktails', params: { q: 'モヒ' }
       json = JSON.parse(response.body)
-      expect(json['cocktails'].map { |c| c['name'] }).to eq(['モヒート'])
+      expect(json['cocktails'].map { |c| c['name'] }).to eq([ 'モヒート' ])
     end
 
     it 'filters by base' do
       get '/api/v1/cocktails', params: { base: 'gin' }
       json = JSON.parse(response.body)
-      expect(json['cocktails'].map { |c| c['name'] }).to eq(['マティーニ'])
+      expect(json['cocktails'].map { |c| c['name'] }).to eq([ 'マティーニ' ])
     end
 
     it 'filters by multiple bases' do
@@ -36,7 +36,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
     it 'filters by ingredients tokens (AND match)' do
       get '/api/v1/cocktails', params: { ingredients: 'ラム, ミント' }
       json = JSON.parse(response.body)
-      expect(json['cocktails'].map { |c| c['name'] }).to eq(['モヒート'])
+      expect(json['cocktails'].map { |c| c['name'] }).to eq([ 'モヒート' ])
     end
 
     it 'orders by id ascending by default' do
@@ -117,7 +117,7 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
 
         expect(json).to have_key('id')
         expect(json).to have_key('name')
-        expect([cocktail1.name, cocktail2.name]).to include(json['name'])
+        expect([ cocktail1.name, cocktail2.name ]).to include(json['name'])
       end
 
       it 'includes ingredients in the response' do

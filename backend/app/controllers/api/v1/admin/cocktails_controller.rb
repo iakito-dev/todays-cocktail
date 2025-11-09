@@ -6,7 +6,7 @@ module Api
       class CocktailsController < ApplicationController
         before_action :authenticate_user!
         before_action :require_admin!
-        before_action :set_cocktail, only: [:update]
+        before_action :set_cocktail, only: [ :update ]
 
         # PUT /api/v1/admin/cocktails/:id
         def update
@@ -66,7 +66,7 @@ module Api
 
         def require_admin!
           unless current_user&.admin?
-            render json: { error: '管理者権限が必要です' }, status: :forbidden
+            render json: { error: "\u7BA1\u7406\u8005\u6A29\u9650\u304C\u5FC5\u8981\u3067\u3059" }, status: :forbidden
           end
         end
       end

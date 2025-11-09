@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'httparty'
-require 'open-uri'
+require "httparty"
+require "open-uri"
 
 # 外部URLから画像をダウンロードしてActive Storageに保存するサービス
 class ImageDownloadService
@@ -20,7 +20,7 @@ class ImageDownloadService
 
     begin
       # 画像をダウンロード
-      downloaded_file = URI.open(image_url, 'rb')
+      downloaded_file = URI.open(image_url, "rb")
 
       # ファイル名を生成（URLから拡張子を抽出）
       filename = generate_filename(image_url, record)
@@ -84,7 +84,7 @@ class ImageDownloadService
   private_class_method def self.generate_filename(url, record)
     # URLから拡張子を抽出
     extension = File.extname(URI.parse(url).path)
-    extension = '.jpg' if extension.blank? # デフォルト拡張子
+    extension = ".jpg" if extension.blank? # デフォルト拡張子
 
     # ファイル名を生成（レコードのクラス名とID、タイムスタンプを使用）
     "#{record.class.name.underscore}_#{record.id}_#{Time.current.to_i}#{extension}"
@@ -97,15 +97,15 @@ class ImageDownloadService
 
     case magic_bytes
     when /^\xff\xd8\xff/n
-      'image/jpeg'
+      "image/jpeg"
     when /^\x89PNG/n
-      'image/png'
+      "image/png"
     when /^GIF8/n
-      'image/gif'
+      "image/gif"
     when /^RIFF....WEBP/n
-      'image/webp'
+      "image/webp"
     else
-      'image/jpeg' # デフォルト
+      "image/jpeg" # デフォルト
     end
   end
 end

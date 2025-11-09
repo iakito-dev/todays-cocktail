@@ -7,19 +7,19 @@ class ApplicationController < ActionController::API
   # Devise + JWT認証のためのヘルパーメソッド
   def authenticate_user!
     # Authorizationヘッダーから手動でJWTトークンを抽出・検証
-    token = request.headers['Authorization']&.split(' ')&.last
+    token = request.headers["Authorization"]&.split(" ")&.last
     return render_unauthorized unless token
 
     begin
       decoded_token = JWT.decode(
         token,
-        Rails.application.credentials.devise_jwt_secret_key || ENV['DEVISE_JWT_SECRET_KEY'],
+        Rails.application.credentials.devise_jwt_secret_key || ENV["DEVISE_JWT_SECRET_KEY"],
         true,
-        { algorithm: 'HS256' }
+        { algorithm: "HS256" }
       )
 
-      jti = decoded_token[0]['jti']
-      user_id = decoded_token[0]['sub']
+      jti = decoded_token[0]["jti"]
+      user_id = decoded_token[0]["sub"]
 
       # トークンが無効化リストに存在するか確認
       if JwtDenylist.exists?(jti: jti)
@@ -44,14 +44,14 @@ class ApplicationController < ActionController::API
   private
 
   def render_unauthorized
-    render json: { error: '認証が必要です。ログインしてください。' }, status: :unauthorized
+    render json: { error: "\u8A8D\u8A3C\u304C\u5FC5\u8981\u3067\u3059\u3002\u30ED\u30B0\u30A4\u30F3\u3057\u3066\u304F\u3060\u3055\u3044\u3002" }, status: :unauthorized
   end
 
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :password, :password_confirmation])
-    devise_parameter_sanitizer.permit(:sign_in, keys: [:email, :password])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:email, :password, :password_confirmation, :current_password])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :email, :password, :password_confirmation ])
+    devise_parameter_sanitizer.permit(:sign_in, keys: [ :email, :password ])
+    devise_parameter_sanitizer.permit(:account_update, keys: [ :email, :password, :password_confirmation, :current_password ])
   end
 end

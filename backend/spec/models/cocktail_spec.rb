@@ -32,7 +32,7 @@ RSpec.describe Cocktail, type: :model do
 
     it 'returns ingredients in the correct order' do
       ordered = cocktail.ordered_ingredients
-      expect(ordered.map { |ci| ci.ingredient.name }).to eq(['テスト材料A', 'テスト材料B', 'テスト材料C'])
+      expect(ordered.map { |ci| ci.ingredient.name }).to eq([ 'テスト材料A', 'テスト材料B', 'テスト材料C' ])
     end
 
     it 'includes amount_text information' do

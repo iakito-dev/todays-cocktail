@@ -3,9 +3,9 @@
 namespace :admin do
   desc "管理者アカウントを作成または更新"
   task setup: :environment do
-    email = ENV['ADMIN_EMAIL']
-    password = ENV['ADMIN_PASSWORD']
-    name = ENV['ADMIN_NAME'] || 'Admin'
+    email = ENV["ADMIN_EMAIL"]
+    password = ENV["ADMIN_PASSWORD"]
+    name = ENV["ADMIN_NAME"] || "Admin"
 
     if email.blank? || password.blank?
       puts "❌ エラー: ADMIN_EMAIL と ADMIN_PASSWORD を.envファイルに設定してください"
@@ -62,7 +62,7 @@ namespace :admin do
   end
 
   desc "指定したユーザーを管理者に昇格"
-  task :promote, [:email] => :environment do |_t, args|
+  task :promote, [ :email ] => :environment do |_t, args|
     email = args[:email]
 
     if email.blank?
@@ -86,7 +86,7 @@ namespace :admin do
   end
 
   desc "指定したユーザーの管理者権限を削除"
-  task :demote, [:email] => :environment do |_t, args|
+  task :demote, [ :email ] => :environment do |_t, args|
     email = args[:email]
 
     if email.blank?

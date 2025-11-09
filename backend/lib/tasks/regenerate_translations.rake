@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 namespace :cocktails do
-  desc 'Regenerate translation-related fields (set COCKTAIL_IDS=1,2 or FORCE=true, FIELDS=name_ja,glass_ja,ingredient_names,amounts,instructions_ja,description,base,strength)'
+  desc "Regenerate translation-related fields (set COCKTAIL_IDS=1,2 or FORCE=true, FIELDS=name_ja,glass_ja,ingredient_names,amounts,instructions_ja,description,base,strength)"
   task regenerate_translations: :environment do
-    force = ActiveModel::Type::Boolean.new.cast(ENV['FORCE'])
-    ids = ENV['COCKTAIL_IDS']&.split(',')&.map(&:strip)&.reject(&:blank?)
-    fields = ENV['FIELDS']&.split(',')&.map { |f| f.strip.underscore.to_sym }
+    force = ActiveModel::Type::Boolean.new.cast(ENV["FORCE"])
+    ids = ENV["COCKTAIL_IDS"]&.split(",")&.map(&:strip)&.reject(&:blank?)
+    fields = ENV["FIELDS"]&.split(",")&.map { |f| f.strip.underscore.to_sym }
 
     regenerator = CocktailRegenerator.new(
       force: force,

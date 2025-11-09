@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'httparty'
+require "httparty"
 
 # Unsplash APIを使用してカクテル画像を検索・保存するサービス
 class UnsplashImageService
-  BASE_URL = 'https://api.unsplash.com'
+  BASE_URL = "https://api.unsplash.com"
 
   def initialize
-    @access_key = ENV['UNSPLASH_ACCESS_KEY']
-    raise 'UNSPLASH_ACCESS_KEY is not set' if @access_key.blank?
+    @access_key = ENV["UNSPLASH_ACCESS_KEY"]
+    raise "UNSPLASH_ACCESS_KEY is not set" if @access_key.blank?
   end
 
   # カクテル名で画像を検索して保存
@@ -77,17 +77,17 @@ class UnsplashImageService
       query: {
         query: query,
         per_page: 1,
-        orientation: 'portrait', # 縦長の画像を優先
-        content_filter: 'high' # 高品質な画像のみ
+        orientation: "portrait", # 縦長の画像を優先
+        content_filter: "high" # 高品質な画像のみ
       },
       headers: {
-        'Authorization' => "Client-ID #{@access_key}",
-        'Accept-Version' => 'v1'
+        "Authorization" => "Client-ID #{@access_key}",
+        "Accept-Version" => "v1"
       }
     )
 
     if response.success?
-      results = response.parsed_response['results']
+      results = response.parsed_response["results"]
       return nil if results.empty?
 
       results.first
@@ -100,10 +100,10 @@ class UnsplashImageService
   # 画像URLをoverrideカラムに保存
   def assign_image_url(cocktail, photo)
     # 高品質な画像URLを取得（regular サイズ: 1080px）
-    image_url = photo.dig('urls', 'regular')
-    photo_id = photo['id']
+    image_url = photo.dig("urls", "regular")
+    photo_id = photo["id"]
 
-    raise 'Unsplash response missing image URL' if image_url.blank?
+    raise "Unsplash response missing image URL" if image_url.blank?
 
     cocktail.update!(image_url_override: image_url)
 
@@ -113,12 +113,12 @@ class UnsplashImageService
 
   # Unsplashのダウンロードを追跡（API利用規約で必須）
   def track_download(photo)
-    download_location = photo['links']['download_location']
+    download_location = photo["links"]["download_location"]
 
     HTTParty.get(
       download_location,
       headers: {
-        'Authorization' => "Client-ID #{@access_key}"
+        "Authorization" => "Client-ID #{@access_key}"
       }
     )
   rescue StandardError => e

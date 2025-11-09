@@ -70,7 +70,7 @@ RSpec.describe 'Api::V1::Confirmations', type: :request do
       it '確認メールを再送信する' do
         # send_confirmation_instructionsメソッドが呼ばれることを確認
         allow(User).to receive(:send_confirmation_instructions).and_call_original
-        
+
         post "/api/v1/confirmation", params: { user: { email: user.email } }, as: :json
 
         expect(User).to have_received(:send_confirmation_instructions)

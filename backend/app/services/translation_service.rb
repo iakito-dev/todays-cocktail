@@ -5,7 +5,7 @@ class TranslationService
   class TranslationError < StandardError; end
 
   def initialize
-    @client = OpenAI::Client.new(access_token: ENV.fetch('OPENAI_API_KEY'))
+    @client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
   end
 
   # カクテル名を翻訳
@@ -135,7 +135,7 @@ class TranslationService
       #{instructions}
     EXAMPLES
 
-    prompt = build_prompt('日本語の自然なカクテル手順に翻訳', examples, rules: rules)
+    prompt = build_prompt("\u65E5\u672C\u8A9E\u306E\u81EA\u7136\u306A\u30AB\u30AF\u30C6\u30EB\u624B\u9806\u306B\u7FFB\u8A33", examples, rules: rules)
     translate(prompt)
   rescue StandardError => e
     Rails.logger.error("Translation failed for instructions: #{e.message}")
@@ -203,7 +203,7 @@ class TranslationService
 
   # カクテルのベース判定
   def determine_base(ingredients_list)
-    return 'vodka' if ingredients_list.blank?
+    return "vodka" if ingredients_list.blank?
 
     prompt = <<~PROMPT
       You are a cocktail expert. From the ingredient list, return only one of:
@@ -213,15 +213,15 @@ class TranslationService
     PROMPT
 
     result = translate(prompt)&.strip&.downcase
-    %w[gin rum whisky vodka tequila wine beer].include?(result) ? result : 'vodka'
+    %w[gin rum whisky vodka tequila wine beer].include?(result) ? result : "vodka"
   rescue StandardError => e
     Rails.logger.error("Base determination failed: #{e.message}")
-    'vodka'
+    "vodka"
   end
 
   # カクテルの強度判定
   def determine_strength(cocktail_name, ingredients_list = [], alcoholic_type = nil)
-    return 'light' if alcoholic_type == 'Non alcoholic'
+    return "light" if alcoholic_type == "Non alcoholic"
 
     prompt = <<~PROMPT
       あなたはプロのバーテンダーです。
@@ -252,17 +252,17 @@ class TranslationService
     data = JSON.parse(raw) rescue nil
     return nil unless data.is_a?(Hash)
 
-    intensity = data['intensity']&.strip
+    intensity = data["intensity"]&.strip
     mapped = case intensity
-             when 'ライト', 'light' then 'light'
-             when 'ミディアム', 'medium' then 'medium'
-             when 'ストロング', 'strong' then 'strong'
-             end
+    when "\u30E9\u30A4\u30C8", "light" then "light"
+    when "\u30DF\u30C7\u30A3\u30A2\u30E0", "medium" then "medium"
+    when "\u30B9\u30C8\u30ED\u30F3\u30B0", "strong" then "strong"
+    end
 
-    mapped || 'medium'
+    mapped || "medium"
   rescue StandardError => e
     Rails.logger.error("Strength determination failed for '#{cocktail_name}': #{e.message}")
-    'medium'
+    "medium"
   end
 
   # バッチ翻訳
@@ -297,10 +297,10 @@ class TranslationService
   def translate(prompt)
     response = @client.responses.create(
       parameters: {
-        model: 'gpt-5',
+        model: "gpt-5",
         input: prompt,
-        reasoning: { effort: 'minimal' },
-        text: { verbosity: 'low' },
+        reasoning: { effort: "minimal" },
+        text: { verbosity: "low" },
         max_output_tokens: 800
       }
     )
@@ -313,16 +313,16 @@ class TranslationService
   def extract_output_text(response)
     return response unless response.is_a?(Hash)
 
-    if response['output_text'].present?
-      return Array(response['output_text']).join("\n").strip
+    if response["output_text"].present?
+      return Array(response["output_text"]).join("\n").strip
     end
 
-    if response['output'].is_a?(Array)
-      combined = response['output'].filter_map do |item|
-        next unless item['content'].is_a?(Array)
+    if response["output"].is_a?(Array)
+      combined = response["output"].filter_map do |item|
+        next unless item["content"].is_a?(Array)
 
-        texts = item['content'].filter_map do |content|
-          content['text'] if content['type'] == 'output_text'
+        texts = item["content"].filter_map do |content|
+          content["text"] if content["type"] == "output_text"
         end
         texts.join
       end
@@ -332,6 +332,6 @@ class TranslationService
     end
 
     # Fallback for backwards compatibility (e.g., Chat Completions API shape)
-    response.dig('choices', 0, 'message', 'content')&.strip
+    response.dig("choices", 0, "message", "content")&.strip
   end
 end

@@ -1,16 +1,44 @@
+# ============================================================
+# CI Pipeline
+# ============================================================
+# 目的：
+#   - バックエンド（Rails）とフロントエンド（Vite + React）の
+#     Lint（静的解析）、テスト実行、デプロイ通知を自動化する。
+#
+# 実行タイミング：
+#   - main ブランチへの push
+#   - main ブランチをターゲットにした Pull Request
+#
+# 目的：
+#   - PR作成時に品質を自動チェック（Lint＋テスト）
+#   - mainブランチへのpush時にRender/Vercelへ自動デプロイ通知
+#
+# 全体設計方針：
+#   - 各ジョブ（backend/frontend）を独立実行し、最後に deploy をまとめる。
+#   - 並列実行＋キャッシュを活用し、速度と安定性を両立。
+# ============================================================
+
 name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
+# 同一ブランチで複数ワークフローが走った場合、古いものをキャンセル
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+# ============================================================
+# Backend Lint (RuboCop)
+# ============================================================
+# 目的：
+#   - Rubyコードの構文・スタイル・品質をRubocopで自動検証
+# 背景：
+#   - チーム全体で統一されたコーディング規約を維持するために有効。
+# ============================================================
 
 jobs:
   backend_lint:
@@ -21,21 +49,33 @@ jobs:
     defaults:
       run:
         working-directory: backend
+
     steps:
+      # ソースコードを取得
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Rubyと依存関係（Gem）をセットアップ
+      # bundler-cache: true により Gemfile.lock に基づく自動キャッシュ
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
           working-directory: backend
+          cache-version: 2
 
-      - name: Install gems
-        run: bundle install
-
+      # RuboCopを実行し、コード品質を静的解析
       - name: Run RuboCop
         run: bundle exec rubocop
+
+
+# ============================================================
+# Backend Test (RSpec)
+# ============================================================
+# 目的：
+#   - RSpecでRailsアプリの自動テストを実行する。
+#   - テスト前にPostgreSQLのテストDBを強制的に再生成し、状態をリセット。
+# ============================================================
 
   backend:
     name: Backend (RSpec)
@@ -44,11 +84,11 @@ jobs:
       RAILS_ENV: test
       LANG: ja_JP.UTF-8
       DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-      DATABASE_URL_TEST: ${{ secrets.TEST_DATABASE_URL }}
       BUNDLE_GEMFILE: ${{ github.workspace }}/backend/Gemfile
     defaults:
       run:
         working-directory: backend
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,53 +98,55 @@ jobs:
         with:
           bundler-cache: true
           working-directory: backend
+          cache-version: 2
 
-      - name: Install gems
-        run: bundle install
-
-      - name: Terminate existing test DB sessions
+      # PostgreSQLのテストDBを完全に再作成
+      # 理由：前回のテスト実行のゴミデータやセッションが残ると誤検知の原因になるため。
+      - id: reset_db
+        name: Reset test database
         env:
           DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
         run: |
-          psql "$DATABASE_URL" <<'SQL'
-          SELECT pg_terminate_backend(pid)
-          FROM pg_stat_activity
-          WHERE datname = current_database()
-            AND pid <> pg_backend_pid();
+          DB_NAME=$(ruby -ruri -e 'puts URI(ENV["DATABASE_URL"]).path.sub(%r{^/}, "")')
+          ADMIN_URL=$(ruby -ruri -e 'uri = URI(ENV["DATABASE_URL"]); uri.path = "/postgres"; puts uri')
+          psql "$ADMIN_URL" <<SQL
+          DO $$
+          BEGIN
+            -- 現在接続中のセッションを強制終了
+            PERFORM pg_terminate_backend(pid)
+            FROM pg_stat_activity
+            WHERE datname = '$DB_NAME'
+              AND pid <> pg_backend_pid();
+            BEGIN
+              -- PostgreSQL 15以降対応（FORCE付きDROP DATABASE）
+              EXECUTE format('DROP DATABASE IF EXISTS %I WITH (FORCE)', '$DB_NAME');
+            EXCEPTION WHEN syntax_error_or_access_rule_violation THEN
+              -- 古いPostgreSQLバージョンでも動作するようフォールバック
+              EXECUTE format('DROP DATABASE IF EXISTS %I', '$DB_NAME');
+            END;
+          END
+          $$;
+          CREATE DATABASE "$DB_NAME" WITH TEMPLATE template0;
           SQL
 
-      - name: Prepare database (schema load)
-        run: |
-          bundle exec rails db:drop db:create
-          bundle exec rails db:schema:load
+      # スキーマをDBに流し込み
+      - id: prepare_db
+        name: Prepare database (schema load)
+        run: bundle exec rails db:schema:load
 
+      # RSpecを並列実行（GitHubランナーは2コアのためjobs=2）
       - name: Run RSpec
-        run: bundle exec rspec --jobs 4
+        run: bundle exec rspec --jobs 2
 
-  frontend:
-    name: Frontend (Vitest)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    env:
-      CI: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Vitest
-        run: npm run test -- --run
+# ============================================================
+# Frontend Lint (ESLint)
+# ============================================================
+# 目的：
+#   - フロントエンドのコードをESLintで静的解析
+# 背景：
+#   - import順・変数未使用・フォーマット崩れなどを早期検出する。
+# ============================================================
 
   frontend_lint:
     name: Frontend Lint (ESLint)
@@ -114,10 +156,13 @@ jobs:
         working-directory: frontend
     env:
       CI: true
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Node.jsセットアップ
+      # .nvmrcに記載のNodeバージョンを自動取得
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -131,6 +176,59 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+
+# ============================================================
+# Frontend Test (Vitest)
+# ============================================================
+# 目的：
+#   - フロントエンドのユニットテストをVitestで実行。
+# 背景：
+#   - Reactコンポーネントのレンダリングやロジックの動作確認を自動化。
+# ============================================================
+
+  frontend:
+    name: Frontend (Vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      CI: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # --run オプションでインタラクティブモードを無効化（CI用）
+      - name: Run Vitest
+        run: npm run test -- --run
+
+
+# ============================================================
+# Deploy Hooks
+# ============================================================
+# 目的：
+#   - mainブランチへのpush完了時に Render / Vercel のデプロイWebhookを叩く。
+#   - テストが全て成功した場合のみ発火。
+#
+# 前提：
+#   - secrets.RENDER_DEPLOY_HOOK / secrets.VERCEL_DEPLOY_HOOK に
+#     各サービスのWebhook URLを登録しておくこと。
+#
+# 利点：
+#   - CI完了後に自動でRender/Vercelが再デプロイされるため、手動操作が不要。
+# ============================================================
+
   deploy:
     name: Deploy Hooks
     runs-on: ubuntu-latest
@@ -142,7 +240,8 @@ jobs:
     env:
       RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
       VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+
     steps:
       - name: Trigger Render deploy
         if: ${{ env.RENDER_DEPLOY_HOOK != '' }}

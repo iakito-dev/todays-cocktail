@@ -84,6 +84,7 @@ jobs:
       RAILS_ENV: test
       LANG: ja_JP.UTF-8
       DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+      DATABASE_URL_TEST: ${{ secrets.TEST_DATABASE_URL }}
       BUNDLE_GEMFILE: ${{ github.workspace }}/backend/Gemfile
     defaults:
       run:

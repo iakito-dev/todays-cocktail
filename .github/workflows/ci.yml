@@ -104,8 +104,6 @@ jobs:
       # 理由：前回のテスト実行のゴミデータやセッションが残ると誤検知の原因になるため。
       - id: reset_db
         name: Reset test database
-        env:
-          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
         run: |
           DB_NAME=$(ruby -ruri -e 'puts URI(ENV["DATABASE_URL"]).path.sub(%r{^/}, "")')
           ADMIN_URL=$(ruby -ruri -e 'uri = URI(ENV["DATABASE_URL"]); uri.path = "/postgres"; puts uri')

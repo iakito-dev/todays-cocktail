@@ -80,11 +80,25 @@ jobs:
   backend:
     name: Backend (RSpec)
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: todays_cocktail_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       RAILS_ENV: test
       LANG: ja_JP.UTF-8
-      DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-      DATABASE_URL_TEST: ${{ secrets.TEST_DATABASE_URL }}
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/todays_cocktail_test
+      DATABASE_URL_TEST: postgresql://postgres:postgres@localhost:5432/todays_cocktail_test
       BUNDLE_GEMFILE: ${{ github.workspace }}/backend/Gemfile
     defaults:
       run:
@@ -101,39 +115,11 @@ jobs:
           working-directory: backend
           cache-version: 2
 
-      # PostgreSQLのテストDBを完全に再作成
-      # 理由：前回のテスト実行のゴミデータやセッションが残ると誤検知の原因になるため。
-      - id: reset_db
-        name: Reset test database
-        run: |
-          DB_NAME=$(ruby -ruri -e 'puts URI(ENV["DATABASE_URL"]).path.sub(%r{^/}, "")')
-          ADMIN_URL=$(ruby -ruri -e 'uri = URI(ENV["DATABASE_URL"]); uri.path = "/postgres"; puts uri')
-          psql "$ADMIN_URL" <<SQL
-          DO $$
-          BEGIN
-            -- 現在接続中のセッションを強制終了
-            PERFORM pg_terminate_backend(pid)
-            FROM pg_stat_activity
-            WHERE datname = '$DB_NAME'
-              AND pid <> pg_backend_pid();
-            BEGIN
-              -- PostgreSQL 15以降対応（FORCE付きDROP DATABASE）
-              EXECUTE format('DROP DATABASE IF EXISTS %I WITH (FORCE)', '$DB_NAME');
-            EXCEPTION WHEN syntax_error_or_access_rule_violation THEN
-              -- 古いPostgreSQLバージョンでも動作するようフォールバック
-              EXECUTE format('DROP DATABASE IF EXISTS %I', '$DB_NAME');
-            END;
-          END
-          $$;
-          CREATE DATABASE "$DB_NAME" WITH TEMPLATE template0;
-          SQL
+      # pg_isready の完了を待ったうえで DB を初期化
+      - name: Prepare database (db:prepare)
+        run: bundle exec rails db:prepare
 
-      # スキーマをDBに流し込み
-      - id: prepare_db
-        name: Prepare database (schema load)
-        run: bundle exec rails db:schema:load
-
-      # RSpecを並列実行（GitHubランナーは2コアのためjobs=2）
+      # RSpecを並列実行（GHランナーは2コアのため jobs=2）
       - name: Run RSpec
         run: bundle exec rspec --jobs 2
 

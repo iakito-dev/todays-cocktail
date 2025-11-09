@@ -150,7 +150,7 @@ export function CocktailDetailDialog({
         <DialogContent
           ref={dialogRef}
           size="full"
-          className="!max-w-none w-[96vw] sm:w-[90vw] lg:w-[84vw] xl:w-[78vw] 2xl:w-[72vw] max-w-[1400px] max-h-[calc(100dvh-2rem)] flex flex-col p-0 border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
+          className="!max-w-none w-[92vw] sm:w-[84vw] lg:w-[74vw] xl:w-[68vw] 2xl:w-[62vw]  max-w-[1400px] max-h-[calc(100dvh-6rem)] flex flex-col p-0 border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
           style={{
             transform:
               touchStart !== null && translateY > 0

@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@vuer-ai/react-helmet-async';
 import { getCanonicalUrl, getOgImageUrl, siteMetadata, type StructuredData } from '../lib/seo';
 
 type SeoProps = {

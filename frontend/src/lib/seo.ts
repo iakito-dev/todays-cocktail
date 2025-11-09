@@ -5,7 +5,19 @@
 
 const FALLBACK_SITE_URL = 'https://todayscocktails.com';
 
-export const siteMetadata = {
+type SiteMetadata = {
+  siteName: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  defaultKeywords: string;
+  locale: string;
+  themeColor: string;
+  twitterHandle?: string;
+  defaultOgImagePath: string;
+  siteUrl: string;
+};
+
+export const siteMetadata: SiteMetadata = {
   siteName: "Today's Cocktail",
   defaultTitle: 'Today’s Cocktail｜人気カクテル図鑑&レシピ検索',
   defaultDescription:
@@ -14,7 +26,7 @@ export const siteMetadata = {
     'カクテル,カクテルレシピ,カクテル検索,カクテル図鑑,バー,お酒,ミクソロジー,ベース,作り方,人気,ウイスキー,ジン,ラム,テキーラ,ウォッカ,リキュール,ノンアルコール,モクテル,歴史',
   locale: 'ja_JP',
   themeColor: '#0f172a',
-  // twitterHandle: '@todayscocktails', // 必要なら有効化
+  twitterHandle: import.meta.env.VITE_TWITTER_HANDLE ?? undefined,
   defaultOgImagePath:
     import.meta.env.VITE_DEFAULT_OG_IMAGE ?? '/og-default.png',
   siteUrl:

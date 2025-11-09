@@ -330,5 +330,10 @@ Devise.setup do |config|
 
     # JWTの有効期限（デフォルト: 1時間）
     jwt.expiration_time = 1.day.to_i
+
+    # API では JSON リクエストのみ JWT の発行対象にする
+    jwt.request_formats = {
+      user: [ :json ]
+    }
   end
 end

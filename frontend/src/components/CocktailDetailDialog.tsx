@@ -208,7 +208,7 @@ export function CocktailDetailDialog({
         <DialogContent
           ref={dialogRef}
           size="full"
-          className="!max-w-none w-[92vw] sm:w-[84vw] lg:w-[74vw] xl:w-[68vw] 2xl:w-[62vw]  max-w-[1400px] max-h-[calc(100dvh-6rem)] flex flex-col p-0 border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
+          className="!max-w-none w-[92vw] sm:w-[84vw] lg:w-[74vw] xl:w-[68vw] 2xl:w-[62vw]  max-w-[1400px] max-h-[calc(100dvh-6rem)] flex flex-col p-4. sm:p-2 border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
           style={{
             transform:
               touchStart !== null && translateY > 0
@@ -245,6 +245,11 @@ export function CocktailDetailDialog({
                       <DialogTitle className="text-2xl sm:text-3xl lg:text-[34px] font-semibold text-gray-900 leading-snug">
                         {primaryName}
                       </DialogTitle>
+                      {noteText && (
+                        <p className="text-sm sm:text-base lg:text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
+                          {noteText}
+                        </p>
+                      )}
                       <div className="flex flex-wrap items-center gap-2.5 pt-1">
                         <Badge
                           className={`${
@@ -270,11 +275,6 @@ export function CocktailDetailDialog({
                           {TECHNIQUE_LABELS[currentCocktail.technique]}
                         </Badge>
                       </div>
-                      {noteText && (
-                        <p className="text-sm sm:text-base lg:text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
-                          {noteText}
-                        </p>
-                      )}
                     </div>
                   </div>
                   <div className="absolute top-1.5 sm:top-2 right-0 flex gap-1.5 sm:gap-2">
@@ -373,7 +373,7 @@ export function CocktailDetailDialog({
                 </div>
 
                 {/* 右カラム */}
-                <div className="flex-1 overflow-y-visible lg:overflow-y-auto px-4 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-6 sm:py-8 lg:max-h-[calc(100dvh-12rem)]">
+                <div className="flex-1 overflow-y-visible lg:overflow-y-auto px-4 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-6 sm:py-8. mb-5  lg:max-h-[calc(100dvh-12rem)]">
                   <div className="space-y-6 sm:space-y-7">
                     <div className="rounded-2xl border border-gray-100 bg-white px-4 py-4 sm:px-5 sm:py-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
                       <div className="flex items-center justify-between">

@@ -150,7 +150,7 @@ export function CocktailDetailDialog({
         <DialogContent
           ref={dialogRef}
           size="full"
-          className="!max-w-none w-[96vw] sm:w-[90vw] lg:w-[84vw] xl:w-[78vw] 2xl:w-[72vw] max-w-[1400px] h-[92vh] flex flex-col p-0 border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
+          className="!max-w-none w-[96vw] sm:w-[90vw] lg:w-[84vw] xl:w-[78vw] 2xl:w-[72vw] max-w-[1400px] max-h-[calc(100dvh-2rem)] flex flex-col p-0 border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
           style={{
             transform:
               touchStart !== null && translateY > 0
@@ -264,7 +264,7 @@ export function CocktailDetailDialog({
                 onTouchEnd={handleTouchEnd}
               >
                 {/* 左カラム */}
-                <div className="lg:w-1/2 flex flex-col space-y-5 px-4 sm:px-6 md:px-8 py-5 bg-white lg:sticky lg:top-0 lg:h-[calc(92vh-10rem)]">
+                <div className="lg:w-1/2 flex flex-col space-y-5 px-4 sm:px-6 md:px-8 py-5 bg-white lg:sticky lg:top-0 lg:max-h-[calc(100dvh-12rem)]">
                   <div className="relative w-full aspect-[4/3] sm:aspect-[5/4] lg:aspect-[3/2] rounded-2xl overflow-hidden border border-gray-100 shadow-[0_15px_35px_rgba(15,23,42,0.12)]">
                     <ImageWithFallback
                       src={currentCocktail.image_url || ''}
@@ -315,7 +315,7 @@ export function CocktailDetailDialog({
                 </div>
 
                 {/* 右カラム */}
-                <div className="flex-1 overflow-y-visible lg:overflow-y-auto px-4 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-6 sm:py-8 lg:h-[calc(92vh-10rem)]">
+                <div className="flex-1 overflow-y-visible lg:overflow-y-auto px-4 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-6 sm:py-8 lg:max-h-[calc(100dvh-12rem)]">
                   <div className="space-y-6 sm:space-y-7">
                     <div className="rounded-2xl border border-gray-100 bg-white px-4 py-4 sm:px-5 sm:py-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
                       <div className="flex items-center justify-between">

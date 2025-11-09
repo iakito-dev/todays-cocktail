@@ -12,9 +12,9 @@ interface CocktailFiltersProps {
 
 const bases: { value: string; label: string; icon: string }[] = [
   { value: 'gin', label: 'ジン', icon: '🍸' },
-  { value: 'rum', label: 'ラム', icon: '🥃' },
+  { value: 'rum', label: 'ラム', icon: '🍹' },
   { value: 'whisky', label: 'ウイスキー', icon: '🥃' },
-  { value: 'vodka', label: 'ウォッカ', icon: '🍹' },
+  { value: 'vodka', label: 'ウォッカ', icon: '🍸' },
   { value: 'tequila', label: 'テキーラ', icon: '🍋' },
   { value: 'beer', label: 'ビール', icon: '🍺' },
   { value: 'wine', label: 'ワイン', icon: '🍷' },

@@ -14,7 +14,7 @@ interface InternalToast extends ToastPayload {
   visible: boolean;
 }
 
-export interface ToasterProps {
+interface ToasterProps {
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center';
 }
 

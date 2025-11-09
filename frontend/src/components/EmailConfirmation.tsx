@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
+import { Seo } from './Seo';
 
 export function EmailConfirmation() {
   const [searchParams] = useSearchParams();
@@ -64,9 +65,24 @@ export function EmailConfirmation() {
     confirmEmail();
   }, [searchParams]);
 
+  const confirmationStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: "メール確認 | Today's Cocktails",
+    description: 'ユーザーのメールアドレス確認状態を表示するページ',
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <>
+      <Seo
+        title="メール確認"
+        description="メールアドレスの認証が完了するとホーム画面にリダイレクトします。"
+        path="/confirmation"
+        noindex
+        structuredData={confirmationStructuredData}
+      />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         {status === 'loading' && (
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -74,8 +90,8 @@ export function EmailConfirmation() {
           </div>
         )}
 
-        {status === 'success' && (
-          <div className="text-center">
+          {status === 'success' && (
+            <div className="text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-8 h-8 text-green-600"
@@ -99,8 +115,8 @@ export function EmailConfirmation() {
           </div>
         )}
 
-        {status === 'error' && (
-          <div className="text-center">
+          {status === 'error' && (
+            <div className="text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-8 h-8 text-red-600"
@@ -122,8 +138,9 @@ export function EmailConfirmation() {
               ホームへ戻る
             </Button>
           </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

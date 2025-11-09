@@ -122,9 +122,9 @@ jobs:
           bundle exec rails db:drop db:create
           bundle exec rails db:schema:load
 
-      # RSpecを並列実行（GitHubホストランナーは2コアのため jobs=2）
+      # RSpecを実行（CI環境では --jobs オプション未対応のためシリアル実行）
       - name: Run RSpec
-        run: bundle exec rspec --jobs 2
+        run: bundle exec rspec
 
 
 # ============================================================

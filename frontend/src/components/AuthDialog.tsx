@@ -101,10 +101,10 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
 
           <Tabs defaultValue="login" className="mt-1">
           <TabsList className="grid w-full grid-cols-2 bg-gray-100 h-11 sm:h-12 rounded-xl">
-            <TabsTrigger value="login" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-lg">
+            <TabsTrigger value="login" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-xl">
               ログイン
             </TabsTrigger>
-            <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-lg">
+            <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-xl">
               新規登録
             </TabsTrigger>
           </TabsList>

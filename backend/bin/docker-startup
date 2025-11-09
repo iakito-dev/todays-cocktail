@@ -3,6 +3,31 @@ set -e
 
 echo "🚀 Starting Rails application..."
 
+# リトライ設定（環境変数で上書き可能）
+DB_PREPARE_MAX_RETRIES=${DB_PREPARE_MAX_RETRIES:-10}
+DB_PREPARE_RETRY_WAIT=${DB_PREPARE_RETRY_WAIT:-5}
+
+run_with_retry() {
+  local cmd="$1"
+  local attempt=1
+
+  while true; do
+    echo "🔁 Attempt ${attempt}/${DB_PREPARE_MAX_RETRIES}: ${cmd}"
+    if eval "${cmd}"; then
+      return 0
+    fi
+
+    if [ "${attempt}" -ge "${DB_PREPARE_MAX_RETRIES}" ]; then
+      echo "❌ Command failed after ${DB_PREPARE_MAX_RETRIES} attempts: ${cmd}"
+      return 1
+    fi
+
+    attempt=$((attempt + 1))
+    echo "⏳ Waiting ${DB_PREPARE_RETRY_WAIT}s before retrying..."
+    sleep "${DB_PREPARE_RETRY_WAIT}"
+  done
+}
+
 # サーバーPIDファイルを削除
 rm -f tmp/pids/server.pid
 
@@ -10,9 +35,9 @@ rm -f tmp/pids/server.pid
 echo "📦 Installing dependencies..."
 bundle install
 
-# データベースの準備（エラーを無視）
-echo "🗄️  Preparing database..."
-bundle exec rails db:prepare || echo "⚠️  Database prepare failed, continuing..."
+# データベースの準備（完了までリトライ）
+echo "🗄️  Preparing database (auto-migrate)..."
+run_with_retry "bundle exec rails db:prepare"
 
 # データベースが空の場合のみSeedを実行
 COCKTAIL_COUNT=$(bundle exec rails runner "puts Cocktail.count" 2>/dev/null || echo "0")

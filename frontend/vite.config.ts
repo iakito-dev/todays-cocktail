@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      '@vercel/analytics/next': '@vercel/analytics/react',
       "@": path.resolve(__dirname, "./src"),
     },
   },

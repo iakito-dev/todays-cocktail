@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/next';
 import { CocktailList } from './features/cocktails/components/list/CocktailList';
 import { CocktailDetail } from './features/cocktails/pages/CocktailDetail';
 import { Header } from './components/layout/Header';
@@ -23,6 +24,7 @@ function App() {
           </Routes>
           <Footer />
           <Toaster />
+          <Analytics />
         </div>
       </Router>
     </AuthProvider>

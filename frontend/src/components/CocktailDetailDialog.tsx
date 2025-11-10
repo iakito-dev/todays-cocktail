@@ -237,11 +237,14 @@ export function CocktailDetailDialog({
         <DialogContent
           ref={dialogRef}
           size="full"
-          className="w-[92vw] sm:w-[84vw] lg:w-[74vw] xl:w-[68vw] 2xl:w-[62vw]  max-w-[1400px] max-h-[calc(100dvh-6rem)] flex flex-col p-2 sm:p-4 bg-white border  border-slate-200 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)]  overflow-hidden [&>button]:hidden"
+          className="!max-w-none w-[92vw] sm:w-[84vw] lg:w-[74vw] xl:w-[68vw] 2xl:w-[62vw] max-w-[1400px] max-h-[calc(100dvh-6rem)] flex flex-col p-2 sm:p-4 border border-slate-200 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
           style={{
-            transform: translateY > 0 ? `translateY(${translateY}px)` : undefined,
-            transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-            willChange: 'transform',
+            transform: `translate(-50%, calc(-50% + ${translateY}px))`,
+            transition: isDragging
+              ? 'none'
+              : 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease-out',
+            opacity: isDragging ? 0.98 : 1,
+            willChange: 'transform, opacity',
           }}
         >
           {!currentCocktail ? (

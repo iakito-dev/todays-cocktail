@@ -72,7 +72,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
 
   if (loading) {
     return (
-      <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
+      <Card className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
         <div className="p-8 md:p-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit mb-6">
             <Sparkles className="w-5 h-5 flex-shrink-0" />
@@ -109,7 +109,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
 
   if (error || !cocktail) {
     return (
-      <Card className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
+      <Card className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
         <div className="p-8 md:p-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full w-fit mb-4">
             <Sparkles className="w-5 h-5 flex-shrink-0" />
@@ -123,7 +123,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
 
   return (
     <Card
-      className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      className="relative overflow-hidden rounded-2xl md:rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
       onClick={handleClick}
     >
       <div className="relative flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 p-4 md:p-8 lg:p-12">
@@ -176,7 +176,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
               e.stopPropagation();
               handleClick();
             }}
-            className="hidden md:flex group w-full md:w-fit bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base rounded-xl"
+            className="hidden md:flex group w-full md:w-fit bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base rounded-2xl"
           >
             レシピを見る
             <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
@@ -186,7 +186,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
         {/* Right Image */}
         <div className="flex items-center justify-center order-2 md:order-2">
           <div className="relative group w-full">
-            <div className="relative aspect-square w-full max-w-sm mx-auto rounded-2xl md:rounded-3xl overflow-hidden shadow-lg">
+            <div className="relative aspect-square w-full max-w-sm mx-auto rounded-2xl md:rounded-2xl overflow-hidden shadow-lg">
               <ImageWithFallback
                 src={cocktail.image_url || ""}
                 alt={cocktail.name || "No image available"}
@@ -202,7 +202,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
             e.stopPropagation();
             handleClick();
           }}
-          className="md:hidden group w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-3 shadow-lg hover:shadow-xl transition-all duration-300 text-sm rounded-xl order-3"
+          className="md:hidden group w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-3 shadow-lg hover:shadow-xl transition-all duration-300 text-sm rounded-2xl order-3"
         >
           レシピを見る
           <ArrowRight className="ml-2 w-4 h-4" />

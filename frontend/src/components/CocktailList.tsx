@@ -300,7 +300,7 @@ export function CocktailList() {
                   {!cocktails && !cocktailsError && (
                     <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-3">
                       {Array.from({ length: itemsPerPage }).map((_, i) => (
-                        <Card key={i} className="overflow-hidden border bg-white border-gray-200 rounded-xl">
+                        <Card key={i} className="overflow-hidden border bg-white border-gray-200 rounded-2xl">
                           <div className="relative aspect-[4/3]">
                             <Skeleton className="absolute inset-0" />
                           </div>
@@ -328,7 +328,7 @@ export function CocktailList() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="h-9 rounded-xl bg-white border-gray-200 hover:bg-gray-50"
+                            className="h-9 bg-white border-gray-200 hover:bg-gray-50"
                             onClick={() => setIsSortMenuOpen((prev) => !prev)}
                             aria-haspopup="menu"
                             aria-expanded={isSortMenuOpen}
@@ -337,7 +337,7 @@ export function CocktailList() {
                             <ChevronDown className="h-4 w-4" />
                           </Button>
                           {isSortMenuOpen && (
-                            <div className="absolute right-0 mt-2 w-40 rounded-xl border border-gray-200 bg-white shadow-lg z-50">
+                            <div className="absolute right-0 mt-2 w-40 rounded-2xl border border-gray-200 bg-white shadow-lg z-50">
                               <div className="py-2">
                                 <button
                                   type="button"

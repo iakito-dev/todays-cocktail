@@ -88,12 +88,12 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
       <DialogContent
         placement="raised"
         size="auth"
-        className="items-stretch gap-5 sm:gap-6 rounded-2xl sm:rounded-3xl"
+        className="items-stretch gap-5 sm:gap-6 rounded-2xl sm:rounded-2xl"
       >
         <div className="w-full flex flex-col gap-4 sm:gap-6">
           <DialogHeader className="space-y-2 sm:space-y-3 text-center sm:text-center">
             <div className="flex items-center justify-center mb-1.5">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-[20px] bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl sm:text-3xl shadow-md text-white">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl sm:text-3xl shadow-md text-white">
                 🍸
               </div>
             </div>
@@ -104,11 +104,11 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
           </DialogHeader>
 
           <Tabs defaultValue="login" className="mt-2 sm:mt-3 w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-gray-100 h-11 sm:h-12 rounded-xl p-1">
-              <TabsTrigger value="login" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-xl">
+            <TabsList className="grid w-full grid-cols-2 bg-gray-100 h-11 sm:h-12 rounded-2xl p-1">
+              <TabsTrigger value="login" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-2xl">
                 ログイン
               </TabsTrigger>
-              <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-xl">
+              <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-2xl">
                 新規登録
               </TabsTrigger>
             </TabsList>
@@ -116,7 +116,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
             <TabsContent value="login" className="space-y-4 sm:space-y-5 mt-4 sm:mt-5">
               <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
                 {error && (
-                  <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm sm:text-base">
+                  <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-2xl text-red-800 text-sm sm:text-base">
                     {error}
                   </div>
                 )}
@@ -159,7 +159,7 @@ export function AuthDialog({ isOpen, onClose, onLogin, onSignup, isLoading }: Au
             <TabsContent value="signup" className="space-y-4 sm:space-y-5 mt-4 sm:mt-5">
               <form onSubmit={handleSignup} className="space-y-3 sm:space-y-4">
                 {error && (
-                  <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm sm:text-base">
+                  <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-2xl text-red-800 text-sm sm:text-base">
                     {error}
                   </div>
                 )}

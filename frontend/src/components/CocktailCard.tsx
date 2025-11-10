@@ -50,7 +50,7 @@ export function CocktailCard({
 }: CocktailCardProps) {
   return (
     <Card
-      className="group cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden border bg-white border-gray-200 rounded-xl"
+      className="group cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden border bg-white border-gray-200 rounded-2xl"
       onClick={() => onViewDetails(cocktail)}
     >
       <div className="relative aspect-[4/3] overflow-hidden">

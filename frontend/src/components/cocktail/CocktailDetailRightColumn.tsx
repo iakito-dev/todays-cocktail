@@ -15,7 +15,7 @@ export function CocktailDetailRightColumn({
   return (
     <div
       className={cn(
-        'flex-1 overflow-y-visible lg:overflow-y-auto px-2 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-5 sm:py-8 mb-5 lg:max-h-[calc(100dvh-12rem)]',
+        'flex-1 overflow-y-visible lg:overflow-y-auto px-2 sm:px-5 md:px-8 lg:px-4 py-4 sm:py-6 lg:pt-4 lg:pb-6 mb-5 lg:max-h-[calc(100dvh-12rem)]',
         className
       )}
     >

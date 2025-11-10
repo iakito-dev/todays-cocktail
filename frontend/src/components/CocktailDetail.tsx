@@ -289,7 +289,7 @@ export function CocktailDetail() {
                 {cocktail.ingredients.map((ingredient, index) => (
                   <div
                     key={index}
-                    className="flex justify-between items-center p-4 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+                    className="flex justify-between items-center p-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-colors"
                   >
                     <span className="text-gray-900">{ingredient.name}</span>
                     <span className="text-gray-600 px-3 py-1 bg-white rounded-full">

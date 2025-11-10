@@ -1,7 +1,6 @@
-import { useEffect, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Input } from './ui/input';
-import { Search, X } from 'lucide-react';
-import { Button } from './ui/button';
+import { Search } from 'lucide-react';
 
 interface CocktailFiltersProps {
   searchQuery: string;
@@ -27,6 +26,7 @@ export function CocktailFilters({
   onBasesChange
 }: CocktailFiltersProps) {
   const [tempSearchQuery, setTempSearchQuery] = useState(searchQuery);
+  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     setTempSearchQuery(searchQuery);
   }, [searchQuery]);
@@ -57,48 +57,31 @@ export function CocktailFilters({
     }
   };
 
-  const handleClear = () => {
-    setTempSearchQuery('');
-    onSearchChange('');
-  };
-
   return (
     <div className="space-y-8">
       {/* Keyword Search */}
-      <div>
-        <label className="block mb-3 text-sm font-medium text-gray-700">
+      <div className="mb-6">
+        <label className="block mb-2 text-sm font-medium text-gray-700">
           カクテル名・材料名で検索
         </label>
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="マティーニ、Mojito、ライム..."
-              value={tempSearchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="pl-9 pr-10 h-11 bg-white border-gray-200 rounded-xl"
-            />
-            {tempSearchQuery && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClear}
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-gray-400 hover:text-gray-900"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
-          <Button
+        <div className="flex items-center w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500 transition">
+          <Input
+            type="text"
+            placeholder="例: マティーニ、モヒート"
+            value={tempSearchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-1 bg-transparent border-none outline-none px-4 text-gray-800 placeholder-gray-400 h-12 rounded-2xl focus-visible:ring-0 focus-visible:ring-offset-0"
+            ref={inputRef}
+          />
+          <button
             type="button"
-            onClick={handleSearchSubmit}
-            className="h-11 w-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-sm flex items-center justify-center"
+            onClick={() => inputRef.current?.focus()}
+            className="h-12 w-12 flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-sm hover:from-indigo-600 hover:to-blue-600 active:scale-95 transition"
             aria-label="検索"
           >
-            <Search className="w-4 h-4" />
-          </Button>
+            <Search className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
@@ -112,7 +95,7 @@ export function CocktailFilters({
               <button
                 key={base.value}
                 onClick={() => handleBaseToggle(base.value)}
-                className={`w-full p-3.5 rounded-xl border transition-all ${
+                className={`w-full p-3.5 rounded-2xl border transition-all ${
                   isSelected
                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-transparent shadow-sm'
                     : 'bg-white hover:bg-gray-50 border-gray-200 text-gray-900'
@@ -128,17 +111,6 @@ export function CocktailFilters({
             );
           })}
         </div>
-        {selectedBases.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onBasesChange([])}
-            className="mt-3 w-full bg-white border-gray-200 hover:bg-gray-50 h-10 rounded-xl"
-          >
-            <X className="w-4 h-4 mr-2" />
-            選択を解除
-          </Button>
-        )}
       </div>
 
     </div>

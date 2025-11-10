@@ -237,7 +237,7 @@ export function CocktailDetailDialog({
         <DialogContent
           ref={dialogRef}
           size="full"
-          className="!max-w-none w-[92vw] sm:w-[84vw] lg:w-[74vw] xl:w-[68vw] 2xl:w-[62vw]  max-w-[1400px] max-h-[calc(100dvh-6rem)] flex flex-col p-4. sm:p-2 border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)] bg-white overflow-hidden [&>button]:hidden"
+          className="w-[92vw] sm:w-[84vw] lg:w-[74vw] xl:w-[68vw] 2xl:w-[62vw]  max-w-[1400px] max-h-[calc(100dvh-6rem)] flex flex-col p-2 sm:p-4 bg-white border  border-slate-200 rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.12)]  overflow-hidden [&>button]:hidden"
           style={{
             transform: translateY > 0 ? `translateY(${translateY}px)` : undefined,
             transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
@@ -245,7 +245,7 @@ export function CocktailDetailDialog({
           }}
         >
           {!currentCocktail ? (
-            <div className="p-4 sm:p-6 md:p-8 space-y-6">
+            <div className="p-2 sm:p-6 md:p-8 space-y-6">
               <Skeleton className="h-8 sm:h-10 w-3/4 rounded-2xl" />
               <Skeleton className="h-5 sm:h-6 w-1/2 rounded-2xl" />
               <div className="flex gap-2">
@@ -260,9 +260,9 @@ export function CocktailDetailDialog({
                 <div className="w-10 h-1 bg-gray-300 rounded-full" />
               </div>
 
-              <DialogHeader className="bg-white z-10 px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-b border-gray-100 text-left">
+              <DialogHeader className="bg-white z-10 px-2 sm:px-5 md:px-8 py-3 sm:py-5 border-b border-gray-100 text-left">
                 <div className="relative w-full">
-                  <div className="flex flex-col gap-4 lg:flex-row lg:justify-between pr-12">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:justify-between pr-2 sm:pr-4 lg:pr-12">
                     <div className="space-y-2.5 sm:space-y-3">
                       {secondaryName && (
                         <p className="pl-px text-sm uppercase tracking-[0.3em] text-gray-400 font-semibold">
@@ -277,7 +277,7 @@ export function CocktailDetailDialog({
                           {noteText}
                         </p>
                       )}
-                      <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                      <div className="flex flex-wrap items-center  gap-2.5 pt-1 ">
                         <Badge
                           className={`${
                             strengthColors[
@@ -350,7 +350,7 @@ export function CocktailDetailDialog({
                 onTouchCancel={handleTouchEnd}
               >
                 {/* 左カラム */}
-                <div className="lg:w-1/2 flex flex-col space-y-5 px-4 sm:px-6 md:px-8 py-5 bg-white lg:sticky lg:top-0 lg:max-h-[calc(100dvh-12rem)]">
+                <div className="lg:w-1/2 flex flex-col space-y-5 px-2 sm:px-5 md:px-8 py-4 bg-white lg:sticky lg:top-0 lg:max-h-[calc(100dvh-12rem)]">
                   <div className="relative w-full aspect-[4/3] sm:aspect-[5/4] lg:aspect-[3/2] rounded-2xl overflow-hidden border border-gray-100 shadow-[0_15px_35px_rgba(15,23,42,0.12)]">
                     <ImageWithFallback
                       src={currentCocktail.image_url || ''}
@@ -358,42 +358,57 @@ export function CocktailDetailDialog({
                       className="object-cover w-full h-full"
                     />
                   </div>
+
+                  {/* ==== Glass & Technique Section ==== */}
                   <div className="grid grid-cols-2 gap-3.5">
                     {[
                       {
-                        icon: <Wine className="w-4 h-4 text-blue-600" />,
+                        icon: (
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <Wine className="w-5 h-5 text-blue-600" />
+                          </div>
+                        ),
                         label: 'ベース',
                         value: BASE_LABELS[currentCocktail.base],
                       },
                       {
-                        icon: <Hammer className="w-4 h-4 text-orange-600" />,
+                        icon: (
+                          <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                            <Hammer className="w-5 h-5 text-orange-600" />
+                          </div>
+                        ),
                         label: '技法',
                         value: TECHNIQUE_LABELS[currentCocktail.technique],
                       },
                       {
-                        icon: <GlassWater className="w-4 h-4 text-indigo-600" />,
+                        icon: (
+                          <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <GlassWater className="w-5 h-5 text-indigo-600" />
+                          </div>
+                        ),
                         label: 'グラス',
-                        value:
-                          currentCocktail.glass_ja || currentCocktail.glass,
+                        value: currentCocktail.glass_ja || currentCocktail.glass,
                       },
                       {
-                        icon: <Droplet className="w-4 h-4 text-rose-600" />,
+                        icon: (
+                          <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center">
+                            <Droplet className="w-5 h-5 text-rose-600" />
+                          </div>
+                        ),
                         label: 'アルコール度数',
                         value: STRENGTH_LABELS[currentCocktail.strength],
                       },
                     ].map((item, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2.5 p-3.5 rounded-2xl bg-white border border-gray-100 shadow-sm"
+                        className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all"
                       >
-                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                          {item.icon}
-                        </div>
+                        {item.icon}
                         <div>
                           <p className="text-[11px] uppercase tracking-wide text-gray-500">
                             {item.label}
                           </p>
-                          <p className="text-sm text-gray-900">{item.value}</p>
+                          <p className="text-sm text-gray-900 font-medium">{item.value}</p>
                         </div>
                       </div>
                     ))}
@@ -401,9 +416,9 @@ export function CocktailDetailDialog({
                 </div>
 
                 {/* 右カラム */}
-                <div className="flex-1 overflow-y-visible lg:overflow-y-auto px-4 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-6 sm:py-8 mb-5  lg:max-h-[calc(100dvh-12rem)]">
+                <div className="flex-1 overflow-y-visible lg:overflow-y-auto px-2 sm:px-6 md:px-8 lg:pl-4 lg:pr-8 py-5 sm:py-8 mb-5  lg:max-h-[calc(100dvh-12rem)]">
                   <div className="space-y-6 sm:space-y-7">
-                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-4 sm:px-5 sm:py-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
+                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-4 sm:px-5 sm:py-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)] hover:shadow-md transition-all">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <div className="w-1 h-5 sm:h-6 bg-blue-500 rounded-full" />
@@ -432,7 +447,7 @@ export function CocktailDetailDialog({
                       </div>
                     </div>
 
-                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-4 sm:px-5 sm:py-5">
+                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-4 sm:px-5 sm:py-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)] hover:shadow-md transition-all">
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-5 sm:h-6 bg-blue-500 rounded-full" />
                         <h3 className="text-base font-semibold text-gray-900">

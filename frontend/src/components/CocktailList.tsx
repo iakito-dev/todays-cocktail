@@ -9,7 +9,7 @@ import { Heart, LogIn, SlidersHorizontal, ChevronDown, Check } from 'lucide-reac
 import { TodaysPick } from './TodaysPick';
 import { CocktailCard } from './CocktailCard';
 import { CocktailFilters } from './CocktailFilters';
-import { CocktailDetailDialog } from './CocktailDetailDialog';
+import { CocktailDetailDialog } from './cocktail/CocktailDetailDialog';
 import { AuthDialog } from './AuthDialog';
 import { Pagination } from './Pagination';
 import { Seo } from './Seo';

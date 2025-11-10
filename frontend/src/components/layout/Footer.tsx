@@ -43,7 +43,7 @@ export const Footer = () => {
                 Today's Cocktail
               </h3>
               <p className="mt-1 text-sm text-slate-400">
-                今日の一杯が見つかるカクテル検索アプリ
+                今日の一杯が見つかるカクテルレシピ検索アプリ
               </p>
             </div>
           </div>

@@ -19,7 +19,7 @@ type SiteMetadata = {
 
 export const siteMetadata: SiteMetadata = {
   siteName: "Today's Cocktail",
-  defaultTitle: 'Today’s Cocktail｜人気カクテル図鑑&レシピ検索',
+  defaultTitle: 'Today’s Cocktail - 人気カクテル図鑑&レシピ検索',
   defaultDescription:
     '定番からオリジナルまで、40種類以上のカクテルを検索・比較。ベースや味わい、アルコール度数で絞り込みながら、作り方や材料、カクテルの起源や由来まで楽しめます。',
   defaultKeywords:
@@ -59,8 +59,7 @@ export const getOgImageUrl = (image?: string | null) => {
 export const absoluteUrl = (path?: string | null) =>
   buildAbsoluteUrl(path ?? '/');
 
-export const getShareImageUrl = (path?: string | null) =>
-  getOgImageUrl(path);
+export const getShareImageUrl = (path?: string | null) => getOgImageUrl(path);
 
 // ========================================================
 // 構造化データ（Structured Data）

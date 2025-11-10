@@ -9,17 +9,21 @@ Today’s Cocktail は、「今日の気分にぴったりなカクテルをす�
 ## アプリ紹介
 
 ### 概要
+
 - カクテルをベース酒・材料・人気度といった複数軸で検索できる Web アプリ
 - レシピ詳細では英語／日本語の材料名や手順を併記し、初心者でも各カクテルごとの雰囲気を掴める内容を目指しました
 - 気に入ったカクテルはお気に入り登録して自分だけのリストを育てることができます
 
 ### URL
+
 - プロダクト: https://todayscocktails.com
 
 ### サービス開発の背景
+
 - バーのメニューを見ても味が想像できない、自宅にある材料で何が作れるか分からない――そんなちょっとした不便を解消する「検索しやすいカクテル図鑑」を作りたいと考えました
 
 ### 主な実装機能
+
 - ベース酒・材料キーワード・人気順を組み合わせた検索とページネーション
 - 日替わりでおすすめカクテルを紹介する「今日の一杯」（24 時間キャッシュ）
 - 英日併記のレシピ詳細（材料順、分量、作り方、説明、画像 URL）
@@ -32,14 +36,14 @@ Today’s Cocktail は、「今日の気分にぴったりなカクテルをす�
 
 ## 採用技術
 
-| レイヤー | 技術 |
-| --- | --- |
-| フロントエンド | React 19 / TypeScript / Vite / Tailwind CSS / shadcn/ui |
-| バックエンド | Ruby 3.4.6 / Rails 8.0.3（API モード） / Devise + devise-jwt |
-| データベース | Supabase Cloud（PostgreSQL 15 系） |
-| インフラ | Vercel（フロント）、Render（API）、Cloudflare DNS、Terraform（IaC 準備中） |
-| CI/CD | GitHub Actions（lint / test）、Vercel / Render のデプロイパイプライン |
-| 開発環境 | Docker / Docker Compose / asdf |
+| レイヤー       | 技術                                                                       |
+| -------------- | -------------------------------------------------------------------------- |
+| フロントエンド | React 19 / TypeScript / Vite / Tailwind CSS / shadcn/ui                    |
+| バックエンド   | Ruby 3.4.6 / Rails 8.0.3（API モード） / Devise + devise-jwt               |
+| データベース   | Supabase Cloud（PostgreSQL 15 系）                                         |
+| インフラ       | Vercel（フロント）、Render（API）、Cloudflare DNS、Terraform（IaC 準備中） |
+| CI/CD          | GitHub Actions（lint / test）、Vercel / Render のデプロイパイプライン      |
+| 開発環境       | Docker / Docker Compose / asdf                                             |
 
 詳しい選定理由は `docs/tech_stack.md` にまとめています。
 
@@ -48,6 +52,7 @@ Today’s Cocktail は、「今日の気分にぴったりなカクテルをす�
 ## 構成図
 
 ### インフラ構成
+
 ```mermaid
 flowchart LR
   User[ユーザー] -->|HTTPS| Cloudflare[Cloudflare DNS]
@@ -58,6 +63,7 @@ flowchart LR
 ```
 
 ### ER 図（抜粋）
+
 ```mermaid
 erDiagram
   USERS ||--o{ FAVORITES : "お気に入り"
@@ -70,6 +76,7 @@ erDiagram
 テーブル定義の詳細は `docs/db_design.md` を参照してください。
 
 ### 画面遷移図（概要）
+
 ```mermaid
 flowchart TD
   Home[トップ / 検索] --> Detail[カクテル詳細]
@@ -101,13 +108,14 @@ UI とレスポンシブ方針は `docs/wireframe.md` にまとめています�
 
 ## 工夫した点
 
--   追記予定
+- 追記予定
 
 ---
 
 ## 苦労した点
 
--   追記予定
+- 追記予定
+
 ---
 
 ## 今後の課題
@@ -124,14 +132,14 @@ UI とレスポンシブ方針は `docs/wireframe.md` にまとめています�
 
 ### 0. 必要なツール
 
-| ツール | バージョン | 備考 |
-| --- | --- | --- |
-| asdf | latest | ランタイム管理 |
-| Ruby | 3.4.6 | `asdf install ruby 3.4.6` |
-| Node.js | 22.21.0 | `asdf install nodejs 22.21.0` |
-| Yarn | 1.22.22 | `asdf install yarn 1.22.22` |
-| Docker Desktop | latest | コンテナ実行 |
-| Supabase CLI | latest | `brew install supabase/tap/supabase` |
+| ツール         | バージョン | 備考                                 |
+| -------------- | ---------- | ------------------------------------ |
+| asdf           | latest     | ランタイム管理                       |
+| Ruby           | 3.4.6      | `asdf install ruby 3.4.6`            |
+| Node.js        | 22.21.0    | `asdf install nodejs 22.21.0`        |
+| Yarn           | 1.22.22    | `asdf install yarn 1.22.22`          |
+| Docker Desktop | latest     | コンテナ実行                         |
+| Supabase CLI   | latest     | `brew install supabase/tap/supabase` |
 
 ### 1. リポジトリの取得と依存関係のインストール
 
@@ -157,11 +165,11 @@ supabase start
 supabase status
 ```
 
-| サービス | ローカル接続 URL |
-| --- | --- |
+| サービス | ローカル接続 URL                                          |
+| -------- | --------------------------------------------------------- |
 | Database | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
-| API | `http://127.0.0.1:54321` |
-| Studio | `http://127.0.0.1:54323` |
+| API      | `http://127.0.0.1:54321`                                  |
+| Studio   | `http://127.0.0.1:54323`                                  |
 
 ### 3. アプリケーションの起動
 
@@ -171,12 +179,12 @@ docker compose up --build
 docker compose up -d --build
 ```
 
-| サービス | URL |
-| --- | --- |
-| Rails API (local) | http://localhost:3000 |
-| React (local) | http://localhost:5173 |
-| Health Check | http://localhost:3000/health |
-| Supabase Studio (local) | http://localhost:54323 |
+| サービス                | URL                          |
+| ----------------------- | ---------------------------- |
+| Rails API (local)       | http://localhost:3000        |
+| React (local)           | http://localhost:5173        |
+| Health Check            | http://localhost:3000/health |
+| Supabase Studio (local) | http://localhost:54323       |
 
 ### 4. よく使うコマンド
 
@@ -199,7 +207,20 @@ docker compose exec backend bundle exec rspec
 docker compose exec backend bundle exec rubocop
 docker compose exec frontend npm run lint
 docker compose exec frontend npm run test
+
+# サイトマップ
+docker compose exec frontend npm run sitemap
 ```
+
+### サイトマップの再生成
+
+SPA で公開中の静的ページと Rails API から取得したカクテル詳細ページを組み合わせて `frontend/public/sitemap.xml` を自動生成できます。
+
+1. API が参照できる状態にする（ローカルなら `docker compose up backend`）。
+2. 必要に応じて `SITE_URL` や `API_BASE_URL` を環境変数で上書きする。
+3. `docker compose exec frontend npm run sitemap` を実行。
+
+実行後に `frontend/public/sitemap.xml` が更新され、Vite ビルド時にそのまま `dist/sitemap.xml` として配備されます。API へ接続できない場合でも静的ページ分の URL は生成されるので、本番デプロイ前に再実行してください。
 
 ---
 

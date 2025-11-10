@@ -11,6 +11,7 @@
     "format": "prettier --write 'src/**/*.{ts,tsx,css,json}'",
     "format:check": "prettier --check 'src/**/*.{ts,tsx,css,json}'",
     "preview": "vite preview",
+    "sitemap": "node scripts/generate-sitemap.mjs",
     "test": "node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs",
     "test:ui": "node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs --ui",
     "test:coverage": "node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs --coverage"

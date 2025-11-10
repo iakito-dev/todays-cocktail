@@ -216,11 +216,11 @@ docker compose exec frontend npm run sitemap
 
 SPA で公開中の静的ページと Rails API から取得したカクテル詳細ページを組み合わせて `frontend/public/sitemap.xml` を自動生成できます。
 
-1. API が参照できる状態にする（ローカルなら `docker compose up backend`）。
-2. 必要に応じて `SITE_URL` や `API_BASE_URL` を環境変数で上書きする。
+1. API が参照できる状態にする（ローカルなら `docker compose up backend`、本番データを反映したい場合は `API_BASE_URL=https://todays-cocktails.onrender.com` などを指定）。
+2. 必要に応じて `SITE_URL`（デフォルトは `https://todayscocktails.com`）も環境変数で上書きする。
 3. `docker compose exec frontend npm run sitemap` を実行。
 
-実行後に `frontend/public/sitemap.xml` が更新され、Vite ビルド時にそのまま `dist/sitemap.xml` として配備されます。API へ接続できない場合でも静的ページ分の URL は生成されるので、本番デプロイ前に再実行してください。
+生成したファイルは Vercel デプロイ時に `dist/sitemap.xml` として公開されます。カクテルを追加・削除・ID変更したとき、固定ページの URL を増やしたとき、またはドメインを切り替えるときに再実行して最新状態へ更新してください。API へ接続できない場合でも静的ページ分の URL は生成されるので、本番デプロイ前に成功ログ（例: `[sitemap] Wrote 46 url entries ...`）を確認してから公開する運用がおすすめです。
 
 ---
 

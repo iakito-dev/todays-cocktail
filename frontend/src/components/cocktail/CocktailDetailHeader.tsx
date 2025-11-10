@@ -61,14 +61,14 @@ export function CocktailDetailHeader({
               </Badge>
               <Badge
                 variant="outline"
-                className="flex items-center gap-1.5 px-3.5 py-1 text-[13px] sm:text-sm rounded-full font-medium border-gray-200 bg-gray-50"
+                className="flex items-center gap-1.5 px-3.5 py-1 text-[13px] sm:text-sm rounded-full font-medium border-gray-200 bg-white shadow-sm"
               >
                 <Wine className="w-3.5 h-3.5" />
                 {BASE_LABELS[cocktail.base]}
               </Badge>
               <Badge
                 variant="outline"
-                className="flex items-center gap-1.5 px-3.5 py-1 text-[13px] sm:text-sm rounded-full font-medium border-gray-200 bg-gray-50"
+                className="flex items-center gap-1.5 px-3.5 py-1 text-[13px] sm:text-sm rounded-full font-medium border-gray-200 bg-white shadow-sm"
               >
                 <Hammer className="w-3.5 h-3.5" />
                 {TECHNIQUE_LABELS[cocktail.technique]}

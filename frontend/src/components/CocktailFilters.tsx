@@ -67,7 +67,7 @@ export function CocktailFilters({
         <div className="flex items-center w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500 transition">
           <Input
             type="text"
-            placeholder="例: マティーニ、モヒート"
+            placeholder="マティーニ、モヒート"
             value={tempSearchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
             onKeyDown={handleKeyDown}

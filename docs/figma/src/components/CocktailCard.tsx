@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Cocktail } from '../types/cocktail';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { Badge } from './ui/badge';

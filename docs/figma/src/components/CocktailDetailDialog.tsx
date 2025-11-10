@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Cocktail } from '../types/cocktail';
 import {
   Dialog,

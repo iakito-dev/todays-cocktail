@@ -1,8 +1,17 @@
 import { createContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { login as apiLogin, signup as apiSignup, logout as apiLogout, getCurrentUser, clearAuthToken } from '../lib/api';
+import {
+  login as apiLogin,
+  signup as apiSignup,
+  logout as apiLogout,
+  getCurrentUser,
+  clearAuthToken,
+} from '../lib/api';
 import { toast } from '../lib/toast';
 
+// =======================================
+// Types
+// =======================================
 interface User {
   id: number;
   email: string;
@@ -22,6 +31,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// =======================================
+// Provider
+// =======================================
+// アプリ全体で共有する認証状態とハンドラーを提供する
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initializeAuth();
   }, []);
 
+  // ログイン：API成功でユーザー情報をセット
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
@@ -56,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // 新規登録：メール認証を待つため自動ログインはしない
   const signup = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
@@ -67,6 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // ログアウト：サーバー側とローカルstateをクリア
   const logout = async () => {
     setIsLoading(true);
     try {

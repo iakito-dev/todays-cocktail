@@ -1,0 +1,382 @@
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { fetchCocktail } from '../../../lib/api';
+import { Button } from '../../../components/ui/button';
+import { Card, CardContent } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
+import { Skeleton } from '../../../components/ui/skeleton';
+import { Separator } from '../../../components/ui/separator';
+import { Wine, GlassWater, Hammer, ArrowLeft } from 'lucide-react';
+import { ImageWithFallback } from '../../../components/common/ImageWithFallback';
+import type { Cocktail } from '../../../lib/types';
+import { Seo } from '../../../components/layout/Seo';
+import { absoluteUrl, getShareImageUrl, siteMetadata } from '../../../lib/seo';
+
+// 日本語ラベルのマッピング
+const BASE_LABELS: Record<string, string> = {
+  gin: 'ジン',
+  rum: 'ラム',
+  whisky: 'ウイスキー',
+  vodka: 'ウォッカ',
+  tequila: 'テキーラ',
+  beer: 'ビール',
+  wine: 'ワイン',
+};
+
+const STRENGTH_LABELS: Record<string, string> = {
+  light: 'ライト',
+  medium: 'ミディアム',
+  strong: 'ストロング',
+};
+
+const TECHNIQUE_LABELS: Record<string, string> = {
+  build: 'ビルド',
+  stir: 'ステア',
+  shake: 'シェイク',
+};
+
+const strengthColors = {
+  light: 'bg-green-100 text-green-800 border-green-200',
+  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  strong: 'bg-red-100 text-red-800 border-red-200',
+};
+
+// =======================================
+// Component
+// =======================================
+export function CocktailDetail() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [cocktail, setCocktail] = useState<Cocktail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const canonicalPath = id ? `/cocktails/${id}` : '/cocktails';
+
+  // ルートパラメータが変わるたびに詳細をフェッチ
+  useEffect(() => {
+    if (!id) {
+      setError('IDが指定されていません');
+      setLoading(false);
+      return;
+    }
+
+    fetchCocktail(id)
+      .then(setCocktail)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  const shareImage =
+    cocktail?.image_url_override ?? cocktail?.image_url ?? null;
+  const fallbackDescription = cocktail
+    ? `${BASE_LABELS[cocktail.base]}ベース・${STRENGTH_LABELS[cocktail.strength]}の${cocktail.name_ja || cocktail.name}の作り方と材料。`
+    : 'カクテルのレシピ詳細や材料、作り方を確認できます。';
+  const seoTitle = cocktail
+    ? `${cocktail.name_ja || cocktail.name}のカクテルレシピ`
+    : 'カクテル詳細';
+  const structuredData = cocktail
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Recipe',
+        name: cocktail.name_ja || cocktail.name,
+        alternateName: cocktail.name,
+        description: cocktail.description || fallbackDescription,
+        image: [getShareImageUrl(shareImage)],
+        datePublished: cocktail.created_at,
+        dateModified: cocktail.updated_at,
+        recipeCategory: 'Beverage',
+        recipeCuisine: 'International',
+        recipeYield: '1 serving',
+        keywords: [
+          cocktail.name,
+          cocktail.name_ja,
+          BASE_LABELS[cocktail.base],
+          STRENGTH_LABELS[cocktail.strength],
+          TECHNIQUE_LABELS[cocktail.technique],
+        ]
+          .filter(Boolean)
+          .join(', '),
+        recipeIngredient: cocktail.ingredients?.map((ingredient) => {
+          const amount = ingredient.amount ? ` ${ingredient.amount}` : '';
+          return `${ingredient.name}${amount}`;
+        }),
+        recipeInstructions:
+          cocktail.instructions_ja || cocktail.instructions
+            ? [
+                {
+                  '@type': 'HowToStep',
+                  text: cocktail.instructions_ja || cocktail.instructions,
+                },
+              ]
+            : undefined,
+        mainEntityOfPage: absoluteUrl(canonicalPath),
+        author: {
+          '@type': 'Organization',
+          name: siteMetadata.siteName,
+        },
+      }
+    : undefined;
+
+  const seoElement = (
+    <Seo
+      title={seoTitle}
+      description={cocktail?.description || fallbackDescription}
+      path={canonicalPath}
+      image={shareImage}
+      type="article"
+      publishedTime={cocktail?.created_at}
+      updatedTime={cocktail?.updated_at}
+      structuredData={structuredData}
+    />
+  );
+
+  if (loading) {
+    return (
+      <>
+        {seoElement}
+        <div className="min-h-screen bg-gray-50 text-foreground p-6">
+          <div className="max-w-3xl mx-auto">
+            <Skeleton className="h-10 w-24 mb-6" />
+            <div className="space-y-6">
+              {/* カード全体 */}
+              <Card>
+                <CardContent className="p-0">
+                  {/* 画像スケルトン */}
+                  <div className="relative w-full aspect-[16/9]">
+                    <Skeleton className="absolute inset-0" />
+                  </div>
+                  {/* コンテンツ */}
+                  <div className="p-6 space-y-6">
+                    {/* タイトル */}
+                    <div className="space-y-3">
+                      <Skeleton className="h-10 w-3/4" />
+                      <Skeleton className="h-6 w-1/2" />
+                    </div>
+                    {/* バッジ群 */}
+                    <div className="flex flex-wrap gap-2">
+                      <Skeleton className="h-8 w-24" />
+                      <Skeleton className="h-8 w-24" />
+                      <Skeleton className="h-8 w-24" />
+                      <Skeleton className="h-8 w-24" />
+                    </div>
+                    {/* 説明文 */}
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-2/3" />
+                    </div>
+                    {/* セパレーター */}
+                    <Skeleton className="h-px w-full" />
+                    {/* 作り方 */}
+                    <div className="space-y-3">
+                      <Skeleton className="h-6 w-32" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-3/4" />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              {/* 材料カード */}
+              <Card>
+                <CardContent className="p-6">
+                  <Skeleton className="h-6 w-24 mb-4" />
+                  <div className="space-y-3">
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-4/5" />
+                    <Skeleton className="h-5 w-full" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error || !cocktail) {
+    return (
+      <>
+        {seoElement}
+        <div className="min-h-screen bg-background text-foreground p-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/')}
+              className="mb-4"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              戻る
+            </Button>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-red-500">
+                  エラーが発生しました:{' '}
+                  {error || 'カクテルが見つかりませんでした'}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {seoElement}
+      <div className="min-h-screen bg-gray-50 text-foreground p-6">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="mb-4 hover:bg-white"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            戻る
+          </Button>
+
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <h1 className="text-4xl font-bold text-gray-900 leading-tight">
+                  {cocktail.name_ja || cocktail.name}
+                </h1>
+                {cocktail.name_ja && (
+                  <p className="text-xl text-gray-500 font-semibold tracking-wider uppercase">
+                    {cocktail.name}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge
+                  className={`${strengthColors[cocktail.strength]} px-3 py-1 border`}
+                >
+                  {STRENGTH_LABELS[cocktail.strength]}
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="flex items-center gap-1 px-3 py-1"
+                >
+                  <Wine className="w-3 h-3" />
+                  {BASE_LABELS[cocktail.base]}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Image */}
+            {cocktail.image_url && (
+              <div className="aspect-square rounded-2xl overflow-hidden shadow-lg border border-gray-200">
+                <ImageWithFallback
+                  src={cocktail.image_url}
+                  alt={cocktail.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            {/* Glass and Technique */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center gap-3 p-5 rounded-2xl bg-gray-50">
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <GlassWater className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-gray-500">グラス</div>
+                  <div className="text-gray-900">
+                    {cocktail.glass || 'タンブラー'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-5 rounded-2xl bg-gray-50">
+                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                  <Hammer className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <div className="text-gray-500">技法</div>
+                  <div className="text-gray-900">
+                    {TECHNIQUE_LABELS[cocktail.technique]}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Separator className="my-6" />
+
+            {/* Ingredients - サンプルデータ表示（後でバックエンドから取得） */}
+            {cocktail.ingredients && cocktail.ingredients.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-blue-500 rounded-full" />
+                  <h3 className="text-gray-900">材料</h3>
+                </div>
+                <div className="space-y-2">
+                  {cocktail.ingredients.map((ingredient, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center p-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-colors"
+                    >
+                      <span className="text-gray-900">{ingredient.name}</span>
+                      <span className="text-gray-600 px-3 py-1 bg-white rounded-full">
+                        {ingredient.amount}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Separator className="my-6" />
+
+            {/* Instructions */}
+            {(cocktail.description || cocktail.instructions) && (
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-blue-500 rounded-full" />
+                  <h3 className="text-gray-900">作り方</h3>
+                </div>
+                <div className="bg-gray-50 p-6 rounded-2xl">
+                  <p className="leading-relaxed text-gray-700 whitespace-pre-wrap">
+                    {cocktail.description || cocktail.instructions}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Tips */}
+            {!cocktail.description && (
+              <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">💡</div>
+                  <div>
+                    <h4 className="mb-2 text-blue-900">Note</h4>
+                    <p className="text-blue-800 leading-relaxed">
+                      このカクテルは
+                      {cocktail.strength === 'light'
+                        ? '飲みやすく、初心者の方にもおすすめです'
+                        : cocktail.strength === 'medium'
+                          ? '程よいアルコール度数で、カクテルの味わいを楽しめます'
+                          : 'アルコール度数が高めです。ゆっくり味わってお楽しみください'}
+                      。
+                      {cocktail.technique === 'build' &&
+                        'グラスで直接作れるので、家でも簡単に作れます。'}
+                      {cocktail.technique === 'shake' &&
+                        'シェイカーを使って本格的な味わいに。バーで注文するのもおすすめです。'}
+                      {cocktail.technique === 'stir' &&
+                        'ミキシンググラスでステアして、滑らかな口当たりに。'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

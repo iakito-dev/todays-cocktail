@@ -1,12 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { CocktailList } from './components/CocktailList';
-import { CocktailDetail } from './components/CocktailDetail';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { EmailConfirmation } from './components/EmailConfirmation';
+import { CocktailList } from './features/cocktails/components/list/CocktailList';
+import { CocktailDetail } from './features/cocktails/pages/CocktailDetail';
+import { Header } from './components/layout/Header';
+import { Footer } from './components/layout/Footer';
+import { EmailConfirmation } from './features/auth/pages/EmailConfirmation';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from './components/ui/sonner';
 
+// =======================================
+// Component
+// =======================================
 function App() {
   return (
     <AuthProvider>

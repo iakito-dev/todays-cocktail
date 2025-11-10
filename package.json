@@ -1,0 +1,29 @@
+{
+  "name": "todays-cocktail",
+  "version": "1.0.0",
+  "description": "React + Rails based cocktail search app that helps users discover drinks by name, ingredient, or base.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iakito-dev/todays-cocktail.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/iakito-dev/todays-cocktail/issues"
+  },
+  "homepage": "https://github.com/iakito-dev/todays-cocktail#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6"
+  }
+}

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BACKEND_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# No files to check; bail out quickly so lint-staged continues.
+if [ "$#" -eq 0 ]; then
+  exit 0
+fi
+
+cd "$BACKEND_DIR"
+
+RELATIVE_PATHS=()
+for file in "$@"; do
+  # lint-staged passes absolute paths; convert them to backend-relative so RuboCop
+  # picks up the right files without needing the full path.
+  if [[ "$file" == "$BACKEND_DIR"/* ]]; then
+    RELATIVE_PATHS+=("${file#"$BACKEND_DIR"/}")
+  elif [[ "$file" == backend/* ]]; then
+    RELATIVE_PATHS+=("${file#backend/}")
+  else
+    RELATIVE_PATHS+=("$file")
+  fi
+done
+
+bin/rubocop -A "${RELATIVE_PATHS[@]}"

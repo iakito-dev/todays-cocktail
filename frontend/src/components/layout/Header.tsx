@@ -50,7 +50,7 @@ export function Header() {
                   Today's Cocktail
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
-                  今日の一杯が見つかるカクテルレシピ検索アプリ
+                  今日の一杯が見つかるカクテル検索アプリ
                 </p>
               </div>
             </Link>

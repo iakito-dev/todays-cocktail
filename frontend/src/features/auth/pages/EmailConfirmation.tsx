@@ -77,7 +77,7 @@ export function EmailConfirmation() {
   const confirmationStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: "メール確認 | Today's Cocktails",
+    name: "メール確認 | Today's Cocktail",
     description: 'ユーザーのメールアドレス確認状態を表示するページ',
   };
 

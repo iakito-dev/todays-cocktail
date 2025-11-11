@@ -8,19 +8,16 @@
       </div>
       <p class="mt-6 text-xs font-semibold uppercase tracking-widest text-slate-500">メールアドレスの確認</p>
       <h1 class="mt-3 text-2xl font-semibold text-slate-900">Today's Cocktail へようこそ</h1>
-      <p class="mt-2 text-base text-slate-600">アカウントを有効にするには、メールアドレスの確認が必要です。</p>
     </div>
 
     <div class="px-8 py-10 text-left">
-      <p class="text-base text-slate-600">
-        <%= @resource.name.present? ? "#{@resource.name}様" : "こんにちは" %>、ご登録ありがとうございます。
-      </p>
-      <p class="mt-4 text-base text-slate-600">
-        下のボタンをクリックして、登録を完了してください。
-      </p>
+      <p class="text-base text-slate-600">こんにちは！</p>
+      <p class="mt-3 text-base text-slate-600">『Today's Cocktail』にご登録いただき、誠にありがとうございます。</p>
+
+      <p class="mt-6 text-base text-slate-600">ご本人確認のため、メールアドレスのご確認をお願いいたします。以下のURLにアクセスすることで、メールアドレスの確認が完了します。</p>
 
       <div class="mt-8 text-center">
-        <%= link_to 'メールアドレスを確認する',
+        <%= link_to 'メールアドレスの確認を完了する',
             confirmation_url,
             class: 'inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-base font-semibold text-white shadow-lg transition duration-200 hover:bg-slate-800 focus:outline-none focus:ring-slate-400' %>
       </div>
@@ -34,6 +31,12 @@
       <p class="mt-10 text-center text-base text-slate-600">
         それでは、今日の一杯との出会いをお楽しみください。
       </p>
+
+      <div class="mt-6 rounded-xl border border-slate-100 px-6 py-4">
+        <p class="text-sm font-semibold text-slate-700">【ご注意】</p>
+        <p class="mt-2 text-xs text-slate-500">このメールは送信専用アドレスよりお送りしています。</p>
+        <p class="mt-1 text-xs text-slate-500">本メールへの返信は受け付けておりませんので、あらかじめご了承ください。</p>
+      </div>
     </div>
 
     <div class="border-t border-slate-100 bg-slate-50 px-8 py-6 text-center">

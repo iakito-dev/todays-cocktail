@@ -16,7 +16,7 @@ ja:
       unconfirmed: メールアドレスの確認が必要です。
     mailer:
       confirmation_instructions:
-        subject: "Today's Cocktail へようこそ — メールアドレス確認のお願い"
+        subject: "Today's Cocktail へようこそ — メールアドレスの確認を完了してください"
       reset_password_instructions:
         subject: パスワード再設定のご案内
       unlock_instructions:

@@ -27,8 +27,7 @@ export const siteMetadata: SiteMetadata = {
   locale: 'ja_JP',
   themeColor: '#0f172a',
   twitterHandle: import.meta.env.VITE_TWITTER_HANDLE ?? undefined,
-  defaultOgImagePath:
-    import.meta.env.VITE_DEFAULT_OG_IMAGE ?? '/og-default.png',
+  defaultOgImagePath: import.meta.env.VITE_DEFAULT_OG_IMAGE ?? '/ogp_image.jpg',
   siteUrl:
     (import.meta.env.VITE_SITE_URL as string | undefined) ?? FALLBACK_SITE_URL,
 };

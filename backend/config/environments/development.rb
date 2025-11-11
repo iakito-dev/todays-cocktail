@@ -34,6 +34,8 @@ Rails.application.configure do
 
   # Mailer settings for development
   # 環境変数RESEND_API_KEYが設定されている場合はResendを使用、なければletter_opener
+  default_from = ENV["MAIL_FROM_ADDRESS"].presence || "onboarding@resend.dev"
+
   if ENV["RESEND_API_KEY"].present?
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
@@ -44,12 +46,14 @@ Rails.application.configure do
       authentication: :plain,
       tls: true  # Port 465はSSL/TLS接続なのでtlsを使用（enable_starttls_autoは不要）
     }
-    config.action_mailer.default_options = {
-      from: ENV.fetch("MAIL_FROM_ADDRESS", "noreply@todays-cocktail.local")
-    }
   else
     config.action_mailer.delivery_method = :letter_opener
   end
+
+  config.action_mailer.default_options = {
+    from: default_from,
+    reply_to: ENV["MAIL_REPLY_TO"].presence || default_from
+  }
 
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true

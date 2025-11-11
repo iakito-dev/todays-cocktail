@@ -64,6 +64,8 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :resend
   config.action_mailer.resend_settings = {}
 
+  default_from = ENV["MAIL_FROM_ADDRESS"].presence || "onboarding@resend.dev"
+
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = {
     host: ENV.fetch("FRONTEND_URL", "https://yourdomain.com").gsub(%r{https?://}, "")
@@ -71,7 +73,8 @@ Rails.application.configure do
 
   # Default mail sender
   config.action_mailer.default_options = {
-    from: ENV.fetch("MAIL_FROM_ADDRESS", "noreply@example.com")
+    from: default_from,
+    reply_to: ENV["MAIL_REPLY_TO"].presence || default_from
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to

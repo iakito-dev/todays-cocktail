@@ -35,6 +35,7 @@ Resendは、開発者向けのモダンなメール配信サービスです。�
 #### オプションB: 開発・テスト用（簡単）
 
 Resendの無料プランでは、認証なしで以下のアドレスから送信できます：
+
 - `onboarding@resend.dev`（デフォルト）
 
 ただし、本番環境では必ず独自ドメインを認証してください。
@@ -117,6 +118,7 @@ kamal env push MAIL_FROM_ADDRESS=noreply@yourdomain.com
 ### メールが届かない
 
 1. **API Keyが正しいか確認**
+
    ```bash
    docker compose exec backend bin/rails runner "puts ENV['RESEND_API_KEY']"
    ```
@@ -129,6 +131,23 @@ kamal env push MAIL_FROM_ADDRESS=noreply@yourdomain.com
 4. **Resendのログを確認**
    - Resendダッシュボードの **Emails** で送信履歴を確認
 
+### 迷惑メールに入る/配信評価が低い
+
+1. **送信元ドメインの一貫性**
+   - `MAIL_FROM_ADDRESS` と Resend で認証したドメインを必ず一致させる（例: `noreply@todays-cocktail.app`）。
+   - Devise の `mailer_sender`／`ApplicationMailer` も同じアドレスを参照するようにしたので、`.env` に正しい値をセットする。
+2. **DNS レコードの整備**
+   - SPF: `v=spf1 include:resend.net ~all`
+   - DKIM: Resend が提示する3つの CNAME を追加
+   - DMARC: `v=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com`
+3. **コンテンツの改善**
+   - テキスト版（`confirmation_instructions.text.erb`）を残す、短縮URLを使わない、挨拶→目的→アクション→サポートの構成を守る。
+4. **レピュテーションの育成**
+   - 新しいドメインは 1 日 10–20 通程度から送り、配信エラー < 2%、スパム苦情 < 0.1% を維持。
+   - Resend の [Emails] 画面でバウンス/ブロック理由を週次で確認。
+5. **受信者サイン**
+   - 連絡先に受信許可（ホワイトリスト）を依頼し、アプリの UI に「確認メールが届かない場合は迷惑メールを確認」と明記。
+
 ### エラーメッセージの確認
 
 ```bash
@@ -139,11 +158,13 @@ docker compose logs backend | grep -i mail
 ## 料金プラン
 
 ### 無料プラン
+
 - 月100通まで無料
 - 独自ドメイン使用可能
 - API Key無制限
 
 ### Proプラン（$20/月）
+
 - 月50,000通
 - 追加で1,000通あたり$1
 

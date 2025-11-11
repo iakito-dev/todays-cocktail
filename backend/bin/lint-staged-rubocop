@@ -11,6 +11,10 @@ fi
 
 cd "$BACKEND_DIR"
 
+# Force UTF-8 locale so RuboCop can handle non-ASCII paths (e.g., 日本語ディレクトリ)
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
 RELATIVE_PATHS=()
 for file in "$@"; do
   # lint-staged passes absolute paths; convert them to backend-relative so RuboCop

@@ -1,4 +1,7 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: ENV.fetch("MAIL_FROM_ADDRESS", "noreply@todays-cocktail.local")
+  DEFAULT_SENDER = ENV["MAIL_FROM_ADDRESS"].presence || "onboarding@resend.dev"
+
+  default from: DEFAULT_SENDER,
+          reply_to: ENV["MAIL_REPLY_TO"].presence || DEFAULT_SENDER
   layout "mailer"
 end

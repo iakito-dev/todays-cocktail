@@ -1,47 +1,43 @@
-<div class="email-wrapper">
-  <div class="email-container">
-    <div class="email-header">
-      <h1 class="logo">🍸</h1>
-      <h2 class="brand-name">Today's Cocktail</h2>
+<% confirmation_url = "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@resource.confirmation_token}" %>
+
+<div class="bg-slate-50 py-10 px-4">
+  <div class="mx-auto max-w-xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl">
+    <div class="border-b border-slate-100 bg-gradient-to-r from-rose-50 to-amber-50 px-8 py-10 text-center">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-inner">
+        <span class="text-2xl">🍸</span>
+      </div>
+      <p class="mt-6 text-xs font-semibold uppercase tracking-widest text-slate-500">メールアドレスの確認</p>
+      <h1 class="mt-3 text-2xl font-semibold text-slate-900">Today's Cocktail へようこそ</h1>
+      <p class="mt-2 text-base text-slate-600">アカウントを有効にするには、メールアドレスの確認が必要です。</p>
     </div>
 
-    <div class="email-body">
-      <p class="greeting">
-        <%= @resource.name.present? ? "#{@resource.name}様" : "こんにちは" %>
+    <div class="px-8 py-10 text-left">
+      <p class="text-base text-slate-600">
+        <%= @resource.name.present? ? "#{@resource.name}様" : "こんにちは" %>、ご登録ありがとうございます。
+      </p>
+      <p class="mt-4 text-base text-slate-600">
+        下のボタンをクリックして、登録を完了してください。
       </p>
 
-      <p class="content-text">
-        Today's Cocktailへようこそ！アカウントのご登録ありがとうございます。
-      </p>
-
-      <p class="content-text">
-        以下のボタンをクリックして、メールアドレスの確認を完了してください：
-      </p>
-
-      <div class="button-container">
+      <div class="mt-8 text-center">
         <%= link_to 'メールアドレスを確認する',
-            "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@resource.confirmation_token}",
-            class: 'button' %>
+            confirmation_url,
+            class: 'inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-base font-semibold text-white shadow-lg transition duration-200 hover:bg-slate-800 focus:outline-none focus:ring-slate-400' %>
       </div>
 
-      <p class="help-text">
-        ボタンが機能しない場合は、以下のURLをコピーしてブラウザに貼り付けてください：
+      <div class="mt-8 rounded-xl bg-slate-50 p-4">
+        <p class="text-sm font-semibold text-slate-700">リンクが開けない場合</p>
+        <p class="mt-2 text-xs text-slate-500">下記URLをブラウザに貼り付けてください。</p>
+        <p class="mt-3 break-all font-mono text-xs text-slate-500"><%= confirmation_url %></p>
+      </div>
+
+      <p class="mt-10 text-center text-base text-slate-600">
+        それでは、今日の一杯との出会いをお楽しみください。
       </p>
-
-      <div class="url-box">
-        <p class="url-text">
-          <%= "#{ENV['FRONTEND_URL'] || 'http://localhost:5173'}/confirmation?confirmation_token=#{@resource.confirmation_token}" %>
-        </p>
-      </div>
     </div>
 
-    <div class="email-footer">
-      <p class="footer-text">
-        このメールに心当たりがない場合は、無視していただいて問題ありません。
-      </p>
-      <p class="copyright">
-        © 2025 Today's Cocktail. All rights reserved.
-      </p>
+    <div class="border-t border-slate-100 bg-slate-50 px-8 py-6 text-center">
+      <p class="text-xs font-medium text-slate-400">© 2025 Today's Cocktail. All rights reserved.</p>
     </div>
   </div>
 </div>

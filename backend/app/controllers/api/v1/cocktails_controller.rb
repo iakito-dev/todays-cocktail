@@ -4,7 +4,7 @@ class Api::V1::CocktailsController < ApplicationController
     cache_key = "cocktails_index_#{cache_key_params}"
 
     # キャッシュから取得、なければクエリ実行
-    result = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+    result = Rails.cache.fetch(cache_key, expires_in: 3.hours) do
       cocktails = Cocktail.all
 
       # 名前/材料/手順をまとめてキーワード検索
@@ -73,8 +73,9 @@ class Api::V1::CocktailsController < ApplicationController
       }
     end
 
-    # クライアント/エッジでも短時間キャッシュ（サーバー側キャッシュと併用）
-    response.set_header("Cache-Control", "public, max-age=300")
+    # クライアント/エッジでもキャッシュ（サーバー側キャッシュと併用）
+    # 一覧は滅多に更新されないため3時間キャッシュとする
+    response.set_header("Cache-Control", "public, max-age=10800")
     render json: result
   end
 

@@ -47,7 +47,11 @@ class Api::V1::CocktailsController < ApplicationController
           filtered_cocktails.order(:id)
         end
 
-      paginated_cocktails = cocktails.offset((page - 1) * per_page).limit(per_page)
+      # 必要な列のみSELECTして転送量を削減
+      paginated_cocktails = cocktails
+        .select(:id, :name, :name_ja, :glass_ja, :image_url_override)
+        .offset((page - 1) * per_page)
+        .limit(per_page)
 
       # 画像URLと日本語データを含めたレスポンス
       cocktails_with_images = paginated_cocktails.map do |cocktail|
@@ -69,6 +73,8 @@ class Api::V1::CocktailsController < ApplicationController
       }
     end
 
+    # クライアント/エッジでも短時間キャッシュ（サーバー側キャッシュと併用）
+    response.set_header("Cache-Control", "public, max-age=300")
     render json: result
   end
 
@@ -98,6 +104,7 @@ class Api::V1::CocktailsController < ApplicationController
       )
     end
 
+    response.set_header("Cache-Control", "public, max-age=86400")
     render json: cocktail_data
   end
 
@@ -107,8 +114,13 @@ class Api::V1::CocktailsController < ApplicationController
     cache_key = "todays_pick_#{today}"
 
     cocktail_data = Rails.cache.fetch(cache_key, expires_in: 1.day) do
-      # ランダムに1件のカクテルを取得
-      cocktail = Cocktail.includes(cocktail_ingredients: :ingredient).order(Arel.sql("RANDOM()")).first
+      # ランダム取得の高速化: ORDER BY RANDOM() は避けて count + offset を利用
+      total = Rails.cache.fetch("cocktails_total_count", expires_in: 12.hours) { Cocktail.count }
+      offset = total > 0 ? rand(total) : 0
+      cocktail = Cocktail
+        .includes(cocktail_ingredients: :ingredient)
+        .offset(offset)
+        .first
 
       if cocktail
         # フロントエンド用のフォーマットに変換
@@ -134,6 +146,8 @@ class Api::V1::CocktailsController < ApplicationController
     end
 
     if cocktail_data
+      # その日の間はクライアント/エッジでもキャッシュ
+      response.set_header("Cache-Control", "public, max-age=86400")
       render json: cocktail_data
     else
       render json: { error: "No cocktails available" }, status: :not_found

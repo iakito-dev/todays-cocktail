@@ -17,7 +17,8 @@ export function ImageWithFallback(
     setDidError(true);
   };
 
-  const { src, alt, style, className, ...rest } = props;
+  const { src, alt, style, className, loading, ...rest } = props;
+  const effectiveLoading = loading ?? 'lazy';
 
   return didError ? (
     <div
@@ -28,6 +29,7 @@ export function ImageWithFallback(
         <img
           src={ERROR_IMG_SRC}
           alt="Error loading image"
+          loading={effectiveLoading}
           {...rest}
           data-original-url={src}
         />
@@ -39,6 +41,7 @@ export function ImageWithFallback(
       alt={alt}
       className={className}
       style={style}
+      loading={effectiveLoading}
       {...rest}
       onError={handleError}
     />

@@ -8,7 +8,12 @@ import type { Cocktail } from './types';
 // 環境変数VITE_API_BASE_URLから取得、未設定時はローカル開発環境をデフォルトとする
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
-function extractErrorMessage(method: string, path: string, status: number, bodyText: string | null): string {
+function extractErrorMessage(
+  method: string,
+  path: string,
+  status: number,
+  bodyText: string | null,
+): string {
   if (bodyText) {
     try {
       const data = JSON.parse(bodyText);
@@ -98,7 +103,11 @@ export async function apiGet(path: string, init?: RequestInit) {
  * @returns レスポンスのJSONデータ
  * @throws {Error} リクエストが失敗した場合
  */
-export async function apiPost(path: string, body?: unknown, init?: RequestInit) {
+export async function apiPost(
+  path: string,
+  body?: unknown,
+  init?: RequestInit,
+) {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -122,7 +131,10 @@ export async function apiPost(path: string, body?: unknown, init?: RequestInit) 
  * @returns レスポンスのJSONデータとAuthorizationヘッダー
  * @throws {Error} リクエストが失敗した場合
  */
-async function apiPostAuth(path: string, body: unknown): Promise<{ data: AuthResponse; token: string | null }> {
+async function apiPostAuth(
+  path: string,
+  body: unknown,
+): Promise<{ data: AuthResponse; token: string | null }> {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -138,7 +150,11 @@ async function apiPostAuth(path: string, body: unknown): Promise<{ data: AuthRes
       try {
         const errorData = JSON.parse(text);
         // バックエンドからのエラーメッセージを取得
-        if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+        if (
+          errorData.errors &&
+          Array.isArray(errorData.errors) &&
+          errorData.errors.length > 0
+        ) {
           errorMessage = errorData.errors.join(', ');
         } else if (errorData.status?.message) {
           errorMessage = errorData.status.message;
@@ -191,7 +207,9 @@ export interface CocktailsResponse {
   };
 }
 
-export async function fetchCocktails(params?: CocktailQuery): Promise<CocktailsResponse> {
+export async function fetchCocktails(
+  params?: CocktailQuery,
+): Promise<CocktailsResponse> {
   const qs = new URLSearchParams();
   if (params) {
     if (params.q) qs.set('q', params.q);
@@ -200,7 +218,9 @@ export async function fetchCocktails(params?: CocktailQuery): Promise<CocktailsR
     if (params.per_page) qs.set('per_page', params.per_page.toString());
     if (params.sort) qs.set('sort', params.sort);
     if (params.base) {
-      const bases = Array.isArray(params.base) ? params.base : params.base.split(',');
+      const bases = Array.isArray(params.base)
+        ? params.base
+        : params.base.split(',');
       if (bases.length === 1) {
         qs.set('base', bases[0]);
       } else if (bases.length > 1) {
@@ -238,6 +258,26 @@ export async function fetchCocktail(id: string | number): Promise<Cocktail> {
   sessionStorage.setItem(cacheKey, JSON.stringify(data));
 
   return data;
+}
+
+/**
+ * カクテル詳細の事前フェッチ（ホバー/フォーカス時の体感を向上）
+ * - すでに sessionStorage にある場合は何もしない
+ * - 取得後、主要画像があれば事前読み込み（ブラウザキャッシュに載せる）
+ */
+export async function prefetchCocktail(id: string | number): Promise<void> {
+  try {
+    const cacheKey = `cocktail_detail_${id}`;
+    if (sessionStorage.getItem(cacheKey)) return;
+    const data: Cocktail = await fetchCocktail(id);
+    const img = (data.image_url_override ?? data.image_url) || undefined;
+    if (img) {
+      const i = new Image();
+      i.src = img;
+    }
+  } catch {
+    // 事前フェッチ失敗はUXに影響しないので無視
+  }
 }
 
 /**
@@ -279,7 +319,10 @@ export interface AuthResponse {
  * @param password - パスワード
  * @returns Promise<AuthResponse> 認証レスポンス
  */
-export async function login(email: string, password: string): Promise<AuthResponse> {
+export async function login(
+  email: string,
+  password: string,
+): Promise<AuthResponse> {
   const { data, token } = await apiPostAuth('/api/v1/login', {
     user: { email, password },
   });
@@ -298,7 +341,11 @@ export async function login(email: string, password: string): Promise<AuthRespon
  * @param name - ユーザー名
  * @returns Promise<AuthResponse> 認証レスポンス
  */
-export async function signup(email: string, password: string, name: string): Promise<AuthResponse> {
+export async function signup(
+  email: string,
+  password: string,
+  name: string,
+): Promise<AuthResponse> {
   const { data, token } = await apiPostAuth('/api/v1/signup', {
     user: { email, password, name },
   });
@@ -400,7 +447,10 @@ export interface UpdateCocktailRequest {
   };
 }
 
-export async function updateCocktail(id: number, data: UpdateCocktailRequest): Promise<Cocktail> {
+export async function updateCocktail(
+  id: number,
+  data: UpdateCocktailRequest,
+): Promise<Cocktail> {
   const updated = await apiPut(`/api/v1/admin/cocktails/${id}`, data);
   // 詳細ページのセッションキャッシュを無効化
   try {

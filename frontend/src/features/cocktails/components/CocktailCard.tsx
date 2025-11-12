@@ -4,6 +4,7 @@ import { Badge } from '../../../components/ui/badge';
 import { Wine } from 'lucide-react';
 import { ImageWithFallback } from '../../../components/common/ImageWithFallback';
 import { FavoriteButton } from './FavoriteButton';
+import { prefetchCocktail } from '../../../lib/api';
 
 // =======================================
 // Props
@@ -64,6 +65,8 @@ export function CocktailCard({
     <Card
       className="group cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden border bg-white border-gray-200 rounded-2xl"
       onClick={() => onViewDetails(cocktail)}
+      onMouseEnter={() => prefetchCocktail(cocktail.id)}
+      onFocus={() => prefetchCocktail(cocktail.id)}
     >
       {/* ================================
           画像エリア

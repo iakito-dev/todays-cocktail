@@ -10,6 +10,7 @@ import { Wine, GlassWater, Hammer, ArrowLeft } from 'lucide-react';
 import { ImageWithFallback } from '../../../components/common/ImageWithFallback';
 import type { Cocktail } from '../../../lib/types';
 import { Seo } from '../../../components/layout/Seo';
+import { Helmet } from '@vuer-ai/react-helmet-async';
 import { absoluteUrl, getShareImageUrl, siteMetadata } from '../../../lib/seo';
 
 // 日本語ラベルのマッピング
@@ -135,6 +136,12 @@ export function CocktailDetail() {
       <>
         {seoElement}
         <div className="min-h-screen bg-gray-50 text-foreground p-6">
+          {/* 主要画像を先読み（対応ブラウザでの初期描画を前倒し） */}
+          {cocktail?.image_url && (
+            <Helmet>
+              <link rel="preload" as="image" href={cocktail.image_url} />
+            </Helmet>
+          )}
           <div className="max-w-3xl mx-auto">
             <Skeleton className="h-10 w-24 mb-6" />
             <div className="space-y-6">
@@ -276,6 +283,9 @@ export function CocktailDetail() {
                   src={cocktail.image_url}
                   alt={cocktail.name}
                   className="w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                 />
               </div>
             )}

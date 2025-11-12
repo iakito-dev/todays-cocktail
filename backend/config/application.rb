@@ -37,6 +37,9 @@ module Backend
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
 
+    # 圧縮を有効化してレスポンス転送量を削減
+    config.middleware.use Rack::Deflater
+
     # デフォルトのエンコーディングをUTF-8に設定
     config.encoding = "utf-8"
 

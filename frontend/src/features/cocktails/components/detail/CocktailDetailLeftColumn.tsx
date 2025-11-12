@@ -37,6 +37,9 @@ export function CocktailDetailLeftColumn({
           src={cocktail.image_url || ''}
           alt={cocktail.name}
           className="object-cover w-full h-full"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
       </div>
 

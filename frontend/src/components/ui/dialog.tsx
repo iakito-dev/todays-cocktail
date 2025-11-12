@@ -1,7 +1,7 @@
-import * as React from "react";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
-import { cn } from "../../lib/utils";
+import * as React from 'react';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { X } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
 function Dialog({
   ...props
@@ -35,42 +35,44 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:duration-300 data-[state=open]:duration-500",
-        className
+        'fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:duration-300 data-[state=open]:duration-500',
+        className,
       )}
       {...props}
     />
   );
 }
 
-type DialogContentProps = React.ComponentProps<typeof DialogPrimitive.Content> & {
-  size?: "default" | "compact" | "auth" | "full";
-  placement?: "center" | "raised";
+type DialogContentProps = React.ComponentProps<
+  typeof DialogPrimitive.Content
+> & {
+  size?: 'default' | 'compact' | 'auth' | 'full';
+  placement?: 'center' | 'raised';
 };
 
 function DialogContent({
   className,
   children,
-  size = "default",
-  placement = "center",
+  size = 'default',
+  placement = 'center',
   ...props
 }: DialogContentProps) {
   const sizeClasses = (() => {
     switch (size) {
-      case "compact":
-        return "max-w-sm sm:max-w-md px-4 sm:px-5 pt-5 sm:pt-6 pb-4 sm:pb-5";
-      case "auth":
-        return "max-w-[min(640px,calc(100%-2rem))] w-[92vw] sm:w-[520px] px-4 sm:px-8 py-6 sm:py-7";
-      case "full":
+      case 'compact':
+        return 'max-w-sm sm:max-w-md px-4 sm:px-5 pt-5 sm:pt-6 pb-4 sm:pb-5';
+      case 'auth':
+        return 'max-w-[min(640px,calc(100%-2rem))] w-[92vw] sm:w-[520px] px-4 sm:px-8 py-6 sm:py-7';
+      case 'full':
         // カクテル詳細用（フルサイズダイアログ）
-        return "w-[96vw] sm:w-[90vw] lg:w-[80vw] 2xl:w-[72vw] max-w-[1400px] h-[92vh] max-h-[92vh] p-0";
+        return 'w-[98vw] sm:w-[90vw] lg:w-[80vw] 2xl:w-[72vw] max-w-[1400px] h-[94dvh] max-h-[94dvh] p-0';
       default:
-        return "max-w-[calc(100%-2rem)] sm:max-w-lg px-5 sm:px-6 pt-6 sm:pt-7 pb-5 sm:pb-6";
+        return 'max-w-[calc(100%-2rem)] sm:max-w-lg px-5 sm:px-6 pt-6 sm:pt-7 pb-5 sm:pb-6';
     }
   })();
 
   const placementClasses =
-    placement === "raised" ? "-translate-y-[55%]" : "-translate-y-1/2";
+    placement === 'raised' ? '-translate-y-[55%]' : '-translate-y-1/2';
 
   return (
     <DialogPortal data-slot="dialog-portal">
@@ -78,10 +80,10 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 flex w-full -translate-x-1/2 flex-col items-center justify-start rounded-2xl border border-gray-200 bg-white shadow-2xl outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60 max-h-[90vh] overflow-y-auto transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          'fixed left-1/2 top-1/2 z-50 flex w-full -translate-x-1/2 flex-col items-center justify-start rounded-2xl border border-gray-200 bg-white shadow-2xl outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60 max-h-[90vh] overflow-y-auto transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
           placementClasses,
           sizeClasses,
-          className
+          className,
         )}
         {...props}
       >
@@ -95,23 +97,23 @@ function DialogContent({
   );
 }
 
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+      className={cn('flex flex-col gap-2 text-center sm:text-left', className)}
       {...props}
     />
   );
 }
 
-function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
+function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="dialog-footer"
       className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
+        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',
+        className,
       )}
       {...props}
     />
@@ -125,7 +127,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-lg leading-none font-semibold", className)}
+      className={cn('text-lg leading-none font-semibold', className)}
       {...props}
     />
   );
@@ -138,7 +140,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn('text-muted-foreground text-sm', className)}
       {...props}
     />
   );

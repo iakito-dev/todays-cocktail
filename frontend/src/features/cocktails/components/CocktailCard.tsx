@@ -67,6 +67,8 @@ export function CocktailCard({
       onClick={() => onViewDetails(cocktail)}
       onMouseEnter={() => prefetchCocktail(cocktail.id)}
       onFocus={() => prefetchCocktail(cocktail.id)}
+      onPointerDown={() => prefetchCocktail(cocktail.id)}
+      onTouchStart={() => prefetchCocktail(cocktail.id)}
     >
       {/* ================================
           画像エリア

@@ -76,9 +76,9 @@ docker-compose.override.yml
 # Node / Frontend
 # ----------------------------------
 **/node_modules
-**/dist                    # Viteビルド出力
-**/dist-ssr               # Vite SSRビルド出力
-**/*.local                # ローカル環境ファイル
+**/dist
+**/dist-ssr
+**/*.local
 **/public/packs
 **/public/packs-test
 
@@ -113,10 +113,3 @@ kamal.lock
 
 # 誤ってプロジェクト一式を入れ子にしないようルート配下のバックアップを除外
 todays-cocktail/
-frontend/dist/assets/index-DqF5yT3g.js
-frontend/dist/assets/index-DqF5yT3g.js
-.gitignore
-frontend/dist/assets/index-DzmOXNOx.js
-frontend/dist/vite.svg
-.gitignore
-frontend/dist/assets/index-BPXsg9n1.css

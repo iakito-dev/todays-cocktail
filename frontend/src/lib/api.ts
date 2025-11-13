@@ -7,6 +7,7 @@ import type { Cocktail } from './types';
 // API BaseURL設定
 // 環境変数VITE_API_BASE_URLから取得、未設定時はローカル開発環境をデフォルトとする
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
+const DETAIL_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7日
 
 function extractErrorMessage(
   method: string,
@@ -92,6 +93,26 @@ export async function apiGet(path: string, init?: RequestInit) {
   }
 
   // JSONパースに失敗した場合は空オブジェクトを返す
+  return res.json().catch(() => ({}));
+}
+
+/**
+ * 公開エンドポイント用のGET（Authorizationヘッダーを付与しない）
+ * 共有キャッシュ/CDNのヒット率を高めるため、未ログイン時だけでなく
+ * ログイン中でも明示的にこの関数を使う
+ */
+export async function apiGetPublic(path: string, init?: RequestInit) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+    ...init,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(extractErrorMessage('GET', path, res.status, text));
+  }
+
   return res.json().catch(() => ({}));
 }
 
@@ -229,7 +250,7 @@ export async function fetchCocktails(
     }
   }
   const path = `/api/v1/cocktails${qs.toString() ? `?${qs.toString()}` : ''}`;
-  return apiGet(path);
+  return apiGetPublic(path);
 }
 
 /**
@@ -240,24 +261,37 @@ export async function fetchCocktails(
 export async function fetchCocktail(id: string | number): Promise<Cocktail> {
   const cacheKey = `cocktail_detail_${id}`;
 
-  // キャッシュをチェック
-  const cached = sessionStorage.getItem(cacheKey);
-  if (cached) {
+  // キャッシュをチェック（TTL付）
+  const raw = sessionStorage.getItem(cacheKey);
+  if (raw) {
     try {
-      return JSON.parse(cached);
+      const parsed = JSON.parse(raw);
+      // 旧フォーマット互換: 直接データが入っている場合
+      if (parsed && !('data' in parsed)) {
+        return parsed as Cocktail;
+      }
+      const { data, ts } = parsed as { data: Cocktail; ts: number };
+      if (typeof ts === 'number' && Date.now() - ts < DETAIL_CACHE_TTL_MS) {
+        return data;
+      }
+      // TTL切れは削除して再取得
+      sessionStorage.removeItem(cacheKey);
     } catch {
-      // キャッシュ読み込み失敗時は再取得
       sessionStorage.removeItem(cacheKey);
     }
   }
 
-  // APIから取得
-  const data = await apiGet(`/api/v1/cocktails/${id}`);
+  // APIから取得（公開GET）
+  const data = await apiGetPublic(`/api/v1/cocktails/${id}`);
 
-  // キャッシュに保存
-  sessionStorage.setItem(cacheKey, JSON.stringify(data));
+  // TTL付きでキャッシュに保存
+  try {
+    sessionStorage.setItem(cacheKey, JSON.stringify({ data, ts: Date.now() }));
+  } catch {
+    // Ignore quota/serialization errors in sessionStorage
+  }
 
-  return data;
+  return data as Cocktail;
 }
 
 /**

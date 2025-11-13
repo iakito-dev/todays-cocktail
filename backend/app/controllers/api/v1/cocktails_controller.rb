@@ -1,10 +1,12 @@
 class Api::V1::CocktailsController < ApplicationController
+  require "digest"
   def index
     # キャッシュキーを生成（パラメータに応じて変化）
     cache_key = "cocktails_index_#{cache_key_params}"
 
     # キャッシュから取得、なければクエリ実行
-    result = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+    # データは基本的に不変のためキャッシュを長めにする
+    result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
       cocktails = Cocktail.all
 
       # 名前/材料/手順をまとめてキーワード検索
@@ -73,16 +75,22 @@ class Api::V1::CocktailsController < ApplicationController
       }
     end
 
-    # クライアント/エッジでも短時間キャッシュ（サーバー側キャッシュと併用）
-    response.set_header("Cache-Control", "public, max-age=300")
-    render json: result
+    # 条件付きGET（ETag）で転送量を削減
+    etag = Digest::SHA256.hexdigest(ActiveSupport::JSON.encode(result))
+    if stale?(etag: etag, public: true)
+      # クライアント/エッジでもキャッシュ。共有キャッシュも意識してs-maxageを付与
+      response.set_header("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400")
+      render json: result
+    else
+      head :not_modified
+    end
   end
 
   def show
     cache_key = "cocktail_show_#{params[:id]}"
 
-    # キャッシュ時間を24時間に延長（カクテル情報はほとんど変わらない）
-    cocktail_data = Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+    # 基本的に更新されない前提で長めにキャッシュ
+    cocktail_data = Rails.cache.fetch(cache_key, expires_in: 30.days) do
       cocktail = Cocktail.includes(cocktail_ingredients: :ingredient).find(params[:id])
 
       # フロントエンド用のフォーマットに変換
@@ -104,8 +112,14 @@ class Api::V1::CocktailsController < ApplicationController
       )
     end
 
-    response.set_header("Cache-Control", "public, max-age=86400")
-    render json: cocktail_data
+    # ETagベースの条件付きGET対応（JSON内容から強ETag生成）
+    etag = Digest::SHA256.hexdigest(ActiveSupport::JSON.encode(cocktail_data))
+    if stale?(etag: etag, public: true)
+      response.set_header("Cache-Control", "public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400, stale-if-error=86400")
+      render json: cocktail_data
+    else
+      head :not_modified
+    end
   end
 
   def todays_pick
@@ -147,8 +161,13 @@ class Api::V1::CocktailsController < ApplicationController
 
     if cocktail_data
       # その日の間はクライアント/エッジでもキャッシュ
-      response.set_header("Cache-Control", "public, max-age=86400")
-      render json: cocktail_data
+      etag = Digest::SHA256.hexdigest(ActiveSupport::JSON.encode(cocktail_data))
+      if stale?(etag: etag, public: true)
+        response.set_header("Cache-Control", "public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400")
+        render json: cocktail_data
+      else
+        head :not_modified
+      end
     else
       render json: { error: "No cocktails available" }, status: :not_found
     end

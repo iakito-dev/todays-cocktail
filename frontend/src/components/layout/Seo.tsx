@@ -77,6 +77,20 @@ export function Seo({
         <meta name="twitter:site" content={siteMetadata.twitterHandle} />
       )}
 
+      {/* 画像CDNへの事前接続で詳細ページ画像の描画を前倒し */}
+      <link rel="dns-prefetch" href="//images.unsplash.com" />
+      <link
+        rel="preconnect"
+        href="https://images.unsplash.com"
+        crossOrigin="anonymous"
+      />
+      <link rel="dns-prefetch" href="//www.thecocktaildb.com" />
+      <link
+        rel="preconnect"
+        href="https://www.thecocktaildb.com"
+        crossOrigin="anonymous"
+      />
+
       {publishedTime && (
         <meta
           property="article:published_time"

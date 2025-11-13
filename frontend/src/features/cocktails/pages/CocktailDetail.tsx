@@ -48,8 +48,22 @@ const strengthColors = {
 export function CocktailDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [cocktail, setCocktail] = useState<Cocktail | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  // セッションキャッシュから即時初期化（体感速度改善）
+  const initialFromCache = (() => {
+    if (typeof window === 'undefined' || !id) return null;
+    const raw = sessionStorage.getItem(`cocktail_detail_${id}`);
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed?.data ?? parsed; // 旧フォーマット互換
+    } catch {
+      return null;
+    }
+  })() as Cocktail | null;
+
+  const [cocktail, setCocktail] = useState<Cocktail | null>(initialFromCache);
+  const [loading, setLoading] = useState(!initialFromCache);
   const [error, setError] = useState<string | null>(null);
   const canonicalPath = id ? `/cocktails/${id}` : '/cocktails';
 
@@ -62,7 +76,9 @@ export function CocktailDetail() {
     }
 
     fetchCocktail(id)
-      .then(setCocktail)
+      .then((data) => {
+        setCocktail(data);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [id]);

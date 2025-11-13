@@ -17,8 +17,21 @@ export function ImageWithFallback(
     setDidError(true);
   };
 
-  const { src, alt, style, className, loading, ...rest } = props;
-  const effectiveLoading = loading ?? 'lazy';
+  const {
+    src,
+    alt,
+    style,
+    className,
+    loading,
+    decoding,
+    fetchPriority,
+    ...rest
+  } = props;
+  // 既定で遅延読み込みを無効化（初期描画の体感改善）
+  const effectiveLoading = loading ?? 'eager';
+  const effectiveDecoding = decoding ?? 'async';
+  const effectivePriority: React.ImgHTMLAttributes<HTMLImageElement>['fetchPriority'] =
+    fetchPriority ?? (effectiveLoading === 'eager' ? 'high' : undefined);
 
   return didError ? (
     <div
@@ -30,6 +43,8 @@ export function ImageWithFallback(
           src={ERROR_IMG_SRC}
           alt="Error loading image"
           loading={effectiveLoading}
+          decoding={effectiveDecoding}
+          fetchPriority={effectivePriority}
           {...rest}
           data-original-url={src}
         />
@@ -42,6 +57,8 @@ export function ImageWithFallback(
       className={className}
       style={style}
       loading={effectiveLoading}
+      decoding={effectiveDecoding}
+      fetchPriority={effectivePriority}
       {...rest}
       onError={handleError}
     />

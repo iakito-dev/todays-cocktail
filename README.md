@@ -1,57 +1,66 @@
-（あとで修正する）
+（編集中）
 
-# はじめに
+# Today's Cocktail　- アプリ紹介
 
-Today’s Cocktail は、「今日の気分にぴったりなカクテルをすぐに見つけたい」という思いから生まれた学習兼ポートフォリオです。要件定義から設計、実装、デプロイ、ドキュメント整備までを完結させることを目標とし、バックエンドには Ruby on Rails（API モード）、フロントエンドには React（Vite）を採用しています。
+## サービス概要
 
----
+Today's Cocktail は、「カクテルをもっと身近に」という思いから生まれたカクテルレシピ検索サービスです。  
+ベース種類・材料・人気順など複数の軸でレシピ検索ができ、気に入った一杯はお気に入りとして保存できます。  
+視覚的にわかりやすい画像と直感的な UI により、初心者でも安心して新しいカクテルに出会える体験を提供します。
 
-## アプリ紹介
-
-### 概要
-
-- カクテルをベース酒・材料・人気度といった複数軸で検索できる Web アプリ
-- レシピ詳細では英語／日本語の材料名や手順を併記し、初心者でも各カクテルごとの雰囲気を掴める内容を目指しました
-- 気に入ったカクテルはお気に入り登録して自分だけのリストを育てることができます
+<img width="1200" height="630" alt="ogp_img" src="https://github.com/user-attachments/assets/f07884a7-66ee-484b-a2d6-d77410a86c90" />
 
 ### URL
 
-- プロダクト: https://todayscocktails.com
+- https://todayscocktails.com
+
+### ゲストユーザーアカウント
+Email: guestuser@example.com
+Password: password123
 
 ### サービス開発の背景
 
-- バーのメニューを見ても味が想像できない、自宅にある材料で何が作れるか分からない――そんなちょっとした不便を解消する「検索しやすいカクテル図鑑」を作りたいと考えました
+開発者自身、休日の飲み歩きや晩酌が好きでよくバーやパブに足を運ぶのですが、いつもビールやワインといった定番のドリンクに落ち着いてしまい、新しい一杯に挑戦しづらいという悩みがありました。特に海外では、日本で定番のハイボールやレモンサワーがなく、代わりに名前だけでは味や見た目が想像できないカクテルが並び、選ぶのに苦労する場面が多くありました。もし材料や味の傾向、由来、見た目が分かれば、もっと挑戦しやすくなるし、晩酌のレパートリーも広がるはず。そんな課題感と期待から、カクテルの情報をシンプルに整理し、初心者でも選びやすい図鑑のようなアプリがあれば便利だと考え、Today's Cocktail の開発を始めました。
+
 
 ### 主な実装機能
 
-- ベース酒・材料キーワード・人気順を組み合わせた検索とページネーション
-- 日替わりでおすすめカクテルを紹介する「今日の一杯」（24 時間キャッシュ）
-- 英日併記のレシピ詳細（材料順、分量、作り方、説明、画像 URL）
-- Devise + JWT によるユーザー登録／ログインとお気に入り CRUD
-- 管理者向けカクテル編集 API（更新後にキャッシュを自動削除）
+- カクテル一覧表示  
+- カクテル詳細ページ（名前、説明文、画像、材料、レシピなどの詳細情報を表示）
+- 検索・フィルタリング機能（ジン・ウォッカなどのベース種類や、使用材料による絞り込み）
+- 日替わりで「今日の一杯」を提示するレコメンド機能
+- 人気順でのソート機能
+- ユーザー登録・ログイン機能
+- お気に入り保存／お気に入り一覧表示（ログインユーザー限定）
+- カクテル情報の作成・編集機能（管理者ユーザー限定）
 
-ユースケースや非機能要件は `docs/functional_requirements.md` に整理しています。
 
 ---
 
-## 採用技術
+### 使用技術一覧（Tech Stack）
 
-| レイヤー       | 技術                                                                       |
-| -------------- | -------------------------------------------------------------------------- |
-| フロントエンド | React 19 / TypeScript / Vite / Tailwind CSS / shadcn/ui                    |
-| バックエンド   | Ruby 3.4.6 / Rails 8.0.3（API モード） / Devise + devise-jwt               |
-| データベース   | Supabase Cloud（PostgreSQL 15 系）                                         |
-| インフラ       | Vercel（フロント）、Render（API）、Cloudflare DNS、Terraform（IaC 準備中） |
-| CI/CD          | GitHub Actions（lint / test）、Vercel / Render のデプロイパイプライン      |
-| 開発環境       | Docker / Docker Compose / asdf                                             |
+| カテゴリ | 採用技術 |
+|----------|-----------|
+| フロントエンド | React 19 / TypeScript / Vite 7 / React Router 7 / Tailwind CSS 3 / shadcn/ui（Radix UI） |
+| バックエンド API | Ruby 3.4.6 / Rails 8.0.3（API モード） / solid_cache / solid_queue / solid_cable |
+| データベース | Supabase（ローカル：Supabase CLI / Cloud：PostgreSQL 17） |
+| 認証 | Devise / devise-jwt |
+| インフラ・ホスティング | Vercel（フロントエンド） / Render（バックエンド API） / Cloudflare DNS / Docker Compose |
+| CI/CD | GitHub Actions（lint / test） |
+| UI/UX デザイン | Figma / Figma Make |
+| 開発環境 | Node.js 22 / npm / Git / Docker / Docker Compose / Supabase CLI / VS Code / GitHub Copilot / Codex（Sonnet 4.5 / gpt-5 / gpt-5-codex） / Colima |
+| テスト | Vitest 4（フロント） / Testing Library / RSpec（Rails API） |
+| 開発支援・品質管理 | ESLint 9 / Prettier 3 / Husky 9 / lint-staged 16 / RuboCop |
+| 外部サービス連携 | OpenAI API（生成・翻訳） / TheCocktailDB API（カクテル情報） / Unsplash API（画像） / Resend API（メール送信） |
 
-詳しい選定理由は `docs/tech_stack.md` にまとめています。
+
+詳しい選定理由は `docs/tech_stack.md` に記載予定。
 
 ---
 
 ## 構成図
 
-### インフラ構成
+## インフラ構成
 
 ```mermaid
 flowchart LR
@@ -59,10 +68,12 @@ flowchart LR
   Cloudflare --> Vercel[Vercel\n(React SPA)]
   Cloudflare --> Render[Render\n(Rails API)]
   Render --> Supabase[(Supabase Cloud\nPostgreSQL)]
-  Render --> Cache[Rail.cache / Redis 検討中]
+  Render --> Cache["Rails.cache / Redis（検討中）"]
 ```
 
-### ER 図（抜粋）
+---
+
+## ER 図（抜粋）
 
 ```mermaid
 erDiagram
@@ -72,6 +83,7 @@ erDiagram
   INGREDIENTS ||--o{ COCKTAIL_INGREDIENTS : "使用材料"
   USERS ||--o{ JWT_DENYLISTS : "無効化トークン"
 ```
+
 
 テーブル定義の詳細は `docs/db_design.md` を参照してください。
 

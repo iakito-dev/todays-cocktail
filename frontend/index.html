@@ -15,6 +15,8 @@
     <meta name="apple-mobile-web-app-title" content="Today's Cocktail" />
     <meta name="application-name" content="Today's Cocktail" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Allow large image previews for Google -->
+    <meta name="googlebot" content="max-image-preview:large" />
     <title>Today's Cocktail | 40種類以上のカクテルを人気順で検索</title>
     <meta name="description" content="ベース酒や材料、人気順で40種類以上のカクテルを検索。今日のおすすめやお気に入り機能で、自分だけの一杯に出会えます。" />
     <meta name="keywords" content="カクテル,カクテルレシピ,カクテル検索,バー,お酒, 材料, 家飲み, 晩酌" />
@@ -34,7 +36,10 @@
     <meta property="og:description" content="ベース酒や材料、人気順で40種類以上のカクテルを検索。今日のおすすめやお気に入り機能で、自分だけの一杯に出会えます。" />
     <meta property="og:url" content="https://todayscocktails.com/" />
     <!-- Use app-hosted OGP image under public/ to allow easy replacement -->
-    <meta property="og:image" content="/ogp_img.png" />
+    <meta
+      property="og:image"
+      content="https://todayscocktails.com/ogp_img.png"
+    />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/png" />
@@ -46,7 +51,37 @@
     <meta name="twitter:title" content="Today's Cocktail | 40種類以上のカクテルを人気順で検索" />
     <meta name="twitter:description" content="ベース酒や材料、人気順で40種類以上のカクテルを検索。今日のおすすめやお気に入り機能で、自分だけの一杯に出会えます。" />
     <meta name="twitter:url" content="https://todayscocktails.com/" />
-    <meta name="twitter:image" content="/ogp_img.png" />
+    <meta name="twitter:image" content="https://todayscocktails.com/ogp_img.png" />
+
+    <!-- Site name and logo for Google Search -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Today's Cocktail",
+        "alternateName": ["Today's Cocktails", "Todays Cocktails"],
+        "url": "https://todayscocktails.com",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://todayscocktails.com/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "url": "https://todayscocktails.com",
+        "name": "Today's Cocktail",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://todayscocktails.com/favicon-192.png",
+          "width": 192,
+          "height": 192
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -42,9 +42,15 @@ export function Header() {
               to="/"
               className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity"
             >
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl shadow-sm">
-                🍸
-              </div>
+              <img
+                src="/favicon-192.png"
+                alt="Today's Cocktail icon"
+                width="44"
+                height="44"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl shadow-sm object-cover"
+                loading="eager"
+                decoding="async"
+              />
               <div className="leading-tight">
                 <h1 className="text-lg sm:text-2xl font-semibold text-gray-900">
                   Today's Cocktail

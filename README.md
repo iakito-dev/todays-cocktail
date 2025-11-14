@@ -48,10 +48,10 @@ Password: password123
 | インフラ・ホスティング | Vercel（フロントエンド） / Render（バックエンド API） / Cloudflare DNS / Docker Compose |
 | CI/CD | GitHub Actions（lint / test） |
 | UI/UX デザイン | Figma / Figma Make |
-| 開発環境 | Node.js 22 / npm / Git / Docker / Docker Compose / Supabase CLI / VS Code / GitHub Copilot / Codex（Sonnet 4.5 / gpt-5 / gpt-5-codex） / Colima |
-| テスト | Vitest 4（フロント） / Testing Library / RSpec（Rails API） |
-| 開発支援・品質管理 | ESLint 9 / Prettier 3 / Husky 9 / lint-staged 16 / RuboCop |
-| 外部サービス連携 | OpenAI API（生成・翻訳） / TheCocktailDB API（カクテル情報） / Unsplash API（画像） / Resend API（メール送信） |
+| 開発環境 | Git / Docker / Docker Compose / Supabase CLI / VS Code / GitHub Copilot / Codex（Sonnet 4.5 / gpt-5 / gpt-5-codex） / Colima （軽量Docker環境） |
+| テスト | Vitest 4（フロント） RSpec（Rails API） |
+| 開発支援・コード整形 | ESLint 9 / Prettier 3 / Husky 9 / lint-staged 16 / RuboCop |
+| 外部API連携 | OpenAI API（生成・翻訳） / TheCocktailDB API（カクテル情報） / Unsplash API（画像） / Resend API（メール送信） |
 
 
 詳しい選定理由は `docs/tech_stack.md` に記載予定。

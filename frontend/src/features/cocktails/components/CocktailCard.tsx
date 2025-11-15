@@ -42,12 +42,22 @@ const baseLabels = {
   tequila: 'テキーラ',
   beer: 'ビール',
   wine: 'ワイン',
-};
+} as const;
 
 const techniqueLabels = {
   build: 'ビルド',
   stir: 'ステア',
   shake: 'シェイク',
+} as const;
+
+const getBaseLabel = (base: string) => {
+  return baseLabels[base as keyof typeof baseLabels] ?? base;
+};
+
+const getTechniqueLabel = (technique: string) => {
+  return (
+    techniqueLabels[technique as keyof typeof techniqueLabels] ?? technique
+  );
 };
 
 // =======================================
@@ -123,12 +133,10 @@ export function CocktailCard({
         <div className="flex items-center justify-between text-xs md:text-sm">
           <div className="flex items-center gap-1.5 md:gap-2 text-gray-600">
             <Wine className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            <span>{baseLabels[cocktail.base]}</span>
+            <span>{getBaseLabel(cocktail.base)}</span>
           </div>
           <span className="text-gray-500">
-            {techniqueLabels[
-              cocktail.technique as keyof typeof techniqueLabels
-            ] ?? cocktail.technique}
+            {getTechniqueLabel(cocktail.technique)}
           </span>
         </div>
       </CardContent>

@@ -31,7 +31,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-
 # ============================================================
 # Backend Lint (RuboCop)
 # ============================================================
@@ -68,15 +67,14 @@ jobs:
       - name: Run RuboCop
         run: bundle exec rubocop
 
-
-# ============================================================
-# Backend Test (RSpec)
-# ============================================================
-# 目的：
-#   - RSpecでRailsアプリの自動テストを実行する。
-#   - テスト前にPostgreSQLのテストDBを強制的に再生成し、状態をリセット。
-#   - Supabase拡張(pg_net, pg_graphql等)を含むstructure.sqlは読み込まない。
-# ============================================================
+  # ============================================================
+  # Backend Test (RSpec)
+  # ============================================================
+  # 目的：
+  #   - RSpecでRailsアプリの自動テストを実行する。
+  #   - テスト前にPostgreSQLのテストDBを強制的に再生成し、状態をリセット。
+  #   - Supabase拡張(pg_net, pg_graphql等)を含むstructure.sqlは読み込まない。
+  # ============================================================
 
   backend:
     name: Backend (RSpec)
@@ -102,7 +100,7 @@ jobs:
       DEVISE_JWT_SECRET_KEY: test_secret_key
       SECRET_KEY_BASE: dummy_key_for_ci
       BUNDLE_GEMFILE: ${{ github.workspace }}/backend/Gemfile
-      DISABLE_DATABASE_ENVIRONMENT_CHECK: "1"  # ← 追加：db:drop保護回避
+      DISABLE_DATABASE_ENVIRONMENT_CHECK: '1' # ← 追加：db:drop保護回避
     defaults:
       run:
         working-directory: backend
@@ -118,25 +116,24 @@ jobs:
           working-directory: backend
           cache-version: 2
 
-      # schema.rbを使ってDBを初期化（Supabase拡張を無視する）
+      # マイグレーションでDBを初期化（Supabase拡張を含むstructure.sqlは読み込まない）
       - name: Prepare database (schema load)
         run: |
           bundle exec rails db:drop db:create
-          bundle exec rails db:schema:load
+          bundle exec rails db:migrate
 
       # RSpecを実行（CI環境では --jobs オプション未対応のためシリアル実行）
       - name: Run RSpec
         run: bundle exec rspec
 
-
-# ============================================================
-# Frontend Lint (ESLint)
-# ============================================================
-# 目的：
-#   - フロントエンドのコードをESLintで静的解析
-# 背景：
-#   - import順・変数未使用・フォーマット崩れなどを早期検出する。
-# ============================================================
+  # ============================================================
+  # Frontend Lint (ESLint)
+  # ============================================================
+  # 目的：
+  #   - フロントエンドのコードをESLintで静的解析
+  # 背景：
+  #   - import順・変数未使用・フォーマット崩れなどを早期検出する。
+  # ============================================================
 
   frontend_lint:
     name: Frontend Lint (ESLint)
@@ -164,15 +161,14 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-
-# ============================================================
-# Frontend Test (Vitest)
-# ============================================================
-# 目的：
-#   - フロントエンドのユニットテストをVitestで実行。
-# 背景：
-#   - Reactコンポーネントのレンダリングやロジックの動作確認を自動化。
-# ============================================================
+  # ============================================================
+  # Frontend Test (Vitest)
+  # ============================================================
+  # 目的：
+  #   - フロントエンドのユニットテストをVitestで実行。
+  # 背景：
+  #   - Reactコンポーネントのレンダリングやロジックの動作確認を自動化。
+  # ============================================================
 
   frontend:
     name: Frontend (Vitest)
@@ -200,21 +196,20 @@ jobs:
       - name: Run Vitest
         run: npm run test -- --run
 
-
-# ============================================================
-# Deploy Hooks
-# ============================================================
-# 目的：
-#   - mainブランチへのpush完了時に Render / Vercel のデプロイWebhookを叩く。
-#   - テストが全て成功した場合のみ発火。
-#
-# 前提：
-#   - secrets.RENDER_DEPLOY_HOOK / secrets.VERCEL_DEPLOY_HOOK に
-#     各サービスのWebhook URLを登録しておくこと。
-#
-# 利点：
-#   - CI完了後に自動でRender/Vercelが再デプロイされるため、手動操作が不要。
-# ============================================================
+  # ============================================================
+  # Deploy Hooks
+  # ============================================================
+  # 目的：
+  #   - mainブランチへのpush完了時に Render / Vercel のデプロイWebhookを叩く。
+  #   - テストが全て成功した場合のみ発火。
+  #
+  # 前提：
+  #   - secrets.RENDER_DEPLOY_HOOK / secrets.VERCEL_DEPLOY_HOOK に
+  #     各サービスのWebhook URLを登録しておくこと。
+  #
+  # 利点：
+  #   - CI完了後に自動でRender/Vercelが再デプロイされるため、手動操作が不要。
+  # ============================================================
 
   deploy:
     name: Deploy Hooks

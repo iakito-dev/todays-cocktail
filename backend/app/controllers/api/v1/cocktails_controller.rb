@@ -2,7 +2,9 @@ class Api::V1::CocktailsController < ApplicationController
   require "digest"
   def index
     # キャッシュキーを生成（パラメータに応じて変化）
-    cache_key = "cocktails_index_#{cache_key_params}"
+    # v2: 一覧カードでベース/強度/技法バッジを表示するための列追加に伴い、
+    # 旧フォーマットのキャッシュと区別する
+    cache_key = "cocktails_index_v2_#{cache_key_params}"
 
     # キャッシュから取得、なければクエリ実行
     # データは基本的に不変のためキャッシュを長めにする
@@ -51,7 +53,7 @@ class Api::V1::CocktailsController < ApplicationController
 
       # 必要な列のみSELECTして転送量を削減
       paginated_cocktails = cocktails
-        .select(:id, :name, :name_ja, :glass_ja, :image_url_override)
+        .select(:id, :name, :name_ja, :glass_ja, :image_url_override, :base, :strength, :technique)
         .offset((page - 1) * per_page)
         .limit(per_page)
 

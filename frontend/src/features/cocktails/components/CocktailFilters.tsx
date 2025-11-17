@@ -137,7 +137,7 @@ export function CocktailFilters({
             value={tempSearchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="h-12 w-full rounded-2xl border-gray-200 bg-white pl-10 pr-[64px] text-xs text-gray-900 md:text-sm"
+            className="h-12 w-full rounded-2xl border-gray-200 bg-white pl-10 pr-[64px] text-[16px] text-gray-900 md:text-sm"
             ref={inputRef}
           />
           {tempSearchQuery ? (

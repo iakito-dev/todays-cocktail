@@ -59,7 +59,7 @@ export function SortMenu({ value, onChange }: SortMenuProps) {
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        並べ替え
+        並び替え
         <ChevronDown className="h-4 w-4" />
       </Button>
       {open && (

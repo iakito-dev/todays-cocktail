@@ -18,7 +18,7 @@ const strengthColors = {
 
 export function TodaysPick({ cocktail, onViewDetails }: TodaysPickProps) {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
+    <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-gray-50 to-white border border-gray-200 shadow-sm">
 
       <div className="relative grid md:grid-cols-2 gap-8 p-8 md:p-12">
         {/* Left Content */}
@@ -61,7 +61,7 @@ export function TodaysPick({ cocktail, onViewDetails }: TodaysPickProps) {
         {/* Right Image */}
         <div className="flex items-center justify-center">
           <div className="relative group">
-            <div className="relative aspect-square w-full max-w-sm rounded-3xl overflow-hidden shadow-lg">
+            <div className="relative aspect-square w-full max-w-sm rounded-2xl overflow-hidden shadow-lg">
               <ImageWithFallback
                 src={cocktail.image}
                 alt={cocktail.name}

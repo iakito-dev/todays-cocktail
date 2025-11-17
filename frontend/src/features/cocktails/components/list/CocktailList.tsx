@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Heart, Search } from 'lucide-react';
-import { Card, CardContent } from '../../../../components/ui/card';
 import {
   Tabs,
   TabsList,
@@ -22,29 +21,17 @@ import { AuthDialog } from '../../../auth/components/AuthDialog';
 import { SortMenu } from './SortMenu';
 import { CocktailGridSection } from './CocktailGridSection';
 import { FavoritesPanel } from './FavoritesPanel';
-import { Seo } from '../../../../components/layout/Seo';
 import { useFavorites } from '../../../../hooks/useFavorites';
 import { useAuth } from '../../../../hooks/useAuth';
 import type { Cocktail } from '../../../../lib/types';
 import { fetchCocktail } from '../../../../lib/api';
-import { absoluteUrl, siteMetadata } from '../../../../lib/seo';
 import { useCocktailSearch } from '../../hooks/useCocktailSearch';
 
 // =======================================
 // SEO定義
 // =======================================
 // 構造化データを定数に切り出し、JSX内をシンプルに保つ
-const HOME_WEBSITE_JSON_LD = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: siteMetadata.siteName,
-  url: siteMetadata.siteUrl,
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${siteMetadata.siteUrl}/?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
-};
+const TODAYS_PICK_STORAGE_KEY = 'todays_pick_visible';
 
 // =======================================
 // Responsive Helper
@@ -86,6 +73,15 @@ export function CocktailList() {
   const [selectedBases, setSelectedBases] = useState<string[]>([]);
   const [selectedTechniques, setSelectedTechniques] = useState<string[]>([]);
   const [selectedStrengths, setSelectedStrengths] = useState<string[]>([]);
+  const [showTodaysPick, setShowTodaysPick] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem(TODAYS_PICK_STORAGE_KEY);
+      if (stored !== null) {
+        return stored === 'true';
+      }
+    }
+    return true;
+  });
   const [sort, setSort] = useState<'id' | 'popular'>('id');
 
   const { user, login, signup } = useAuth();
@@ -136,6 +132,15 @@ export function CocktailList() {
       clearFavorites();
     }
   }, [user, fetchFavorites, clearFavorites]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(
+        TODAYS_PICK_STORAGE_KEY,
+        showTodaysPick ? 'true' : 'false',
+      );
+    }
+  }, [showTodaysPick]);
 
   // カードクリック時に詳細データを取得し、モーダル用stateへ格納する
   const handleCocktailClick = async (cocktail: Cocktail) => {
@@ -195,58 +200,32 @@ export function CocktailList() {
     favoritesPage * itemsPerPage,
   );
 
-  const itemListStructuredData =
-    cocktails && cocktails.length
-      ? {
-          '@context': 'https://schema.org',
-          '@type': 'ItemList',
-          itemListElement: cocktails
-            .slice(0, Math.min(10, cocktails.length))
-            .map((cocktail, index) => ({
-              '@type': 'ListItem',
-              position: index + 1,
-              url: absoluteUrl(`/cocktails/${cocktail.id}`),
-              name: cocktail.name_ja || cocktail.name,
-            })),
-        }
-      : undefined;
-
-  const homeStructuredData = itemListStructuredData
-    ? [HOME_WEBSITE_JSON_LD, itemListStructuredData]
-    : HOME_WEBSITE_JSON_LD;
-
   return (
     <>
-      <Seo
-        title="Today's Cocktail - 40種類以上のカクテルレシピを人気順で検索"
-        description="Today's Cocktailは、今日の一杯に出会えるカクテルレシピ検索アプリです。人気カクテル40種以上を、ベース酒・材料・人気順から簡単に探せます。今日のおすすめ機能やお気に入り登録で、自分だけの定番の一杯を見つけましょう。"
-        path="/"
-        structuredData={homeStructuredData}
-      />
       <div className="min-h-screen bg-gray-50 text-foreground">
         <div className="max-w-7xl mx-auto p-6">
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-            <aside className="hidden lg:block lg:sticky lg:top-6 lg:h-fit">
-              <Card className="bg-white border-gray-200">
-                <CardContent className="pt-6">
-                  <CocktailFilters
-                    searchQuery={q}
-                    onSearchChange={setQ}
-                    selectedBases={selectedBases}
-                    onBasesChange={setSelectedBases}
-                    selectedTechniques={selectedTechniques}
-                    onTechniquesChange={setSelectedTechniques}
-                    selectedStrengths={selectedStrengths}
-                    onStrengthsChange={setSelectedStrengths}
-                  />
-                </CardContent>
-              </Card>
+            <aside className="hidden lg:block lg:sticky lg:top-28 lg:h-fit">
+              <CocktailFilters
+                searchQuery={q}
+                onSearchChange={setQ}
+                selectedBases={selectedBases}
+                onBasesChange={setSelectedBases}
+                selectedTechniques={selectedTechniques}
+                onTechniquesChange={setSelectedTechniques}
+                selectedStrengths={selectedStrengths}
+                onStrengthsChange={setSelectedStrengths}
+                showTodaysPick={showTodaysPick}
+                onToggleTodaysPick={setShowTodaysPick}
+              />
             </aside>
 
             <main className="space-y-6">
-              <div className="order-1">
-                <TodaysPick onViewDetails={handleCocktailClick} />
-              </div>
+              {showTodaysPick ? (
+                <div className="order-1">
+                  <TodaysPick onViewDetails={handleCocktailClick} />
+                </div>
+              ) : null}
 
               <section className="space-y-4 order-2">
                 <Tabs
@@ -336,9 +315,7 @@ export function CocktailList() {
             className="w-[320px] sm:w-[380px] overflow-y-auto"
           >
             <SheetHeader>
-              <SheetTitle className="text-lg font-semibold">
-                検索・絞り込み
-              </SheetTitle>
+              <SheetTitle className="sr-only">フィルター</SheetTitle>
             </SheetHeader>
             <div className="mt-6">
               <CocktailFilters
@@ -350,6 +327,8 @@ export function CocktailList() {
                 onTechniquesChange={setSelectedTechniques}
                 selectedStrengths={selectedStrengths}
                 onStrengthsChange={setSelectedStrengths}
+                showTodaysPick={showTodaysPick}
+                onToggleTodaysPick={setShowTodaysPick}
               />
             </div>
           </SheetContent>

@@ -26,6 +26,10 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./src/test/setup.ts'],
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['text', 'lcov'],
+    },
   },
   resolve: {
     alias: {

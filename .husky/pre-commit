@@ -1,1 +1,15 @@
+#!/usr/bin/env sh
+
+if command -v asdf >/dev/null 2>&1; then
+  if asdf which node >/dev/null 2>&1; then
+    if asdf exec npx lint-staged; then
+      exit 0
+    else
+      echo "asdf exec npx lint-staged failed; falling back to system npx." >&2
+    fi
+  else
+    echo "asdf nodejs plugin not configured; falling back to system npx." >&2
+  fi
+fi
+
 npx lint-staged

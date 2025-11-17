@@ -212,6 +212,8 @@ export async function fetchHealth(): Promise<string> {
 export interface CocktailQuery {
   q?: string;
   base?: string | string[]; // enum key(s)
+  technique?: string | string[];
+  strength?: string | string[];
   ingredients?: string; // comma/space separated
   page?: number;
   per_page?: number;
@@ -238,16 +240,19 @@ export async function fetchCocktails(
     if (params.page) qs.set('page', params.page.toString());
     if (params.per_page) qs.set('per_page', params.per_page.toString());
     if (params.sort) qs.set('sort', params.sort);
-    if (params.base) {
-      const bases = Array.isArray(params.base)
-        ? params.base
-        : params.base.split(',');
-      if (bases.length === 1) {
-        qs.set('base', bases[0]);
-      } else if (bases.length > 1) {
-        bases.forEach((b) => qs.append('base[]', b));
+    const appendEnumParam = (name: string, value?: string | string[]) => {
+      if (!value) return;
+      const values = Array.isArray(value) ? value : value.split(',');
+      if (values.length === 1) {
+        qs.set(name, values[0]);
+      } else if (values.length > 1) {
+        values.forEach((v) => qs.append(`${name}[]`, v));
       }
-    }
+    };
+
+    appendEnumParam('base', params.base);
+    appendEnumParam('technique', params.technique);
+    appendEnumParam('strength', params.strength);
   }
   const path = `/api/v1/cocktails${qs.toString() ? `?${qs.toString()}` : ''}`;
   return apiGetPublic(path);

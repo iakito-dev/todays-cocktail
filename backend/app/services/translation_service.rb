@@ -191,7 +191,7 @@ class TranslationService
       # 実行対象
       カクテル名: #{cocktail_name}
       ベース: #{base.presence || '不明'}
-      強度: #{strength.presence || '不明'}
+      度数: #{strength.presence || '不明'}
       材料: #{ingredients_list.any? ? ingredients_list.join(', ') : '情報なし'}
     PROMPT
 
@@ -219,7 +219,7 @@ class TranslationService
     "vodka"
   end
 
-  # カクテルの強度判定
+  # カクテルの度数判定
   def determine_strength(cocktail_name, ingredients_list = [], alcoholic_type = nil)
     return "light" if alcoholic_type == "Non alcoholic"
 

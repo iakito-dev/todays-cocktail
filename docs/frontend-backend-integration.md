@@ -1,6 +1,7 @@
 # 実装機能の概要
 
 ## 1. システム全体像
+
 - **バックエンド**: Rails API（`backend/`）。Devise + JWT 認証、Rails.cache による応答キャッシュ、外部 API（TheCocktailDB / OpenAI / DeepL / Unsplash）連携でデータを拡充。
 - **フロントエンド**: Vite + React（`frontend/`）。shadcn/ui をベースにした UI コンポーネントと Context + Hooks で状態管理。API 通信は `src/lib/api.ts` に集約。
 - **データモデル**: `Cocktail` / `Ingredient` / `CocktailIngredient` / `Favorite` / `User`。カクテル情報は日本語フィールドと画像 URL（`image_url_override`）を保持。
@@ -9,35 +10,38 @@
 ## 2. バックエンド API 概要
 
 ### 2.1 認証・ユーザー系
-| エンドポイント | メソッド | 認証 | 役割 | 主なレスポンス |
-| --- | --- | --- | --- | --- |
-| `/api/v1/signup` | POST | 不要 | ユーザー登録。メール確認必須のため自動ログインなし。 | `status`, `data.user`（confirmed フラグ含む） |
-| `/api/v1/login` | POST | 不要 | ログイン。Devise JWT が `Authorization` ヘッダー（Bearer）で返却。 | `status`, `data.user` |
-| `/api/v1/logout` | DELETE | 要 | トークンを denylist に登録し無効化。 | 成功メッセージのみ |
-| `/api/v1/confirmation` | GET/POST | 不要 | メール確認・再送。GET は確認トークンを検証し自動ログイン。 | `data.user` またはエラー |
-| `/api/v1/users/me` | GET | 要 | 現在のユーザー情報を返却。 | `data.user` |
+
+| エンドポイント         | メソッド | 認証 | 役割                                                               | 主なレスポンス                                |
+| ---------------------- | -------- | ---- | ------------------------------------------------------------------ | --------------------------------------------- |
+| `/api/v1/signup`       | POST     | 不要 | ユーザー登録。メール確認必須のため自動ログインなし。               | `status`, `data.user`（confirmed フラグ含む） |
+| `/api/v1/login`        | POST     | 不要 | ログイン。Devise JWT が `Authorization` ヘッダー（Bearer）で返却。 | `status`, `data.user`                         |
+| `/api/v1/logout`       | DELETE   | 要   | トークンを denylist に登録し無効化。                               | 成功メッセージのみ                            |
+| `/api/v1/confirmation` | GET/POST | 不要 | メール確認・再送。GET は確認トークンを検証し自動ログイン。         | `data.user` またはエラー                      |
+| `/api/v1/users/me`     | GET      | 要   | 現在のユーザー情報を返却。                                         | `data.user`                                   |
 
 認証チェックは `ApplicationController#authenticate_user!`（`backend/app/controllers/application_controller.rb`）で JWT を検証し、denylist（`JwtDenylist`）で失効判定する。
 
 ### 2.2 カクテル系
-| エンドポイント | メソッド | 認証 | 役割 | キャッシュ |
-| --- | --- | --- | --- | --- |
-| `/api/v1/cocktails` | GET | 任意 | 一覧取得。`q`（名前検索）、`base`（enum 複数可）、`ingredients`（AND 検索）、`sort`（`popular`）などをサポート。ページネーションは `page` / `per_page`。 | Rails.cache で 1 時間（パラメータ別にキー生成） |
-| `/api/v1/cocktails/:id` | GET | 任意 | 詳細取得。材料配列・日本語訳・表示用画像 URL を含む。 | Rails.cache で 24 時間 |
-| `/api/v1/cocktails/todays_pick` | GET | 任意 | 当日のおすすめをランダム表示。 | Rails.cache で 1 日（`todays_pick_YYYY-MM-DD`） |
+
+| エンドポイント                  | メソッド | 認証 | 役割                                                                                                                                                     | キャッシュ                                      |
+| ------------------------------- | -------- | ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `/api/v1/cocktails`             | GET      | 任意 | 一覧取得。`q`（名前検索）、`base`（enum 複数可）、`ingredients`（AND 検索）、`sort`（`popular`）などをサポート。ページネーションは `page` / `per_page`。 | Rails.cache で 1 時間（パラメータ別にキー生成） |
+| `/api/v1/cocktails/:id`         | GET      | 任意 | 詳細取得。材料配列・日本語訳・表示用画像 URL を含む。                                                                                                    | Rails.cache で 24 時間                          |
+| `/api/v1/cocktails/todays_pick` | GET      | 任意 | 当日のおすすめをランダム表示。                                                                                                                           | Rails.cache で 1 日（`todays_pick_YYYY-MM-DD`） |
 
 ### 2.3 お気に入り・管理者系
-| エンドポイント | メソッド | 認証 | 役割 |
-| --- | --- | --- | --- |
-| `/api/v1/favorites` | GET | 要 | ログインユーザーのお気に入り一覧を最新順で返却。 |
-| `/api/v1/favorites` | POST | 要 | `cocktail_id` をお気に入り登録。重複登録はバリデーションで防止。 |
-| `/api/v1/favorites/:id` | DELETE | 要 | お気に入り削除。 |
-| `/api/v1/admin/cocktails/:id` | PUT | 管理者 | カクテル情報（各種フィールドや `image_url_override`）を更新。キャッシュを明示的に無効化。 |
+
+| エンドポイント                | メソッド | 認証   | 役割                                                                                      |
+| ----------------------------- | -------- | ------ | ----------------------------------------------------------------------------------------- |
+| `/api/v1/favorites`           | GET      | 要     | ログインユーザーのお気に入り一覧を最新順で返却。                                          |
+| `/api/v1/favorites`           | POST     | 要     | `cocktail_id` をお気に入り登録。重複登録はバリデーションで防止。                          |
+| `/api/v1/favorites/:id`       | DELETE   | 要     | お気に入り削除。                                                                          |
+| `/api/v1/admin/cocktails/:id` | PUT      | 管理者 | カクテル情報（各種フィールドや `image_url_override`）を更新。キャッシュを明示的に無効化。 |
 
 ## 3. バックエンドのサービス層・バッチ処理
 
 - `TranslationService`（`backend/app/services/translation_service.rb`）
-  OpenAI Chat Completions（`gpt-4o-mini`）で日本語訳や説明文を生成。429 エラー時は DeepL API にフォールバック。材料翻訳はバッチプロンプトで効率化。ベース／強度推定もプロンプトで実施。
+  OpenAI Chat Completions（`gpt-4o-mini`）で日本語訳や説明文を生成。429 エラー時は DeepL API にフォールバック。材料翻訳はバッチプロンプトで効率化。ベース／度数推定もプロンプトで実施。
 
 - `ImageDownloadService`（`backend/app/services/image_download_service.rb`）
   外部 URL の画像をダウンロードし Active Storage に添付する設計。現在は Active Storage テーブルを削除しているため（`20251104232712_drop_active_storage_tables.rb`）、`image_url_override` の URL をそのままフロントで利用する運用が基本。将来的に再導入する場合は `has_one_attached :image` をモデルに追加する。
@@ -49,7 +53,7 @@
   - `cocktails:import`（`import_cocktails.rake`）: TheCocktailDB API 全件インポート。翻訳・日本語フィールドの保存、材料翻訳、画像ダウンロードまでを一括で実施。
   - `cocktails:import_popular`（`import_popular_cocktails.rake`）: 人気リストを順次取り込み、欠損画像・翻訳を補完。
   - `cocktails:translate_all`: 既存カクテル・材料・分量・レシピを後付け翻訳。
-  各処理で API 負荷を下げるための `sleep` が明示されており、エラーはロギング＋カウントで要約される。
+    各処理で API 負荷を下げるための `sleep` が明示されており、エラーはロギング＋カウントで要約される。
 
 ## 4. フロントエンドの UI コンポーネントと状態管理
 

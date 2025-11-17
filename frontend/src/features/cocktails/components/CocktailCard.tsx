@@ -102,7 +102,7 @@ export function CocktailCard({
           </div>
         )}
 
-        {/* 強度バッジ：右上に重ね、Tailwindクラスで色分けする */}
+        {/* 度数バッジ：右上に重ね、Tailwindクラスで色分けする */}
         <div className="absolute top-2 right-2 md:top-3 md:right-3">
           <Badge
             className={`${strengthColors[cocktail.strength] ?? strengthColors['light']} shadow-sm text-xs`}

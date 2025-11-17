@@ -185,7 +185,7 @@ export default function App() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xl shadow-sm">
+              <div className="w-11 h-11 rounded-2xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xl shadow-sm">
                 🍸
               </div>
               <div>
@@ -202,7 +202,7 @@ export default function App() {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full">
                     <Avatar className="w-7 h-7">
-                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                      <AvatarFallback className="bg-linear-to-br from-blue-500 to-purple-600 text-white">
                         {user.email.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -235,7 +235,7 @@ export default function App() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           <aside className="lg:col-span-1">
-            <div className="bg-gray-50 rounded-3xl p-6 sticky top-24">
+            <div className="bg-gray-50 rounded-2xl p-6 sticky top-24">
               <div className="flex items-center gap-2 mb-6">
                 <BookOpen className="w-5 h-5 text-blue-600" />
                 <h2 className="text-gray-900">カクテル図鑑</h2>
@@ -262,7 +262,7 @@ export default function App() {
             )}
 
             {/* Tabs */}
-            <div className="bg-white rounded-3xl p-6">
+            <div className="bg-white rounded-2xl p-6">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                 <TabsList className="grid w-full max-w-md grid-cols-2 bg-gray-100">
                   <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">

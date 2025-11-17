@@ -28,7 +28,7 @@ describe('CocktailCard', () => {
     expect(screen.getByText('ステア')).toBeInTheDocument();
   });
 
-  it('強度バッジを正しく表示する', () => {
+  it('度数バッジを正しく表示する', () => {
     const onViewDetails = vi.fn();
     render(
       <CocktailCard cocktail={mockCocktail} onViewDetails={onViewDetails} />,
@@ -129,7 +129,7 @@ describe('CocktailCard', () => {
     expect(screen.getByText('ラム')).toBeInTheDocument();
   });
 
-  it('異なる強度でバッジの色が変わる', () => {
+  it('異なる度数でバッジの色が変わる', () => {
     const onViewDetails = vi.fn();
 
     const { rerender } = render(

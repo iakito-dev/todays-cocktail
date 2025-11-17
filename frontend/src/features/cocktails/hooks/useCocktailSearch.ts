@@ -6,6 +6,8 @@ import { useDebounce } from '../../../hooks/useDebounce';
 export interface UseCocktailSearchOptions {
   query: string;
   bases: string[];
+  techniques: string[];
+  strengths: string[];
   page: number;
   perPage: number;
   sort: 'id' | 'popular';
@@ -28,7 +30,7 @@ interface UseCocktailSearchResult {
 export function useCocktailSearch(
   options: UseCocktailSearchOptions,
 ): UseCocktailSearchResult {
-  const { query, bases, page, perPage, sort } = options;
+  const { query, bases, techniques, strengths, page, perPage, sort } = options;
   const [cocktails, setCocktails] = useState<Cocktail[] | null>(null);
   const [totalPages, setTotalPages] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -41,11 +43,13 @@ export function useCocktailSearch(
     return `cocktails_${JSON.stringify({
       q: debouncedQuery,
       base: bases,
+      technique: techniques,
+      strength: strengths,
       page,
       per_page: perPage,
       sort,
     })}`;
-  }, [debouncedQuery, bases, page, perPage, sort]);
+  }, [debouncedQuery, bases, techniques, strengths, page, perPage, sort]);
 
   // APIを呼び出し、結果をstateとsessionStorageに反映
   useEffect(() => {
@@ -89,6 +93,8 @@ export function useCocktailSearch(
 
     if (debouncedQuery) params.q = debouncedQuery;
     if (bases.length) params.base = bases;
+    if (techniques.length) params.technique = techniques;
+    if (strengths.length) params.strength = strengths;
     if (sort === 'popular') params.sort = 'popular';
 
     fetchCocktails(params)
@@ -113,7 +119,16 @@ export function useCocktailSearch(
     return () => {
       mounted = false;
     };
-  }, [bases, cacheKey, debouncedQuery, page, perPage, sort]);
+  }, [
+    bases,
+    techniques,
+    strengths,
+    cacheKey,
+    debouncedQuery,
+    page,
+    perPage,
+    sort,
+  ]);
 
   return {
     cocktails,

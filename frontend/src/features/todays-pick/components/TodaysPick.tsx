@@ -201,7 +201,7 @@ export function TodaysPick({ onViewDetails }: TodaysPickProps) {
             className="hidden md:flex group w-full md:w-fit bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base"
           >
             レシピを見る
-            <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
+            <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
           </Button>
         </div>
 

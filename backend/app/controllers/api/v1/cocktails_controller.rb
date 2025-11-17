@@ -26,6 +26,22 @@ class Api::V1::CocktailsController < ApplicationController
         end
       end
 
+      if params[:technique].present?
+        techniques = Array(params[:technique]).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
+        if techniques.any?
+          valid = techniques & Cocktail.techniques.keys
+          cocktails = cocktails.where(technique: valid.map { |k| Cocktail.techniques[k] }) if valid.any?
+        end
+      end
+
+      if params[:strength].present?
+        strengths = Array(params[:strength]).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
+        if strengths.any?
+          valid = strengths & Cocktail.strengths.keys
+          cocktails = cocktails.where(strength: valid.map { |k| Cocktail.strengths[k] }) if valid.any?
+        end
+      end
+
       # ページネーション
       page = [ params[:page].to_i, 1 ].max
       per_page = params[:per_page].to_i
@@ -179,6 +195,8 @@ class Api::V1::CocktailsController < ApplicationController
     {
       q: params[:q],
       base: params[:base],
+      technique: params[:technique],
+      strength: params[:strength],
       ingredients: params[:ingredients],
       page: params[:page],
       per_page: params[:per_page],

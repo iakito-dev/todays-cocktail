@@ -69,7 +69,7 @@ export const getProvidedText = (value?: string | null) => {
   return trimmed?.length ? trimmed : null;
 };
 
-// 既存の説明がない場合に、ベース・強度・技法のテンプレから文章を生成
+// 既存の説明がない場合に、ベース・度数・技法のテンプレから文章を生成
 export const buildDefaultDescription = (cocktail: Cocktail | null) => {
   if (!cocktail) return null;
   const baseStory =

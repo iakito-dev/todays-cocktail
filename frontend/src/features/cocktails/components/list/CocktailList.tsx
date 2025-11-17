@@ -84,6 +84,8 @@ export function CocktailList() {
   const [favoritesPage, setFavoritesPage] = useState(1);
   const [q, setQ] = useState('');
   const [selectedBases, setSelectedBases] = useState<string[]>([]);
+  const [selectedTechniques, setSelectedTechniques] = useState<string[]>([]);
+  const [selectedStrengths, setSelectedStrengths] = useState<string[]>([]);
   const [sort, setSort] = useState<'id' | 'popular'>('id');
 
   const { user, login, signup } = useAuth();
@@ -108,6 +110,8 @@ export function CocktailList() {
   } = useCocktailSearch({
     query: q,
     bases: selectedBases,
+    techniques: selectedTechniques,
+    strengths: selectedStrengths,
     page: currentPage,
     perPage: itemsPerPage,
     sort,
@@ -116,7 +120,13 @@ export function CocktailList() {
   // 検索条件が変わるたびにページを先頭へ戻し、APIパラメータをリセットする
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedQuery, selectedBases, sort]);
+  }, [
+    debouncedQuery,
+    selectedBases,
+    selectedTechniques,
+    selectedStrengths,
+    sort,
+  ]);
 
   // ログイン状態に合わせてお気に入り一覧を同期する
   useEffect(() => {
@@ -208,8 +218,8 @@ export function CocktailList() {
   return (
     <>
       <Seo
-        title="Today's Cocktail - 今日の一杯が見つかる人気カクテルレシピ検索アプリ"
-        description="人気カクテル40種以上を、ベース酒・材料・人気順から簡単検索。今日のおすすめやお気に入り機能で、自分だけの一杯に出会えるカクテル検索アプリ。"
+        title="Today's Cocktail - 40種類以上のカクテルレシピを人気順で検索"
+        description="Today's Cocktailは、今日の一杯に出会えるカクテルレシピ検索アプリです。人気カクテル40種以上を、ベース酒・材料・人気順から簡単に探せます。今日のおすすめ機能やお気に入り登録で、自分だけの定番の一杯を見つけましょう。"
         path="/"
         structuredData={homeStructuredData}
       />
@@ -224,6 +234,10 @@ export function CocktailList() {
                     onSearchChange={setQ}
                     selectedBases={selectedBases}
                     onBasesChange={setSelectedBases}
+                    selectedTechniques={selectedTechniques}
+                    onTechniquesChange={setSelectedTechniques}
+                    selectedStrengths={selectedStrengths}
+                    onStrengthsChange={setSelectedStrengths}
                   />
                 </CardContent>
               </Card>
@@ -332,6 +346,10 @@ export function CocktailList() {
                 onSearchChange={setQ}
                 selectedBases={selectedBases}
                 onBasesChange={setSelectedBases}
+                selectedTechniques={selectedTechniques}
+                onTechniquesChange={setSelectedTechniques}
+                selectedStrengths={selectedStrengths}
+                onStrengthsChange={setSelectedStrengths}
               />
             </div>
           </SheetContent>

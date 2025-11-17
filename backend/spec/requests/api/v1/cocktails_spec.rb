@@ -101,10 +101,12 @@ RSpec.describe "Api::V1::Cocktails", type: :request do
       expect(cache_keys.uniq.size).to be >= 2
     end
 
-    def cocktails_index_cache_key(q: nil, base: nil, ingredients: nil, page: nil, per_page: nil, sort: 'id')
+    def cocktails_index_cache_key(q: nil, base: nil, technique: nil, strength: nil, ingredients: nil, page: nil, per_page: nil, sort: 'id')
       payload = {
         q: q,
         base: base,
+        technique: technique,
+        strength: strength,
         ingredients: ingredients,
         page: page,
         per_page: per_page,

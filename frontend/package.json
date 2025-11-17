@@ -4,17 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "asdf exec vite",
-    "build": "asdf exec vite build",
-    "lint": "asdf exec eslint 'src/**/*.{ts,tsx}'",
-    "lint:fix": "asdf exec eslint 'src/**/*.{ts,tsx}' --fix",
-    "format": "asdf exec prettier --write 'src/**/*.{ts,tsx,css,json}'",
-    "format:check": "asdf exec prettier --check 'src/**/*.{ts,tsx,css,json}'",
-    "preview": "asdf exec vite preview",
-    "sitemap": "asdf exec node scripts/generate-sitemap.mjs",
-    "test": "asdf exec node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs",
-    "test:ui": "asdf exec node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs --ui",
-    "test:coverage": "asdf exec node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs --coverage"
+    "dev": "scripts/run-with-asdf.sh vite",
+    "build": "scripts/run-with-asdf.sh vite build",
+    "lint": "scripts/run-with-asdf.sh eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "scripts/run-with-asdf.sh eslint \"src/**/*.{ts,tsx}\" --fix",
+    "format": "scripts/run-with-asdf.sh prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "format:check": "scripts/run-with-asdf.sh prettier --check \"src/**/*.{ts,tsx,css,json}\"",
+    "preview": "scripts/run-with-asdf.sh vite preview",
+    "sitemap": "scripts/run-with-asdf.sh node scripts/generate-sitemap.mjs",
+    "test": "scripts/run-with-asdf.sh node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs",
+    "test:ui": "scripts/run-with-asdf.sh node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs --ui",
+    "test:coverage": "scripts/run-with-asdf.sh node --require ./vitest.polyfill.cjs ./node_modules/vitest/vitest.mjs --coverage"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

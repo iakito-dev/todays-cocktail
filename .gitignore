@@ -32,8 +32,6 @@ lerna-debug.log*
 /vendor/bundle
 backend/vendor/bundle/
 .rspec
-backend/db/schema.rb
-
 **/log/*
 **/tmp/*
 !**/log/.keep

@@ -120,7 +120,7 @@ jobs:
       - name: Prepare database (schema load)
         run: |
           bundle exec rails db:drop db:create
-          bundle exec rails db:migrate
+          bundle exec rails db:schema:load
 
       # RSpecを実行（CI環境では --jobs オプション未対応のためシリアル実行）
       - name: Run RSpec

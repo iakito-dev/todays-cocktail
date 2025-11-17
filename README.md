@@ -1,5 +1,3 @@
-（編集中）
-
 # Today's Cocktail　- アプリ紹介
 
 ## サービス概要
@@ -12,15 +10,16 @@ Today's Cocktail は、「カクテルをもっと身近に」という思いか
 
 ### URL
 
-- https://todayscocktails.com
+https://todayscocktails.com
+
 
 ### ゲストユーザーアカウント
-Email: guestuser@example.com
-Password: password123
+- Email: guestuser@example.com  
+- Password: password123
 
 ### サービス開発の背景
 
-開発者自身、休日の飲み歩きや晩酌が好きでよくバーやパブに足を運ぶのですが、いつもビールやワインといった定番のドリンクに落ち着いてしまい、新しい一杯に挑戦しづらいという悩みがありました。特に海外では、日本で定番のハイボールやレモンサワーがなく、代わりに名前だけでは味や見た目が想像できないカクテルが並び、選ぶのに苦労する場面が多くありました。もし材料や味の傾向、由来、見た目が分かれば、もっと挑戦しやすくなるし、晩酌のレパートリーも広がるはず。そんな課題感と期待から、カクテルの情報をシンプルに整理し、初心者でも選びやすい図鑑のようなアプリがあれば便利だと考え、Today's Cocktail の開発を始めました。
+海外のバーでドリンクを選ぶとき、名前だけでは味や見た目が想像できないカクテルがずらっと並び、注文に苦戦したことがアプリ開発のきっかけです。日本ではハイボールやレモンサワーが定番ですが、海外ではそういったメニューはほとんど存在せず、さらにメニューに写真が載っていないことも多いため、よく分からない名前だけを頼りに適当に注文してしまうことがよくありました。困ったときはワインやビールを頼めば済むものの、せっかくなら幅広い種類のカクテルにも詳しくなり、自分でも自信を持ってバーで注文できるようになりたいと感じ、初心者向けのカクテル図鑑のようなアプリをつくりたいと感じました。本アプリでは、このような開発者自身の体験をもとに、初心者でも直感的に雰囲気が分かる画像や、カクテルの起源・由来・アルコール度数などの情報を分かりやすく整理し、安心して新しい一杯を選べることを目指しています。
 
 
 ### 主な実装機能
@@ -42,19 +41,19 @@ Password: password123
 | カテゴリ | 採用技術 |
 |----------|-----------|
 | フロントエンド | React 19 / TypeScript / Vite 7 / React Router 7 / Tailwind CSS 3 / shadcn/ui（Radix UI） |
-| バックエンド API | Ruby 3.4.6 / Rails 8.0.3（API モード） / solid_cache / solid_queue / solid_cable |
-| データベース | Supabase（ローカル：Supabase CLI / Cloud：PostgreSQL 17） |
+| バックエンド API | Ruby 3.4.6 / Rails 8.0.3（API モード） |
+| データベース | Supabase CLI / Cloud（PostgreSQL 17） |
 | 認証 | Devise / devise-jwt |
-| インフラ・ホスティング | Vercel（フロントエンド） / Render（バックエンド API） / Cloudflare DNS / Docker Compose |
-| CI/CD | GitHub Actions（lint / test） |
-| UI/UX デザイン | Figma / Figma Make |
-| 開発環境 | Git / Docker / Docker Compose / Supabase CLI / VS Code / GitHub Copilot / Codex（Sonnet 4.5 / gpt-5 / gpt-5-codex） / Colima （軽量Docker環境） |
-| テスト | Vitest 4（フロント） RSpec（Rails API） |
-| 開発支援・コード整形 | ESLint 9 / Prettier 3 / Husky 9 / lint-staged 16 / RuboCop |
 | 外部API連携 | OpenAI API（生成・翻訳） / TheCocktailDB API（カクテル情報） / Unsplash API（画像） / Resend API（メール送信） |
+| インフラ・ホスティング | Vercel（フロントエンド） / Render（バックエンド API） / Cloudflare DNS |
+| CI/CD | GitHub Actions（lint / test） / Vercel & Render Deploy Hooks |
+| テスト | Vitest 4（フロント） / RSpec（Rails API） |
+| UI/UX デザイン | Figma / Figma Make |
+| 開発支援・コード整形 | ESLint 9 / Prettier 3 / Husky 9 / lint-staged 16 / RuboCop |
+| 開発環境 | Git / Docker / Docker Compose / VS Code / GitHub Copilot / Codex（Sonnet 4.5 / gpt-5 / gpt-5-codex） / Colima（軽量Docker環境） |
 
 
-詳しい選定理由は `docs/tech_stack.md` に記載予定。
+詳しい選定理由は `docs/tech_stack.md` に記載。
 
 ---
 
@@ -65,11 +64,12 @@ Password: password123
 ```mermaid
 flowchart LR
   User[ユーザー] -->|HTTPS| Cloudflare[Cloudflare DNS]
-  Cloudflare --> Vercel[Vercel\n(React SPA)]
-  Cloudflare --> Render[Render\n(Rails API)]
-  Render --> Supabase[(Supabase Cloud\nPostgreSQL)]
-  Render --> Cache["Rails.cache / Redis（検討中）"]
+  Cloudflare --> Vercel[Vercel<br/>(React SPA)]
+  Cloudflare --> Render[Render<br/>(Rails API)]
+  Render --> Supabase[(Supabase Cloud<br/>PostgreSQL)]
+  Render --> Cache[RAILS.cache / Redis（検討中）]
 ```
+
 
 ---
 
@@ -84,8 +84,7 @@ erDiagram
   USERS ||--o{ JWT_DENYLISTS : "無効化トークン"
 ```
 
-
-テーブル定義の詳細は `docs/db_design.md` を参照してください。
+テーブル定義の詳細は `docs/db_design.md` に記載。
 
 ### 画面遷移図（概要）
 
@@ -99,156 +98,57 @@ flowchart TD
   Home --> TodaysPick[今日の一杯]
 ```
 
-UI とレスポンシブ方針は `docs/wireframe.md` にまとめています。
+UI とレスポンシブ方針は `docs/wireframe.md` に記載。
 
 ---
 
 ## 技術選定理由（抜粋）
 
-- **Rails 8 (API モード)**
-  REST API の整備と Devise を活かしたメール確認付き認証を最短で実装できるため。日本語資料も豊富で、ポートフォリオとしても説明しやすい。
-- **React + Vite + TypeScript**
-  SPA として自由度の高い UI を構築しつつ、Vite で軽快な開発体験、TypeScript で静的型チェックを実現。
-- **Supabase Cloud**
-  追記予定
-- **Render / Vercel / Cloudflare**
-  未定
-- **Docker / asdf**
-  ローカルでも本番に近い構成を再現できるようにし、開発環境の差異を最小化しました。
+- **Rails 8 (API モード)**  
+  他のバックエンドフレームワークと比較して日本語の学習教材や導入事例が豊富である点が採用理由です。本プロジェクトはポートフォリオとしての活用も想定していたため、スタートアップ企業や未経験・ジュニア層での採用実績が比較的多い Ruby を選択しました。
+
+- **React + Vite + TypeScript**  
+  もともと JavaScript を学習していたことに加え、日本語の教材や採用実績が豊富で、現在主流のフロントエンド開発手法に合致している点から採用しました。Next.js も検討しましたが、Ruby と併用する場合は学習範囲が広がり負荷が増える可能性があること、また本プロジェクトでは複雑な要件が特にないため、よりシンプルに扱える React を選択しました。
+
+- **Render / Vercel / Cloudflare**  
+  当初は前職で使用経験のある AWS も検討しましたが、フロントとバックエンドでそれぞれ ECS Fargate を運用し、RDS を配置する構成では、最小スペックでも月額 6,000〜10,000 円ほどのコストが発生する見込みでした。個人開発として長く運用したいことから、低コストかつ小〜中規模アプリ向けの機能が充実している Render・Vercel・Cloudflare を組み合わせる構成を選択しました。
+
+- **Supabase Cloud**  
+  同様にコスト面を考慮し、無料で簡単に PostgreSQL 環境をデプロイできる点を評価しました。前職では MySQL の利用経験が中心でしたが、Supabase が PostgreSQL に特化していること、そして今後さらにシェアが伸びると見込まれる PostgreSQL を学習する良い機会になると考え採用しました。
+
 
 ---
 
 ## 工夫した点
 
-- 追記予定
+- カクテル一覧、詳細、検索機能におけるパフォーマンス向上
+
+- AIを活用した材料やレシピなどのコンテンツ生成
+
+- なるべくシンプルでわかりやすいUIUXの実装
 
 ---
 
 ## 苦労した点
 
-- 追記予定
+- 認証機能の実装
+
+- Lint、自動テストなど開発環境の整備
 
 ---
 
-## 今後の課題
+## 今後の開発ロードマップ
 
-- `/api/v1/ingredients` を公開し、フロントでの材料サジェストやオートコンプリートに活かす
-- 画像アップロードの仕組み（Supabase Storage or Active Storage + S3）の導入
-- 味わい・香りなどのメタ情報をタグ化し、レコメンド精度を高める
-- GitHub Actions と Render/Vercel を統合した CI/CD パイプラインの整備
-- Terraform での本番インフラ定義、ログ監視・モニタリング（Sentry / Logflare 等）の導入
+- カクテル画像アップロード機能の実装（現在は外部URLのみ取得）
+- 「定番」「簡単」などのタグ付け機能の追加、およびフィルタリング項目への反映
+- ソーシャルログイン機能（LINE / Google など）の導入
+- コメント投稿機能の追加
+- カクテルレシピの拡充
+- プレミアムユーザー向け機能（課金）の導入
 
----
-
-## セットアップ（ローカル開発時）
-
-### 0. 必要なツール
-
-| ツール         | バージョン | 備考                                 |
-| -------------- | ---------- | ------------------------------------ |
-| asdf           | latest     | ランタイム管理                       |
-| Ruby           | 3.4.6      | `asdf install ruby 3.4.6`            |
-| Node.js        | 22.21.0    | `asdf install nodejs 22.21.0`        |
-| Yarn           | 1.22.22    | `asdf install yarn 1.22.22`          |
-| Docker Desktop | latest     | コンテナ実行                         |
-| Supabase CLI   | latest     | `brew install supabase/tap/supabase` |
-
-### 1. リポジトリの取得と依存関係のインストール
-
-```bash
-git clone https://github.com/iakito-dev/todays-cocktail.git
-cd todays-cocktail
-
-asdf install
-
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
-
-cd backend && bundle install
-cd ../frontend && yarn install
-```
-
-### 2. Supabase ローカルの起動（任意）
-
-本番は Supabase Cloud を利用していますが、ローカルで検証したい場合は以下で起動できます。
-
-```bash
-supabase start
-supabase status
-```
-
-| サービス | ローカル接続 URL                                          |
-| -------- | --------------------------------------------------------- |
-| Database | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
-| API      | `http://127.0.0.1:54321`                                  |
-| Studio   | `http://127.0.0.1:54323`                                  |
-
-### 3. アプリケーションの起動
-
-```bash
-docker compose up --build
-# バックグラウンド起動
-docker compose up -d --build
-```
-
-| サービス                | URL                          |
-| ----------------------- | ---------------------------- |
-| Rails API (local)       | http://localhost:3000        |
-| React (local)           | http://localhost:5173        |
-| Health Check            | http://localhost:3000/health |
-| Supabase Studio (local) | http://localhost:54323       |
-
-### 4. よく使うコマンド
-
-```bash
-# Docker
-docker compose up -d
-docker compose logs -f backend
-docker compose exec backend rails console
-docker compose down -v
-
-# データベース
-supabase db reset
-docker compose exec backend rails db:seed
-
-# キャッシュ
-docker compose exec backend bin/rails runner 'Rails.cache.clear'
-
-# テスト・品質
-docker compose exec backend bundle exec rspec
-docker compose exec backend bundle exec rubocop
-docker compose exec frontend npm run lint
-docker compose exec frontend npm run test
-
-# サイトマップ
-docker compose exec frontend npm run sitemap
-```
-
-### サイトマップの再生成
-
-SPA で公開中の静的ページと Rails API から取得したカクテル詳細ページを組み合わせて `frontend/public/sitemap.xml` を自動生成できます。
-
-1. API が参照できる状態にする（ローカルなら `docker compose up backend`、本番データを反映したい場合は `API_BASE_URL=https://todays-cocktails.onrender.com` などを指定）。
-2. 必要に応じて `SITE_URL`（デフォルトは `https://todayscocktails.com`）も環境変数で上書きする。
-3. `docker compose exec frontend npm run sitemap` を実行。
-
-生成したファイルは Vercel デプロイ時に `dist/sitemap.xml` として公開されます。カクテルを追加・削除・ID変更したとき、固定ページの URL を増やしたとき、またはドメインを切り替えるときに再実行して最新状態へ更新してください。API へ接続できない場合でも静的ページ分の URL は生成されるので、本番デプロイ前に成功ログ（例: `[sitemap] Wrote 46 url entries ...`）を確認してから公開する運用がおすすめです。
 
 ---
 
-## ドキュメント
-
-- コンセプト・ペルソナ: `docs/concept_design.md`
-- 機能要件: `docs/functional_requirements.md`
-- API 仕様: `docs/api-design.md`
-- データベース設計: `docs/db_design.md`
-- 画面設計: `docs/wireframe.md`
-- 技術選定メモ: `docs/tech_stack.md`
-- 旧バージョンの資料: `docs/old/`
-
----
-
-## 作者
 
 - Akito（iakito-dev）
 - GitHub: https://github.com/iakito-dev

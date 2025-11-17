@@ -6,7 +6,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
-import { BookOpen, Search, X } from 'lucide-react';
+import { BookOpen, Info, Search, X } from 'lucide-react';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
 import { cn } from '../../../lib/utils';
@@ -38,14 +38,19 @@ const techniqueOptions = [
   {
     value: 'build',
     label: 'ビルド',
+    description: '材料をグラスに直接注いで作る、最もシンプルな技法。',
   },
   {
     value: 'stir',
     label: 'ステア',
+    description:
+      '氷を入れたミキシンググラスで静かに混ぜて冷やす技法。クリアな味わいを保ちたいカクテルに使われる。',
   },
   {
     value: 'shake',
     label: 'シェイク',
+    description:
+      'シェイカーで強く振って、すばやく冷やしながら混ぜる技法。香りや泡立ちを引き出したいときに使われる。',
   },
 ];
 
@@ -170,6 +175,22 @@ export function CocktailFilters({
         options={techniqueOptions}
         selectedValues={selectedTechniques}
         onToggle={handleTechniqueToggle}
+        infoContent={
+          <dl className="space-y-3">
+            {techniqueOptions.map((technique) => (
+              <div key={technique.value}>
+                <dt className="text-xs font-semibold text-gray-900">
+                  {technique.label}
+                </dt>
+                {technique.description ? (
+                  <dd className="mt-1 text-[11px] leading-relaxed text-gray-600">
+                    {technique.description}
+                  </dd>
+                ) : null}
+              </div>
+            ))}
+          </dl>
+        }
       />
 
       <FilterBadgeSection
@@ -207,6 +228,7 @@ type FilterBadgeOption = {
   value: string;
   label: string;
   icon?: ReactNode;
+  description?: string;
 };
 
 interface FilterBadgeSectionProps {
@@ -214,6 +236,7 @@ interface FilterBadgeSectionProps {
   options: FilterBadgeOption[];
   selectedValues: string[];
   onToggle: (value: string) => void;
+  infoContent?: ReactNode;
 }
 
 function FilterBadgeSection({
@@ -221,10 +244,16 @@ function FilterBadgeSection({
   options,
   selectedValues,
   onToggle,
+  infoContent,
 }: FilterBadgeSectionProps) {
   return (
     <section className="space-y-2">
-      <p className="text-sm text-gray-700">{title}</p>
+      <div className="flex items-center gap-1 text-sm text-gray-700">
+        <p>{title}</p>
+        {infoContent ? (
+          <InfoTooltip label={`${title}の説明`}>{infoContent}</InfoTooltip>
+        ) : null}
+      </div>
       <div className="flex flex-wrap gap-2">
         {options.map((option) => {
           const isSelected = selectedValues.includes(option.value);
@@ -254,5 +283,45 @@ function FilterBadgeSection({
         })}
       </div>
     </section>
+  );
+}
+
+interface InfoTooltipProps {
+  label: string;
+  children: ReactNode;
+}
+
+function InfoTooltip({ label, children }: InfoTooltipProps) {
+  const [open, setOpen] = useState(false);
+  const contentId = useId();
+
+  return (
+    <div
+      className="relative inline-flex"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        aria-label={label}
+        aria-describedby={contentId}
+        aria-expanded={open}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        className="rounded-full p-1 text-gray-400 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+      >
+        <Info className="h-4 w-4" aria-hidden />
+      </button>
+      <div
+        id={contentId}
+        role="tooltip"
+        className={cn(
+          'absolute left-1/2 top-full z-20 mt-3 w-64 -translate-x-1/2 rounded-2xl border border-gray-200 bg-white p-4 text-xs text-gray-600 shadow-lg transition-opacity duration-150',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+      >
+        {children}
+      </div>
+    </div>
   );
 }

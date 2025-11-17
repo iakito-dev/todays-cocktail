@@ -17,7 +17,6 @@ type SeoProps = {
   type?: 'website' | 'article';
   noindex?: boolean;
   twitterCard?: 'summary' | 'summary_large_image';
-  keywords?: string;
   structuredData?: StructuredData;
   publishedTime?: string;
   updatedTime?: string;
@@ -35,16 +34,20 @@ export function Seo({
   type = 'website',
   noindex = false,
   twitterCard = 'summary_large_image',
-  keywords,
   structuredData,
   publishedTime,
   updatedTime,
 }: SeoProps) {
+  const normalizedSiteName = siteMetadata.siteName.toLowerCase();
+  const withBrand = (value: string) =>
+    value.toLowerCase().includes(normalizedSiteName)
+      ? value
+      : `${value} | ${siteMetadata.siteName}`;
+
   const pageTitle = title
-    ? `${title} | ${siteMetadata.siteName}`
-    : `${siteMetadata.defaultTitle} | ${siteMetadata.siteName}`;
+    ? withBrand(title)
+    : withBrand(siteMetadata.defaultTitle);
   const pageDescription = description ?? siteMetadata.defaultDescription;
-  const metaKeywords = keywords ?? siteMetadata.defaultKeywords;
   const canonicalUrl = getCanonicalUrl(path);
   const ogImage = getOgImageUrl(image);
   const robotsValue = noindex ? 'noindex,nofollow' : 'index,follow';
@@ -55,12 +58,10 @@ export function Seo({
       <html lang="ja" />
       <title>{pageTitle}</title>
       <meta name="description" content={pageDescription} />
-      <meta name="keywords" content={metaKeywords} />
+      <meta name="keywords" content={siteMetadata.defaultKeywords} />
       <meta name="robots" content={robotsValue} />
       <meta name="theme-color" content={siteMetadata.themeColor} />
       <link rel="canonical" href={canonicalUrl} />
-      <link rel="alternate" hrefLang="ja-JP" href={canonicalUrl} />
-      <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
 
       <meta property="og:site_name" content={siteMetadata.siteName} />
       <meta property="og:type" content={type} />

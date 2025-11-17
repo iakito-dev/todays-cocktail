@@ -35,31 +35,15 @@ import { useCocktailSearch } from '../../hooks/useCocktailSearch';
 // =======================================
 // 構造化データを定数に切り出し、JSX内をシンプルに保つ
 const HOME_WEBSITE_JSON_LD = {
+  '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: siteMetadata.siteName,
   url: siteMetadata.siteUrl,
-  description: siteMetadata.defaultDescription,
   potentialAction: {
     '@type': 'SearchAction',
     target: `${siteMetadata.siteUrl}/?q={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
-};
-
-const HOME_WEB_APP_JSON_LD = {
-  '@type': 'WebApplication',
-  name: siteMetadata.siteName,
-  url: siteMetadata.siteUrl,
-  applicationCategory: 'LifestyleApplication',
-  operatingSystem: 'Web',
-  description:
-    'カクテル レシピ アプリとして、人気レシピ検索・お気に入り・おすすめ表示が1つで完結します。',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'JPY',
-  },
-  keywords: 'カクテル レシピ アプリ,カクテルレシピ検索,家飲みアプリ',
 };
 
 // =======================================
@@ -204,6 +188,7 @@ export function CocktailList() {
   const itemListStructuredData =
     cocktails && cocktails.length
       ? {
+          '@context': 'https://schema.org',
           '@type': 'ItemList',
           itemListElement: cocktails
             .slice(0, Math.min(10, cocktails.length))
@@ -216,28 +201,16 @@ export function CocktailList() {
         }
       : undefined;
 
-  const structuredGraph: Record<string, unknown>[] = [
-    HOME_WEBSITE_JSON_LD,
-    HOME_WEB_APP_JSON_LD,
-  ];
-  if (itemListStructuredData) {
-    structuredGraph.push(itemListStructuredData);
-  }
-  const homeStructuredData = {
-    '@context': 'https://schema.org',
-    '@graph': structuredGraph,
-  };
-
-  const homeKeywords =
-    'カクテル レシピ アプリ,カクテルレシピアプリ,カクテル検索,家飲みレシピ';
+  const homeStructuredData = itemListStructuredData
+    ? [HOME_WEBSITE_JSON_LD, itemListStructuredData]
+    : HOME_WEBSITE_JSON_LD;
 
   return (
     <>
       <Seo
-        title="Today's Cocktail - カクテル レシピ アプリで人気レシピ検索"
-        description="カクテル レシピ アプリとして、ベース酒や味わい、人気順で40種類以上のレシピを検索。今日のおすすめやお気に入り機能で、自分だけの一杯を見つけましょう。"
+        title="Today's Cocktail - 今日の一杯が見つかるカクテル図鑑"
+        description="ベース酒や味わい、人気順で40種類以上のカクテルを検索。今日のおすすめやお気に入り機能で、自分だけの一杯を見つけましょう。"
         path="/"
-        keywords={homeKeywords}
         structuredData={homeStructuredData}
       />
       <div className="min-h-screen bg-gray-50 text-foreground">

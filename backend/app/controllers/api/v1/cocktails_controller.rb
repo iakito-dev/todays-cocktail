@@ -2,9 +2,7 @@ class Api::V1::CocktailsController < ApplicationController
   require "digest"
   def index
     # キャッシュキーを生成（パラメータに応じて変化）
-    # v2: 一覧カードでベース/強度/技法バッジを表示するための列追加に伴い、
-    # 旧フォーマットのキャッシュと区別する
-    cache_key = "cocktails_index_v2_#{cache_key_params}"
+    cache_key = "cocktails_index_#{cache_key_params}"
 
     # キャッシュから取得、なければクエリ実行
     # データは基本的に不変のためキャッシュを長めにする

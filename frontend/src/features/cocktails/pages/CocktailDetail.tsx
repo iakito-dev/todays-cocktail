@@ -91,9 +91,8 @@ export function CocktailDetail() {
   const seoTitle = cocktail
     ? `${cocktail.name_ja || cocktail.name}のカクテルレシピ`
     : 'カクテル詳細';
-  const structuredData = cocktail
+  const recipeStructuredData = cocktail
     ? {
-        '@context': 'https://schema.org',
         '@type': 'Recipe',
         name: cocktail.name_ja || cocktail.name,
         alternateName: cocktail.name,
@@ -134,6 +133,48 @@ export function CocktailDetail() {
       }
     : undefined;
 
+  const breadcrumbStructuredData = cocktail
+    ? {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: siteMetadata.siteName,
+            item: absoluteUrl('/'),
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: cocktail.name_ja || cocktail.name,
+            item: absoluteUrl(canonicalPath),
+          },
+        ],
+      }
+    : undefined;
+
+  const structuredGraph: Record<string, unknown>[] = [];
+  if (recipeStructuredData) structuredGraph.push(recipeStructuredData);
+  if (breadcrumbStructuredData) structuredGraph.push(breadcrumbStructuredData);
+
+  const structuredData = structuredGraph.length
+    ? {
+        '@context': 'https://schema.org',
+        '@graph': structuredGraph,
+      }
+    : undefined;
+
+  const detailKeywords = cocktail
+    ? [
+        cocktail.name_ja || cocktail.name,
+        `${cocktail.name_ja || cocktail.name} レシピ`,
+        `${BASE_LABELS[cocktail.base]} カクテル`,
+        'カクテル レシピ アプリ',
+      ]
+        .filter(Boolean)
+        .join(',')
+    : undefined;
+
   const seoElement = (
     <Seo
       title={seoTitle}
@@ -141,6 +182,7 @@ export function CocktailDetail() {
       path={canonicalPath}
       image={shareImage}
       type="article"
+      keywords={detailKeywords}
       publishedTime={cocktail?.created_at}
       updatedTime={cocktail?.updated_at}
       structuredData={structuredData}

@@ -208,7 +208,7 @@ export function CocktailList() {
   return (
     <>
       <Seo
-        title="Today's Cocktail - 人気カクテル40種類以上をベース・材料・人気順で検索"
+        title="Today's Cocktail - 今日の一杯が見つかる人気カクテルレシピ検索アプリ"
         description="人気カクテル40種以上を、ベース酒・材料・人気順から簡単検索。今日のおすすめやお気に入り機能で、自分だけの一杯に出会えるカクテル検索アプリ。"
         path="/"
         structuredData={homeStructuredData}

@@ -26,12 +26,26 @@ import { useAuth } from '../../../../hooks/useAuth';
 import type { Cocktail } from '../../../../lib/types';
 import { fetchCocktail } from '../../../../lib/api';
 import { useCocktailSearch } from '../../hooks/useCocktailSearch';
+import { Seo } from '../../../../components/layout/Seo';
+import { absoluteUrl, siteMetadata } from '../../../../lib/seo';
 
 // =======================================
 // SEO定義
 // =======================================
 // 構造化データを定数に切り出し、JSX内をシンプルに保つ
 const TODAYS_PICK_STORAGE_KEY = 'todays_pick_visible';
+const HOMEPAGE_STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: siteMetadata.siteName,
+  url: siteMetadata.siteUrl,
+  description: siteMetadata.defaultDescription,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${absoluteUrl('/')}?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
 
 // =======================================
 // Responsive Helper
@@ -202,6 +216,12 @@ export function CocktailList() {
 
   return (
     <>
+      <Seo
+        title={siteMetadata.defaultTitle}
+        description={siteMetadata.defaultDescription}
+        path="/"
+        structuredData={HOMEPAGE_STRUCTURED_DATA}
+      />
       <div className="min-h-screen bg-gray-50 text-foreground">
         <div className="max-w-7xl mx-auto p-6">
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">

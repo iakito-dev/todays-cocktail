@@ -3,7 +3,15 @@ import type { Mock } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { AuthProvider } from './AuthContext';
 import { useAuth } from '../hooks/useAuth';
-import { login as apiLogin, signup as apiSignup, logout as apiLogout, getCurrentUser, clearAuthToken } from '../lib/api';
+import {
+  login as apiLogin,
+  signup as apiSignup,
+  logout as apiLogout,
+  getCurrentUser,
+  clearAuthToken,
+  updateUserProfile,
+  updateUserPassword,
+} from '../lib/api';
 
 // 認証 API に対する依存をすべてモック化し、
 // 「コンテキスト内部でどの関数が呼ばれるか」だけをテストできるようにする
@@ -13,6 +21,8 @@ vi.mock('../lib/api', () => ({
   logout: vi.fn(),
   getCurrentUser: vi.fn(),
   clearAuthToken: vi.fn(),
+  updateUserProfile: vi.fn(),
+  updateUserPassword: vi.fn(),
 }));
 
 // localStorage をテスト環境で差し替える
@@ -45,6 +55,8 @@ const mockedSignup = apiSignup as unknown as Mock;
 const mockedLogout = apiLogout as unknown as Mock;
 const mockedGetCurrentUser = getCurrentUser as unknown as Mock;
 const mockedClearAuthToken = clearAuthToken as unknown as Mock;
+const mockedUpdateUserProfile = updateUserProfile as unknown as Mock;
+const mockedUpdateUserPassword = updateUserPassword as unknown as Mock;
 
 describe('AuthProvider', () => {
   beforeEach(() => {
@@ -103,7 +115,14 @@ describe('AuthProvider', () => {
   it('logs in and stores the user', async () => {
     // ログイン成功時にユーザー情報・ admin フラグが更新されることを検証
     mockedLogin.mockResolvedValueOnce({
-      data: { user: { id: 2, email: 'login@example.com', name: 'Login User', admin: true } },
+      data: {
+        user: {
+          id: 2,
+          email: 'login@example.com',
+          name: 'Login User',
+          admin: true,
+        },
+      },
     });
 
     const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
@@ -127,7 +146,11 @@ describe('AuthProvider', () => {
       await result.current.signup('new@example.com', 'password', 'New User');
     });
 
-    expect(mockedSignup).toHaveBeenCalledWith('new@example.com', 'password', 'New User');
+    expect(mockedSignup).toHaveBeenCalledWith(
+      'new@example.com',
+      'password',
+      'New User',
+    );
     expect(result.current.user).toBeNull();
     expect(result.current.isAuthenticated).toBe(false);
   });
@@ -135,7 +158,14 @@ describe('AuthProvider', () => {
   it('logs out and clears user state', async () => {
     // ログアウト API が呼ばれたあと状態が初期化されることを確認
     mockedLogin.mockResolvedValueOnce({
-      data: { user: { id: 2, email: 'login@example.com', name: 'Login User', admin: false } },
+      data: {
+        user: {
+          id: 2,
+          email: 'login@example.com',
+          name: 'Login User',
+          admin: false,
+        },
+      },
     });
 
     const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
@@ -153,5 +183,60 @@ describe('AuthProvider', () => {
     expect(mockedLogout).toHaveBeenCalledTimes(1);
     expect(result.current.user).toBeNull();
     expect(result.current.isAuthenticated).toBe(false);
+  });
+
+  it('updates profile and syncs user state', async () => {
+    mockedLogin.mockResolvedValueOnce({
+      data: {
+        user: {
+          id: 3,
+          email: 'profile@example.com',
+          name: 'Before',
+          admin: false,
+        },
+      },
+    });
+
+    mockedUpdateUserProfile.mockResolvedValueOnce({
+      data: {
+        user: {
+          id: 3,
+          email: 'profile@example.com',
+          name: 'After',
+          admin: false,
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
+
+    await act(async () => {
+      await result.current.login('profile@example.com', 'password');
+    });
+
+    await act(async () => {
+      await result.current.updateProfile('After');
+    });
+
+    expect(mockedUpdateUserProfile).toHaveBeenCalledWith('After');
+    expect(result.current.user?.name).toBe('After');
+  });
+
+  it('requests password change through API helper', async () => {
+    mockedUpdateUserPassword.mockResolvedValueOnce({
+      status: { code: 200, message: 'ok' },
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
+
+    await act(async () => {
+      await result.current.changePassword('current', 'newpass', 'newpass');
+    });
+
+    expect(mockedUpdateUserPassword).toHaveBeenCalledWith(
+      'current',
+      'newpass',
+      'newpass',
+    );
   });
 });

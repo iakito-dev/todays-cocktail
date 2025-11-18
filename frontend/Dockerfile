@@ -5,6 +5,9 @@ FROM node:22-alpine
 # アプリケーションディレクトリを設定
 WORKDIR /app
 
+# bashを追加インストール（プロジェクトスクリプトがbashに依存するため）
+RUN apk add --no-cache bash
+
 # package.jsonとpackage-lock.jsonをコピー
 # 依存関係のインストールを先に行うことでDockerキャッシュを効率化
 COPY package*.json ./

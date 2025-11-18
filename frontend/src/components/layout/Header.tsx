@@ -64,14 +64,19 @@ export function Header() {
             {/* Auth Buttons：状態に応じてログイン導線とユーザー情報を切り替える */}
             {isAuthenticated ? (
               <div className="flex items-center gap-2 sm:gap-3">
-                <Avatar className="w-8 h-8 sm:w-10 sm:h-10">
-                  <AvatarFallback>
-                    {user?.name?.charAt(0).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="hidden sm:inline text-sm font-medium text-gray-900">
-                  {user?.name}
-                </span>
+                <Link
+                  to="/settings"
+                  className="flex items-center gap-2 sm:gap-3 rounded-2xl px-1.5 py-1 -m-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 hover:bg-gray-100"
+                >
+                  <Avatar className="w-8 h-8 sm:w-10 sm:h-10">
+                    <AvatarFallback>
+                      {user?.name?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="hidden sm:inline text-sm font-medium text-gray-900">
+                    {user?.name}
+                  </span>
+                </Link>
                 <Button
                   onClick={handleLogout}
                   variant="ghost"

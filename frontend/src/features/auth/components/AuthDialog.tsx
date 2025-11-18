@@ -15,6 +15,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '../../../components/ui/tabs';
+import { ForgotPasswordDialog } from './ForgotPasswordDialog';
 
 // =======================================
 // Props
@@ -42,6 +43,7 @@ export function AuthDialog({
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   // ログインタブからフォーム送信
   const handleLogin = async (e: React.FormEvent) => {
@@ -104,176 +106,192 @@ export function AuthDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        placement="raised"
-        size="auth"
-        className="items-stretch gap-5 sm:gap-6 rounded-2xl sm:rounded-2xl"
-      >
-        <div className="w-full flex flex-col gap-4 sm:gap-6">
-          <DialogHeader className="space-y-2 sm:space-y-3 text-center sm:text-center">
-            <div className="flex items-center justify-center mb-1.5">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl sm:text-3xl shadow-md text-white">
-                🍸
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent
+          placement="raised"
+          size="auth"
+          className="items-stretch gap-5 sm:gap-6 rounded-2xl sm:rounded-2xl"
+        >
+          <div className="w-full flex flex-col gap-4 sm:gap-6">
+            <DialogHeader className="space-y-2 sm:space-y-3 text-center sm:text-center">
+              <div className="flex items-center justify-center mb-1.5">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl sm:text-3xl shadow-md text-white">
+                  🍸
+                </div>
               </div>
-            </div>
-            <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
-              Today's Cocktail
-            </DialogTitle>
-            <DialogDescription className="text-sm sm:text-base text-gray-500">
-              お気に入りのカクテルを保存して、いつでも楽しめます
-            </DialogDescription>
-          </DialogHeader>
+              <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
+                Today's Cocktail
+              </DialogTitle>
+              <DialogDescription className="text-sm sm:text-base text-gray-500">
+                お気に入りのカクテルを保存して、いつでも楽しめます
+              </DialogDescription>
+            </DialogHeader>
 
-          <Tabs defaultValue="login" className="mt-2 sm:mt-3 w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-gray-100 h-11 sm:h-12 rounded-2xl p-1">
-              <TabsTrigger
+            <Tabs defaultValue="login" className="mt-2 sm:mt-3 w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-gray-100 h-11 sm:h-12 rounded-2xl p-1">
+                <TabsTrigger
+                  value="login"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-2xl"
+                >
+                  ログイン
+                </TabsTrigger>
+                <TabsTrigger
+                  value="signup"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-2xl"
+                >
+                  新規登録
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent
                 value="login"
-                className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-2xl"
+                className="space-y-4 sm:space-y-5 mt-4 sm:mt-5"
               >
-                ログイン
-              </TabsTrigger>
-              <TabsTrigger
+                <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+                  {error && (
+                    <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-2xl text-red-800 text-sm sm:text-base">
+                      {error}
+                    </div>
+                  )}
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="login-email"
+                      className="text-sm sm:text-base font-medium text-gray-700"
+                    >
+                      メールアドレス
+                    </Label>
+                    <Input
+                      id="login-email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      disabled={isLoading}
+                      className="h-11 sm:h-12 text-base"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="login-password"
+                      className="text-sm sm:text-base font-medium text-gray-700"
+                    >
+                      パスワード
+                    </Label>
+                    <Input
+                      id="login-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      disabled={isLoading}
+                      className="h-11 sm:h-12 text-base"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full h-11 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-md mt-2 sm:mt-3 text-base"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'ログイン中...' : 'ログイン'}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setIsForgotPasswordOpen(true)}
+                    className="w-full text-center text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    パスワードをお忘れの方はこちら
+                  </button>
+                </form>
+              </TabsContent>
+
+              <TabsContent
                 value="signup"
-                className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-sm sm:text-base py-2 rounded-2xl"
+                className="space-y-4 sm:space-y-5 mt-4 sm:mt-5"
               >
-                新規登録
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent
-              value="login"
-              className="space-y-4 sm:space-y-5 mt-4 sm:mt-5"
-            >
-              <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
-                {error && (
-                  <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-2xl text-red-800 text-sm sm:text-base">
-                    {error}
-                  </div>
-                )}
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="login-email"
-                    className="text-sm sm:text-base font-medium text-gray-700"
-                  >
-                    メールアドレス
-                  </Label>
-                  <Input
-                    id="login-email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={isLoading}
-                    className="h-11 sm:h-12 text-base"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="login-password"
-                    className="text-sm sm:text-base font-medium text-gray-700"
-                  >
-                    パスワード
-                  </Label>
-                  <Input
-                    id="login-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={isLoading}
-                    className="h-11 sm:h-12 text-base"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full h-11 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-md mt-2 sm:mt-3 text-base"
-                  disabled={isLoading}
+                <form
+                  onSubmit={handleSignup}
+                  className="space-y-3 sm:space-y-4"
                 >
-                  {isLoading ? 'ログイン中...' : 'ログイン'}
-                </Button>
-              </form>
-            </TabsContent>
-
-            <TabsContent
-              value="signup"
-              className="space-y-4 sm:space-y-5 mt-4 sm:mt-5"
-            >
-              <form onSubmit={handleSignup} className="space-y-3 sm:space-y-4">
-                {error && (
-                  <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-2xl text-red-800 text-sm sm:text-base">
-                    {error}
+                  {error && (
+                    <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-2xl text-red-800 text-sm sm:text-base">
+                      {error}
+                    </div>
+                  )}
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="signup-name"
+                      className="text-sm sm:text-base font-medium text-gray-700"
+                    >
+                      ユーザー名
+                    </Label>
+                    <Input
+                      id="signup-name"
+                      type="text"
+                      placeholder="カクテル太郎"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      disabled={isLoading}
+                      className="h-11 sm:h-12 text-base"
+                    />
                   </div>
-                )}
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="signup-name"
-                    className="text-sm sm:text-base font-medium text-gray-700"
-                  >
-                    ユーザー名
-                  </Label>
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    placeholder="カクテル太郎"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="signup-email"
+                      className="text-sm sm:text-base font-medium text-gray-700"
+                    >
+                      メールアドレス
+                    </Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      disabled={isLoading}
+                      className="h-11 sm:h-12 text-base"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="signup-password"
+                      className="text-sm sm:text-base font-medium text-gray-700"
+                    >
+                      パスワード
+                    </Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      disabled={isLoading}
+                      minLength={6}
+                      className="h-11 sm:h-12 text-base"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full h-11 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-md mt-2 sm:mt-3 text-base"
                     disabled={isLoading}
-                    className="h-11 sm:h-12 text-base"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="signup-email"
-                    className="text-sm sm:text-base font-medium text-gray-700"
                   >
-                    メールアドレス
-                  </Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={isLoading}
-                    className="h-11 sm:h-12 text-base"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="signup-password"
-                    className="text-sm sm:text-base font-medium text-gray-700"
-                  >
-                    パスワード
-                  </Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={isLoading}
-                    minLength={6}
-                    className="h-11 sm:h-12 text-base"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full h-11 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-md mt-2 sm:mt-3 text-base"
-                  disabled={isLoading}
-                >
-                  {isLoading ? '登録中...' : '新規登録'}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </DialogContent>
-    </Dialog>
+                    {isLoading ? '登録中...' : '新規登録'}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <ForgotPasswordDialog
+        isOpen={isForgotPasswordOpen}
+        onClose={() => setIsForgotPasswordOpen(false)}
+      />
+    </>
   );
 }

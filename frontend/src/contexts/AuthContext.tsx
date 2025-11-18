@@ -6,6 +6,8 @@ import {
   logout as apiLogout,
   getCurrentUser,
   clearAuthToken,
+  updateUserProfile,
+  updateUserPassword,
 } from '../lib/api';
 import { toast } from '../lib/toast';
 
@@ -25,6 +27,12 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (name: string) => Promise<void>;
+  changePassword: (
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string,
+  ) => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;
 }
@@ -94,12 +102,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // ユーザー名を更新して最新のユーザー情報を反映
+  const updateProfile = async (name: string) => {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      throw new Error('ユーザー名を入力してください');
+    }
+    const response = await updateUserProfile(trimmedName);
+    setUser(response.data.user);
+    toast.success('ユーザー名を更新しました');
+  };
+
+  // パスワード更新。サーバー側で検証に失敗した場合はエラーをそのまま伝播させる
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string,
+  ) => {
+    if (!currentPassword || !newPassword) {
+      throw new Error('現在のパスワードと新しいパスワードを入力してください');
+    }
+    await updateUserPassword(currentPassword, newPassword, confirmPassword);
+    toast.success('パスワードを更新しました');
+  };
+
   const value: AuthContextType = {
     user,
     isLoading,
     login,
     signup,
     logout,
+    updateProfile,
+    changePassword,
     isAuthenticated: user !== null,
     isAdmin: user?.admin || false,
   };

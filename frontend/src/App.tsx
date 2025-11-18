@@ -19,6 +19,16 @@ const EmailConfirmation = lazy(() =>
     default: m.EmailConfirmation,
   })),
 );
+const ResetPassword = lazy(() =>
+  import('./features/auth/pages/ResetPassword').then((m) => ({
+    default: m.ResetPassword,
+  })),
+);
+const AccountSettings = lazy(() =>
+  import('./features/account/pages/AccountSettings').then((m) => ({
+    default: m.AccountSettings,
+  })),
+);
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from './components/ui/sonner';
 
@@ -38,6 +48,8 @@ function App() {
               <Route path="/" element={<CocktailList />} />
               <Route path="/cocktails/:id" element={<CocktailDetail />} />
               <Route path="/confirmation" element={<EmailConfirmation />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/settings" element={<AccountSettings />} />
             </Routes>
           </Suspense>
           <Footer />

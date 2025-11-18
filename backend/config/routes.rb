@@ -12,10 +12,14 @@ Rails.application.routes.draw do
         delete "logout", to: "sessions#destroy"
         get "confirmation", to: "confirmations#show"
         post "confirmation", to: "confirmations#create"
+        post "password/forgot", to: "passwords#create"
+        put "password/reset", to: "passwords#update"
       end
 
       # ユーザーエンドポイント
       get "users/me", to: "users#me"
+      put "users/profile", to: "users#update_profile"
+      put "users/password", to: "users#update_password"
 
       # カクテルエンドポイント
       resources :cocktails, only: [ :index, :show ] do

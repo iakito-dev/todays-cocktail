@@ -116,6 +116,46 @@ export async function apiGetPublic(path: string, init?: RequestInit) {
   return res.json().catch(() => ({}));
 }
 
+export async function apiPostPublic(
+  path: string,
+  body?: unknown,
+  init?: RequestInit,
+) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+    ...init,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(extractErrorMessage('POST', path, res.status, text));
+  }
+
+  return res.json().catch(() => ({}));
+}
+
+export async function apiPutPublic(
+  path: string,
+  body?: unknown,
+  init?: RequestInit,
+) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+    ...init,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(extractErrorMessage('PUT', path, res.status, text));
+  }
+
+  return res.json().catch(() => ({}));
+}
+
 /**
  * POSTリクエストを送信する
  * @param path - APIエンドポイントのパス
@@ -352,6 +392,13 @@ export interface AuthResponse {
   };
 }
 
+interface StatusResponse {
+  status: {
+    code: number;
+    message: string;
+  };
+}
+
 /**
  * ログイン
  * @param email - メールアドレス
@@ -416,6 +463,48 @@ export async function logout(): Promise<void> {
  */
 export async function getCurrentUser(): Promise<AuthResponse> {
   return apiGet('/api/v1/users/me');
+}
+
+export async function requestPasswordReset(
+  email: string,
+): Promise<StatusResponse> {
+  return apiPostPublic('/api/v1/password/forgot', {
+    user: { email },
+  });
+}
+
+export async function resetPasswordWithToken(
+  token: string,
+  password: string,
+  passwordConfirmation: string,
+): Promise<StatusResponse> {
+  return apiPutPublic('/api/v1/password/reset', {
+    user: {
+      reset_password_token: token,
+      password,
+      password_confirmation: passwordConfirmation,
+    },
+  });
+}
+
+export async function updateUserProfile(name: string): Promise<AuthResponse> {
+  return apiPut('/api/v1/users/profile', {
+    user: { name },
+  });
+}
+
+export async function updateUserPassword(
+  currentPassword: string,
+  newPassword: string,
+  confirmPassword: string,
+): Promise<StatusResponse> {
+  return apiPut('/api/v1/users/password', {
+    user: {
+      current_password: currentPassword,
+      password: newPassword,
+      password_confirmation: confirmPassword,
+    },
+  });
 }
 
 /**

@@ -133,7 +133,9 @@ export function CocktailDetail() {
         },
       }
     : undefined;
-  const shouldNoIndex = Boolean(error || !cocktail);
+  // noindex はロード完了後にデータが存在しない場合やエラー時のみに限定し、
+  // API フェッチ中の一時的な空データでは出力しない（Search Console の誤検知を防ぐ）
+  const shouldNoIndex = Boolean(error || (!loading && !cocktail));
 
   const seoElement = (
     <Seo

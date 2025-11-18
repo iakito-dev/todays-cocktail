@@ -133,6 +133,7 @@ export function CocktailDetail() {
         },
       }
     : undefined;
+  const shouldNoIndex = Boolean(error || !cocktail);
 
   const seoElement = (
     <Seo
@@ -144,6 +145,7 @@ export function CocktailDetail() {
       publishedTime={cocktail?.created_at}
       updatedTime={cocktail?.updated_at}
       structuredData={structuredData}
+      noindex={shouldNoIndex}
     />
   );
 

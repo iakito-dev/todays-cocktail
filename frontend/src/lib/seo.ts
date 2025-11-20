@@ -19,11 +19,11 @@ type SiteMetadata = {
 
 export const siteMetadata: SiteMetadata = {
   siteName: "Today's Cocktail",
-  defaultTitle: 'Today’s Cocktail - 人気カクテル図鑑&レシピ検索',
+  defaultTitle: "Today's Cocktail - 40種類以上のカクテルレシピを人気順で検索",
   defaultDescription:
-    '定番からオリジナルまで、40種類以上のカクテルを検索・比較。ベースや味わい、アルコール度数で絞り込みながら、作り方や材料、カクテルの起源や由来まで楽しめます。',
+    "Today's Cocktailは、今日の一杯に出会えるカクテルレシピ検索アプリです。人気カクテル40種以上を、ベース酒・材料・人気順から簡単に探せます。今日のおすすめ機能やお気に入り登録で、自分だけの定番の一杯を見つけましょう。",
   defaultKeywords:
-    'カクテル,カクテルレシピ,カクテル検索,カクテル図鑑,バー,お酒,ミクソロジー,ベース,作り方,人気,ウイスキー,ジン,ラム,テキーラ,ウォッカ,リキュール,ノンアルコール,モクテル,歴史',
+    'カクテル,カクテルレシピ,レシピ,カクテル検索,バー,お酒,材料,家飲み,晩酌',
   locale: 'ja_JP',
   themeColor: '#0f172a',
   twitterHandle: import.meta.env.VITE_TWITTER_HANDLE ?? undefined,

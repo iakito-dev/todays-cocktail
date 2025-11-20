@@ -38,11 +38,14 @@ export function Seo({
   publishedTime,
   updatedTime,
 }: SeoProps) {
-  const normalizedSiteName = siteMetadata.siteName.toLowerCase();
+  const escapeForRegExp = (value: string) =>
+    value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const brandRegExp = new RegExp(
+    `\\b${escapeForRegExp(siteMetadata.siteName)}\\b`,
+    'i',
+  );
   const withBrand = (value: string) =>
-    value.toLowerCase().includes(normalizedSiteName)
-      ? value
-      : `${value} | ${siteMetadata.siteName}`;
+    brandRegExp.test(value) ? value : `${value} | ${siteMetadata.siteName}`;
 
   const pageTitle = title
     ? withBrand(title)

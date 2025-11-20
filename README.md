@@ -54,8 +54,6 @@ https://todayscocktails.com
 | 開発支援・コード整形 | ESLint 9 / Prettier 3 / Husky 9 / lint-staged 16 / RuboCop |
 | 開発環境 | Git / Docker / Docker Compose / VS Code / GitHub Copilot / Codex（Sonnet 4.5 / gpt-5 / gpt-5-codex） / Colima（軽量Docker環境） |
 
-詳しい選定理由は `docs/tech_stack.md` に記載。
-
 ---
 
 ## インフラ構成図
@@ -104,8 +102,6 @@ flowchart TD
   Detail --> Favorites
   Home --> TodaysPick[今日の一杯]
 ```
-
-UI とレスポンシブ方針は `docs/wireframe.md` に記載。
 
 ---
 

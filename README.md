@@ -65,7 +65,7 @@ flowchart LR
   fe["Vercel (React SPA)"]
   api["Render (Rails API)"]
   db["Supabase Cloud PostgreSQL"]
-  cache["RAILS.cache / Redis (検討中)"]
+  cache["RAILS.cache"]
 
   user -->|HTTPS| dns
   dns --> fe

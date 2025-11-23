@@ -132,10 +132,8 @@ class CocktailImporter
         import_ingredients(cocktail, drink_data)
       end
 
-      # トランザクション成功後に画像をダウンロード（失敗してもロールバックしない）
-      if cocktail && drink_data["strDrinkThumb"].present?
-        ImageDownloadService.download_and_attach(cocktail, drink_data["strDrinkThumb"])
-      end
+      # 画像URLは既にimage_url_overrideに保存済み（126行目）
+      # 必要に応じて、UnsplashImageServiceを使って画像を取得可能
 
       puts " Imported: #{cocktail_name} (#{cocktail&.name_ja})"
       @imported_count += 1

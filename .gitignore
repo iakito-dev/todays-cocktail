@@ -111,3 +111,8 @@ kamal.lock
 
 # 誤ってプロジェクト一式を入れ子にしないようルート配下のバックアップを除外
 todays-cocktail/
+
+# ----------------------------------
+# Portfolio Documentation (Local only)
+# ----------------------------------
+docs/interview-prep/

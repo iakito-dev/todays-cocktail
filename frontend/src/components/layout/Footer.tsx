@@ -82,7 +82,7 @@ export const Footer = () => {
             <a
               href={
                 import.meta.env.VITE_AUTHOR_GITHUB_URL ??
-                'https://github.com/iakito-dev'
+                'https://github.com/iakito-dev/todays-cocktail'
               }
               target="_blank"
               rel="noopener noreferrer"

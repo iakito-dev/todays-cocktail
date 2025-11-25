@@ -1,35 +1,4 @@
-import { Github, ArrowUp, Globe, Linkedin, PenSquare } from 'lucide-react';
-
-// =======================================
-// 外部リンク設定
-// =======================================
-const profileLinks = [
-  {
-    name: 'GitHub',
-    href:
-      import.meta.env.VITE_AUTHOR_GITHUB_URL ?? 'https://github.com/iakito-dev',
-    icon: Github,
-  },
-  {
-    name: 'Portfolio',
-    href:
-      import.meta.env.VITE_AUTHOR_PORTFOLIO_URL ??
-      'https://akito-portfolio-site.vercel.app',
-    icon: Globe,
-  },
-  {
-    name: 'LinkedIn',
-    href:
-      import.meta.env.VITE_AUTHOR_LINKEDIN_URL ??
-      'https://www.linkedin.com/in/akito-dev/',
-    icon: Linkedin,
-  },
-  {
-    name: 'Zenn',
-    href: import.meta.env.VITE_AUTHOR_ZENN_URL ?? 'https://zenn.dev/',
-    icon: PenSquare,
-  },
-] as const;
+import { ArrowUp } from 'lucide-react';
 
 // =======================================
 // BackToTopButton コンポーネント
@@ -103,51 +72,15 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Linksセクション */}
-        <div className="mt-12 border-t border-white/10 pt-6 space-y-6">
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-xs uppercase tracking-[0.3em] text-slate-400">
-                Links
-              </span>
-              <p className="text-xs text-slate-500">
-                プロジェクト更新情報や制作背景はこちらから。
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3" role="list">
-              {profileLinks.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${link.name} を開く`}
-                    role="listitem"
-                    className="group inline-flex min-w-[140px] flex-1 items-center gap-2 rounded-full border border-[#333333] bg-[#111111] px-5 py-2.5 text-sm font-medium text-white/90 shadow-sm transition hover:-translate-y-0.5 hover:border-cyan-200/70 hover:text-cyan-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300 sm:flex-none"
-                  >
-                    <Icon
-                      className="h-4 w-4 text-white/80 transition group-hover:text-cyan-100"
-                      aria-hidden
-                    />
-                    <span>{link.name}</span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
+        {/* 下部コピーライト */}
+        <div className="mt-12 border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs md:text-sm text-slate-500">
+          <p className="text-center md:text-left text-slate-500">
+            © 2025 Today's Cocktail. All rights reserved.
+          </p>
 
-          {/* 下部コピーライト */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs md:text-sm text-slate-500">
-            <p className="text-center md:text-left text-slate-500">
-              © 2025 Today's Cocktail. All rights reserved.
-            </p>
-
-            <p className="text-center md:text-right text-slate-500">
-              Crafted by Akito / Today's Cocktail Team
-            </p>
-          </div>
+          <p className="text-center md:text-right text-slate-500">
+            Crafted by Akito / Today's Cocktail Team
+          </p>
         </div>
       </div>
     </footer>

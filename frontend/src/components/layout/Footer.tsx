@@ -1,4 +1,4 @@
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Github } from 'lucide-react';
 
 // =======================================
 // BackToTopButton コンポーネント
@@ -78,9 +78,24 @@ export const Footer = () => {
             © 2025 Today's Cocktail. All rights reserved.
           </p>
 
-          <p className="text-center md:text-right text-slate-500">
-            Crafted by Akito / Today's Cocktail Team
-          </p>
+          <div className="flex items-center gap-4">
+            <a
+              href={
+                import.meta.env.VITE_AUTHOR_GITHUB_URL ??
+                'https://github.com/iakito-dev'
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub を開く"
+              className="inline-flex items-center gap-2 text-slate-500 transition hover:text-slate-300"
+            >
+              <Github className="h-4 w-4" aria-hidden />
+              <span>GitHub</span>
+            </a>
+            <p className="text-center md:text-right text-slate-500">
+              Crafted by Akito
+            </p>
+          </div>
         </div>
       </div>
     </footer>

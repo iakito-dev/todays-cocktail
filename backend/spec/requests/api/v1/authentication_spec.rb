@@ -13,6 +13,7 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
       {
         user: {
           email: 'newuser@example.com',
+          name: 'Test User',
           password: 'password123',
           password_confirmation: 'password123'
         }

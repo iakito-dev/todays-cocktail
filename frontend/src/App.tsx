@@ -29,6 +29,11 @@ const AccountSettings = lazy(() =>
     default: m.AccountSettings,
   })),
 );
+const NotFound = lazy(() =>
+  import('./features/error/pages/NotFound').then((m) => ({
+    default: m.NotFound,
+  })),
+);
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from './components/ui/sonner';
 
@@ -50,6 +55,7 @@ function App() {
               <Route path="/confirmation" element={<EmailConfirmation />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/settings" element={<AccountSettings />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
           <Footer />

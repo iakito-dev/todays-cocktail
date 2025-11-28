@@ -96,6 +96,8 @@ jobs:
     env:
       RAILS_ENV: test
       LANG: ja_JP.UTF-8
+      LC_ALL: ja_JP.UTF-8
+      RUBYOPT: '-E UTF-8:UTF-8'
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/todays_cocktail_test
       DEVISE_JWT_SECRET_KEY: test_secret_key
       SECRET_KEY_BASE: dummy_key_for_ci
@@ -115,6 +117,10 @@ jobs:
           bundler-cache: true
           working-directory: backend
           cache-version: 2
+
+      # Clear bootsnap cache to avoid encoding issues
+      - name: Clear bootsnap cache
+        run: rm -rf tmp/cache/bootsnap
 
       # マイグレーションでDBを初期化（Supabase拡張を含むstructure.sqlは読み込まない）
       - name: Prepare database (schema load)

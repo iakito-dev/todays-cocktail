@@ -9,4 +9,7 @@ class User < ApplicationRecord
   # お気に入り機能の関連付け
   has_many :favorites, dependent: :destroy
   has_many :favorite_cocktails, through: :favorites, source: :cocktail
+
+  # ユーザー名のバリデーション
+  validates :name, presence: true, length: { maximum: 20 }
 end

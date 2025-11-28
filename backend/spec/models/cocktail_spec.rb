@@ -14,6 +14,52 @@ RSpec.describe Cocktail, type: :model do
   # Section: Validations — 名前必須ルールは importer/管理画面で最も頼りにする
   describe 'validations' do
     it { should validate_presence_of(:name) }
+
+    describe 'image_url_override' do
+      it '有効なHTTP URLを許可する' do
+        cocktail = build(:cocktail, image_url_override: 'http://example.com/image.jpg')
+        expect(cocktail).to be_valid
+      end
+
+      it '有効なHTTPS URLを許可する' do
+        cocktail = build(:cocktail, image_url_override: 'https://example.com/image.jpg')
+        expect(cocktail).to be_valid
+      end
+
+      it '空文字列を許可する' do
+        cocktail = build(:cocktail, image_url_override: '')
+        expect(cocktail).to be_valid
+      end
+
+      it 'nilを許可する' do
+        cocktail = build(:cocktail, image_url_override: nil)
+        expect(cocktail).to be_valid
+      end
+
+      it 'javascript:プロトコルを拒否する' do
+        cocktail = build(:cocktail, image_url_override: 'javascript:alert("XSS")')
+        expect(cocktail).not_to be_valid
+        expect(cocktail.errors[:image_url_override]).to include('はHTTPまたはHTTPSプロトコルである必要があります')
+      end
+
+      it 'data:プロトコルを拒否する' do
+        cocktail = build(:cocktail, image_url_override: 'data:text/html,<script>alert("XSS")</script>')
+        expect(cocktail).not_to be_valid
+        expect(cocktail.errors[:image_url_override]).to include('はHTTPまたはHTTPSプロトコルである必要があります')
+      end
+
+      it '無効なURL形式を拒否する' do
+        cocktail = build(:cocktail, image_url_override: 'not a valid url')
+        expect(cocktail).not_to be_valid
+        expect(cocktail.errors[:image_url_override]).to include('は有効なURL形式である必要があります')
+      end
+
+      it 'ホストがないURLを拒否する' do
+        cocktail = build(:cocktail, image_url_override: 'https://')
+        expect(cocktail).not_to be_valid
+        expect(cocktail.errors[:image_url_override]).to include('は有効なURL形式である必要があります')
+      end
+    end
   end
 
   # Section: Enums — base/strength/technique の値変更はフィルタや翻訳に直結

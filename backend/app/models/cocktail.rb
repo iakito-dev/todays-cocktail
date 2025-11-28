@@ -31,6 +31,7 @@ class Cocktail < ApplicationRecord
   }, prefix: true
 
   validates :name, presence: true
+  validates :image_url_override, url: true, allow_blank: true
 
   # 材料を順序つきで取得
   def ordered_ingredients

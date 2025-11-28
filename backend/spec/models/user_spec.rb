@@ -18,6 +18,27 @@ RSpec.describe User, type: :model do
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email).case_insensitive }
     it { should validate_presence_of(:password) }
+    it { should validate_presence_of(:name) }
+    it { should validate_length_of(:name).is_at_most(20) }
+
+    describe 'name' do
+      it '20文字以内の名前を許可する' do
+        user = build(:user, name: 'a' * 20)
+        expect(user).to be_valid
+      end
+
+      it '21文字以上の名前を拒否する' do
+        user = build(:user, name: 'a' * 21)
+        expect(user).not_to be_valid
+        expect(user.errors[:name]).to include('は20文字以内で入力してください')
+      end
+
+      it '空文字列を拒否する' do
+        user = build(:user, name: '')
+        expect(user).not_to be_valid
+        expect(user.errors[:name]).to include('を入力してください')
+      end
+    end
   end
 
   # Section: Devise modules — 必要なモジュールが有効かをリストアップ

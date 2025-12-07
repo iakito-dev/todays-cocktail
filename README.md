@@ -1,5 +1,4 @@
 # Today's Cocktail 🍸
----
 
 ## サービス概要
 
@@ -80,6 +79,7 @@ flowchart LR
   api --> db
   api --> cache
 ```
+
 ---
 
 ## ER 図
@@ -108,6 +108,7 @@ flowchart TD
   Detail --> Favorites
   Home --> TodaysPick[今日の一杯]
 ```
+
 ---
 
 ## 技術選定理由

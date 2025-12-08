@@ -36,13 +36,29 @@ Today's Cocktail は、「カクテルをもっと身近に」という想いか
 ## 主な実装機能
 
 - **カクテル一覧表示**：ベース種類・材料・人気順など複数の軸で検索・フィルタリング
+  ![カクテル一覧](https://github.com/user-attachments/assets/120a7a87-c5b6-4d26-b2b9-23bb028849fe)
+
 - **カクテル詳細ページ**：名前、説明文、画像、材料、レシピなどの詳細情報を表示
+  ![カクテル詳細](https://github.com/user-attachments/assets/8bbc0e30-688c-42e6-9e33-af303210f07f)
+
 - **日替わりレコメンド機能**：「今日の一杯」を日替わりで提示
+  ![今日の一杯](https://github.com/user-attachments/assets/b5f9e577-5b9e-4ce5-8f26-5427b0b55b71)
+
 - **検索・フィルタリング機能**：「今日の一杯」を日替わりで提示
+  ![検索フィルタリング](https://github.com/user-attachments/assets/293bbbf5-60e7-46ff-ab00-bc967e690365)
+
 - **お気に入り機能**：気に入ったカクテルを保存・管理（ログインユーザー限定）
+  ![お気に入り一覧](https://github.com/user-attachments/assets/cbdde10f-7814-44d5-8437-e6c45b3c01df)
+
 - **ユーザー認証機能**：ユーザー登録・ログイン・パスワードリセット
+  ![ログイン](https://github.com/user-attachments/assets/d35235f4-22fa-4788-838e-54f31a0886ac)
+
 - **アカウント設定機能**：ユーザー名・パスワード変更
+  ![アカウント設定](https://github.com/user-attachments/assets/157a2ed8-13b1-474d-ba66-08a9c4eb23b1)
+
 - **管理者機能**：カクテル情報の編集（管理者ユーザー限定）
+  ![カクテル情報編集](https://github.com/user-attachments/assets/af3ab22a-2fd1-4d40-856c-699b824a6291)
+
 
 ---
 

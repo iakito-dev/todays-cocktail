@@ -74,64 +74,64 @@ Today's Cocktail は、「カクテルをもっと身近に」という思いか
 erDiagram
 
   USERS {
-    BIGINT id PK
-    VARCHAR email
-    VARCHAR encrypted_password
-    VARCHAR reset_password_token
-    TIMESTAMP reset_password_sent_at
-    TIMESTAMP remember_created_at
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
-    VARCHAR name
-    BOOLEAN admin
-    VARCHAR confirmation_token
-    TIMESTAMP confirmed_at
-    TIMESTAMP confirmation_sent_at
-    VARCHAR unconfirmed_email
+    id BIGINT PK
+    email VARCHAR
+    encrypted_password VARCHAR
+    name VARCHAR
+    admin BOOLEAN
+    confirmation_token VARCHAR
+    confirmed_at TIMESTAMP
+    confirmation_sent_at TIMESTAMP
+    unconfirmed_email VARCHAR
+    reset_password_token VARCHAR
+    reset_password_sent_at TIMESTAMP
+    remember_created_at TIMESTAMP
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
   }
 
   COCKTAILS {
-    BIGINT id PK
-    VARCHAR name
-    INTEGER base
-    INTEGER strength
-    INTEGER technique
-    TEXT instructions
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
-    VARCHAR glass
-    TEXT description
-    VARCHAR name_ja
-    VARCHAR glass_ja
-    VARCHAR image_url_override
-    TEXT instructions_ja
+    id BIGINT PK
+    name VARCHAR
+    name_ja VARCHAR
+    base INTEGER
+    strength INTEGER
+    technique INTEGER
+    glass VARCHAR
+    glass_ja VARCHAR
+    image_url_override VARCHAR
+    description TEXT
+    instructions TEXT
+    instructions_ja TEXT
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
   }
 
   INGREDIENTS {
-    BIGINT id PK
-    VARCHAR name
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
-    VARCHAR name_ja
+    id BIGINT PK
+    name VARCHAR
+    name_ja VARCHAR
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
   }
 
   COCKTAIL_INGREDIENTS {
-    BIGINT id PK
-    BIGINT cocktail_id FK
-    BIGINT ingredient_id FK
-    VARCHAR amount_text
-    INTEGER position
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
-    VARCHAR amount_ja
+    id BIGINT PK
+    cocktail_id BIGINT FK
+    ingredient_id BIGINT FK
+    position INTEGER
+    amount_text VARCHAR
+    amount_ja VARCHAR
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
   }
 
   FAVORITES {
-    BIGINT id PK
-    BIGINT user_id FK
-    BIGINT cocktail_id FK
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
+    id BIGINT PK
+    user_id BIGINT FK
+    cocktail_id BIGINT FK
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
   }
 
   %% Relationships
@@ -142,8 +142,25 @@ erDiagram
   INGREDIENTS ||--o{ COCKTAIL_INGREDIENTS : "使用材料"
 ```
 
+### テーブル概要
 
+- **USERS**  
+  ユーザーアカウント情報を管理するテーブルです。メールアドレス・パスワード・管理者フラグ・認証関連のトークンなどを保存しています。
 
+- **COCKTAILS**  
+  カクテルの基本情報を格納するメインテーブルです。名前、ベース種、度数、作り方、説明文、画像 URL などを管理します。
+
+- **INGREDIENTS**  
+  材料のマスターデータ。材料名（日本語・英語）を保持。  
+  ※カクテルとは直接紐付かず、中間テーブルを介して多対多関係を形成。
+
+- **COCKTAIL_INGREDIENTS**  
+  カクテルと材料を結びつける中間テーブルです。  
+  どのカクテルにどの材料がどれくらい必要か（分量）を管理し、さらに position により表示順序も保持しています。
+
+- **FAVORITES**  
+  ユーザーがお気に入り登録したカクテルを管理する中間テーブルです。  
+  1ユーザーは複数のお気に入りを持つことができ、1カクテルは多くのユーザーにお気に入り登録される可能性があります。
 
 ---
 

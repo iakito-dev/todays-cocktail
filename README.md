@@ -64,21 +64,7 @@ Today's Cocktail は、「カクテルをもっと身近に」という思いか
 
 ## インフラ構成図
 
-```mermaid
-flowchart LR
-  user["ユーザー"]
-  dns["Cloudflare DNS"]
-  fe["Vercel (React SPA)"]
-  api["Render (Rails API)"]
-  db["Supabase Cloud PostgreSQL"]
-  cache["RAILS.cache"]
-
-  user -->|HTTPS| dns
-  dns --> fe
-  dns --> api
-  api --> db
-  api --> cache
-```
+<img width="2816" height="1536" alt="構成図" src="https://github.com/user-attachments/assets/922d43dc-77e3-4115-aa6a-4ca161f02d08" />
 
 ---
 
@@ -93,21 +79,6 @@ erDiagram
   USERS ||--o{ JWT_DENYLISTS : "無効化トークン"
 ```
 
----
-
-## 画面遷移図
-
-アプリケーションの画面遷移とユーザーフローを示しています。
-
-```mermaid
-flowchart TD
-  Home[トップ / 検索] --> Detail[カクテル詳細]
-  Home --> Favorites[お気に入り一覧]
-  Home --> Login[ログイン]
-  Login --> Signup[サインアップ]
-  Detail --> Favorites
-  Home --> TodaysPick[今日の一杯]
-```
 
 ---
 

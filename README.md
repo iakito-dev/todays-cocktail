@@ -72,12 +72,77 @@ Today's Cocktail は、「カクテルをもっと身近に」という思いか
 
 ```mermaid
 erDiagram
+
+  USERS {
+    BIGINT id PK
+    VARCHAR email
+    VARCHAR encrypted_password
+    VARCHAR reset_password_token
+    TIMESTAMP reset_password_sent_at
+    TIMESTAMP remember_created_at
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+    VARCHAR name
+    BOOLEAN admin
+    VARCHAR confirmation_token
+    TIMESTAMP confirmed_at
+    TIMESTAMP confirmation_sent_at
+    VARCHAR unconfirmed_email
+  }
+
+  COCKTAILS {
+    BIGINT id PK
+    VARCHAR name
+    INTEGER base
+    INTEGER strength
+    INTEGER technique
+    TEXT instructions
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+    VARCHAR glass
+    TEXT description
+    VARCHAR name_ja
+    VARCHAR glass_ja
+    VARCHAR image_url_override
+    TEXT instructions_ja
+  }
+
+  INGREDIENTS {
+    BIGINT id PK
+    VARCHAR name
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+    VARCHAR name_ja
+  }
+
+  COCKTAIL_INGREDIENTS {
+    BIGINT id PK
+    BIGINT cocktail_id FK
+    BIGINT ingredient_id FK
+    VARCHAR amount_text
+    INTEGER position
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+    VARCHAR amount_ja
+  }
+
+  FAVORITES {
+    BIGINT id PK
+    BIGINT user_id FK
+    BIGINT cocktail_id FK
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+  }
+
+  %% Relationships
   USERS ||--o{ FAVORITES : "お気に入り"
   COCKTAILS ||--o{ FAVORITES : "お気に入り"
+
   COCKTAILS ||--o{ COCKTAIL_INGREDIENTS : "材料構成"
   INGREDIENTS ||--o{ COCKTAIL_INGREDIENTS : "使用材料"
-  USERS ||--o{ JWT_DENYLISTS : "無効化トークン"
 ```
+
+
 
 
 ---
